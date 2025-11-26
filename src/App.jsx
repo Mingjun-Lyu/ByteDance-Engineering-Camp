@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import HelloWorld from './components/HelloWorld'
+import { Button } from '@douyinfe/semi-ui'
 import './App.css'
 
 function App() {
@@ -8,15 +8,15 @@ function App() {
   return (
     <>
       <div className="container">
-        <h1>React项目示例</h1>
-        <HelloWorld />
+        <h1>Semi-UI 组件示例</h1>
         
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            计数: {count}
-          </button>
-          <p>点击按钮增加计数</p>
-        </div>
+        <Button 
+          type="primary" 
+          onClick={() => setCount(count + 1)}
+          style={{ margin: '20px' }}
+        >
+          点击计数: {count}
+        </Button>
       </div>
     </>
   )
