@@ -1,41 +1,77 @@
-import React from 'react';
-import './ActivityHome.css';
+import React, { useState, useEffect } from 'react';
+import Banner from '../components/Banner';
+import ActivityCategories from '../components/ActivityCategories';
+import Notice from '../components/Notice';
+import HighlightActivities from '../components/HighlightActivities';
+import { 
+  getBanners, 
+  getActivityCategories, 
+  getNotices, 
+  getOngoingHighlightActivities 
+} from '../mocks/apiService';
 
 const ActivityHome = () => {
-  // 使用静态文本代替真实数据
+  const [banners, setBanners] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [notices, setNotices] = useState([]);
+  const [highlightActivities, setHighlightActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // 并行请求所有数据
+        const [bannersRes, categoriesRes, noticesRes, highlightActivitiesRes] = await Promise.all([
+          getBanners(),
+          getActivityCategories(),
+          getNotices(),
+          getOngoingHighlightActivities()
+        ]);
+
+        if (bannersRes.success) {
+          setBanners(bannersRes.data);
+        }
+        
+        if (categoriesRes.success) {
+          setCategories(categoriesRes.data);
+        }
+        
+        if (noticesRes.success) {
+          setNotices(noticesRes.data);
+        }
+        
+        if (highlightActivitiesRes.success) {
+          setHighlightActivities(highlightActivitiesRes.data);
+        }
+      } catch (error) {
+        console.error('获取数据失败:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>;
+  }
+
   return (
-    <div className="activity-home">
+    <div>
       {/* Banner轮播 */}
-      <div className="banner-section">
-        <h2>轮播图区域</h2>
-        <div className="banner-placeholder">
-          这里是Banner轮播组件
-        </div>
-      </div>
+      <Banner banners={banners} />
       
       {/* 活动分类 */}
-      <div className="categories-section">
-        <h2>活动分类</h2>
-        <div className="categories-placeholder">
-          这里是活动分类组件，包含促销活动、线下活动、节日活动、专属活动等分类
-        </div>
-      </div>
+      <ActivityCategories categories={categories} />
       
       {/* 公告信息 */}
-      <div className="notice-section">
-        <h2>公告信息</h2>
-        <div className="notice-placeholder">
-          这里是公告列表，展示系统最新公告
-        </div>
-      </div>
+      <Notice notices={notices} />
       
       {/* 重点活动 */}
-      <div className="highlight-section">
-        <h2>重点活动</h2>
-        <div className="highlight-placeholder">
-          这里是重点活动展示组件，支持宫格布局和轮播布局切换
-        </div>
-      </div>
+      <HighlightActivities activities={highlightActivities} />
     </div>
   );
 };

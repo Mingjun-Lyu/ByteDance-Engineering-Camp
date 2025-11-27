@@ -244,7 +244,7 @@ const ActivityList = () => {
               <Button type="primary" theme="solid" onClick={handleFilterSubmit}>
                 筛选
               </Button>
-              <Button onClick={handleResetFilter}>
+              <Button type="tertiary" onClick={handleResetFilter}>
                 重置
               </Button>
             </Space>

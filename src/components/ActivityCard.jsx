@@ -1,48 +1,125 @@
 import React from 'react';
-import { Card } from '@douyinfe/semi-ui';
 import { Link } from 'react-router-dom';
-import './ActivityCard.css';
+import { Card, Tag, Typography } from '@douyinfe/semi-ui';
 
 const ActivityCard = ({ activity }) => {
-  // 状态样式配置
+  if (!activity) {
+    return null;
+  }
+  
   const getStatusConfig = (status) => {
-    switch (status) {
-      case 'ongoing':
-        return { text: '进行中', className: 'status-ongoing' };
-      case 'upcoming':
-      case 'pending':
-        return { text: '即将开始', className: 'status-upcoming' };
-      case 'ended':
-        return { text: '已结束', className: 'status-ended' };
-      default:
-        return { text: '未知', className: 'status-unknown' };
-    }
+    const statusMap = {
+      ongoing: { text: '进行中', color: 'green' },
+      pending: { text: '待开始', color: 'blue' },
+      ended: { text: '已结束', color: 'grey' }
+    };
+    return statusMap[status] || { text: status, color: 'default' };
   };
 
+  const { Text } = Typography;
   const statusConfig = getStatusConfig(activity.status);
 
   return (
-    <Link to={`/detail/${activity.id}`} className="activity-card-link">
-      <Card className="activity-card">
-        <div className="activity-card-image-container">
-          <img 
-            src={activity.imageUrl || activity.coverImage || 'https://via.placeholder.com/400x300?text=Activity'} 
-            alt={activity.title} 
-            className="activity-card-image"
-          />
-          <div className={`activity-card-status ${statusConfig.className}`}>
-            {statusConfig.text}
-          </div>
+    <Card
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        transition: 'box-shadow 0.3s'
+      }}
+    >
+      <div style={{
+        position: 'relative',
+        height: '180px',
+        overflow: 'hidden'
+      }}>
+        <img 
+          src={activity.banner || 'https://via.placeholder.com/400x300?text=暂无图片'} 
+          alt={activity.title} 
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transition: 'transform 0.3s'
+          }}
+          onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+          onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+        />
+        <Tag 
+          color={statusConfig.color} 
+          style={{
+            position: 'absolute',
+            top: '12px',
+            left: '12px',
+            zIndex: 1
+          }}
+        >
+          {statusConfig.text}
+        </Tag>
+        {activity.type && (
+          <Tag 
+            color="orange" 
+            style={{
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              zIndex: 1
+            }}
+          >
+            {activity.type}
+          </Tag>
+        )}
+      </div>
+      <div style={{
+        padding: '16px',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <Link 
+          to={`/detail/${activity.id}`}
+          style={{
+            textDecoration: 'none',
+            color: 'inherit'
+          }}
+        >
+          <h3 style={{
+            margin: '0 0 8px 0',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}>
+            {activity.title}
+          </h3>
+        </Link>
+        <Text 
+          ellipsis={{ rows: 2 }}
+          style={{
+            marginBottom: '12px',
+            color: '#666',
+            flex: 1
+          }}
+        >
+          {activity.description || '暂无描述'}
+        </Text>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '14px',
+          color: '#888'
+        }}>
+          <span>
+            {activity.startTime ? new Date(activity.startTime).toLocaleDateString() : '时间待定'} - 
+            {activity.endTime ? new Date(activity.endTime).toLocaleDateString() : '时间待定'}
+          </span>
+          <span>参与人数: {activity.participants || 0}</span>
         </div>
-        <div className="activity-card-content">
-          <h4 className="activity-card-title">{activity.title}</h4>
-          <p className="activity-card-date">{activity.date || activity.timeRange || '时间待定'}</p>
-          {activity.type && (
-            <div className="activity-card-type">{activity.type}</div>
-          )}
-        </div>
-      </Card>
-    </Link>
+      </div>
+    </Card>
   );
 };
 

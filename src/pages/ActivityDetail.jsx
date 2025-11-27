@@ -103,7 +103,7 @@ const ActivityDetail = () => {
     return (
       <div className="error">
         <p>活动不存在或已被删除</p>
-        <Button onClick={handleBack}>返回列表</Button>
+        <Button type="tertiary" onClick={handleBack}>返回列表</Button>
       </div>
     );
   }
@@ -119,7 +119,7 @@ const ActivityDetail = () => {
             <Button type="primary" theme="solid" onClick={() => setIsEditMode(true)}>
               编辑
             </Button>
-            <Button onClick={handleBack}>
+            <Button type="tertiary" onClick={handleBack}>
               返回列表
             </Button>
           </Space>
@@ -128,7 +128,7 @@ const ActivityDetail = () => {
             <Button type="primary" theme="solid" onClick={handleSave} loading={saving}>
               保存
             </Button>
-            <Button onClick={handleCancel} disabled={saving}>
+            <Button type="tertiary" onClick={handleCancel} disabled={saving}>
               取消
             </Button>
           </Space>
