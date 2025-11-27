@@ -1,0 +1,218 @@
+.activity-list {
+  min-height: 100vh;
+  background-color: var(--color-bg-1);
+  padding: var(--space-lg) 0;
+}
+
+.activity-list-header {
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.activity-list-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.activity-list-title {
+  margin: 0 0 var(--space-md) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-text-1);
+}
+
+.activity-list-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.activity-list-filters {
+  background-color: var(--color-bg-2);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.activity-list-status-filter {
+  margin-top: 16px;
+}
+
+.activity-list-filter-title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.activity-list-status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.activity-list-status-btn {
+  margin-bottom: 8px;
+  margin-right: 8px;
+}
+
+.activity-list-search {
+  background-color: var(--color-bg-2);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.activity-list-search-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.activity-list-search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.activity-list-search-input:focus {
+  outline: none;
+  border-color: #2ea04d;
+  box-shadow: 0 0 0 2px rgba(46, 160, 77, 0.2);
+}
+
+.activity-list-search-btn {
+  padding: 0 16px;
+}
+
+.activity-list-results {
+  background-color: var(--color-bg-2);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.activity-list-skeleton {
+  width: 100%;
+}
+
+.activity-list-error {
+  background-color: var(--color-bg-error);
+  border: 1px solid var(--color-border-error);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-md);
+  text-align: center;
+  color: var(--color-text-error);
+  margin-bottom: var(--space-xl);
+}
+
+.activity-list-error p {
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.activity-list-empty {
+  background-color: var(--color-bg-2);
+  padding: var(--space-3xl) var(--space-lg);
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-3);
+}
+
+.activity-list-load-more {
+  text-align: center;
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+}
+
+.activity-list-pagination {
+  margin-top: 24px;
+  text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: var(--breakpoint-md)) {
+  .activity-list-header-content {
+    padding: 0 var(--space-md);
+    height: 56px;
+  }
+  
+  .activity-list-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .activity-list-content {
+    padding: var(--space-md);
+  }
+  
+  .activity-list-filters {
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm);
+  }
+  
+  .activity-list-search {
+    padding: var(--space-sm);
+  }
+  
+  .activity-list-search-input-wrapper {
+    flex-direction: column;
+  }
+  
+  .activity-list-search-btn {
+    width: 100%;
+  }
+  
+  .activity-list-results {
+    padding: var(--space-sm);
+  }
+}
+
+@media (max-width: var(--breakpoint-sm)) {
+  .activity-list-header-content {
+    padding: 0 var(--space-sm);
+    height: 52px;
+  }
+  
+  .activity-list-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .activity-list-content {
+    padding: var(--space-sm);
+  }
+  
+  .activity-list-filter-title {
+    font-size: var(--font-size-sm);
+  }
+  
+  .activity-list-status-btn {
+    font-size: var(--font-size-xs);
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
+/* 骨架屏样式 */
+.activity-list-skeleton .semi-skeleton-image {
+  border-radius: 4px;
+}
+
+.activity-list-skeleton .semi-skeleton-title {
+  width: 80%;
+}
+
+.activity-list-skeleton .semi-skeleton-paragraph {
+  width: 100%;
+}

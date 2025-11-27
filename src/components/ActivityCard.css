@@ -1,0 +1,187 @@
+.activity-card {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--border-color);
+}
+
+.activity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.activity-card-cover {
+  display: block;
+  position: relative;
+}
+
+.activity-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--border-radius-md);
+}
+
+.activity-card-image {
+  width: 100%;
+  height: auto;
+  transition: transform var(--transition-slow);
+}
+
+.activity-card:hover .activity-card-image {
+  transform: scale(1.05);
+}
+
+.activity-card-status {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 1;
+}
+
+.activity-card-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.activity-card-progress-bar {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width var(--transition-normal);
+}
+
+.activity-card-content {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.activity-card-title {
+  margin: 0 0 var(--space-sm) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+
+.activity-card-content:hover .activity-card-title {
+  color: var(--primary-color);
+}
+
+.activity-card-description {
+  margin-bottom: var(--space-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.activity-card-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.activity-card-time,
+.activity-card-location,
+.activity-card-participants {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 图标样式占位 */
+.icon-calendar::before,
+.icon-map-marker::before,
+.icon-users::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 卡片大小变体 */
+.activity-card-small {
+  max-width: 280px;
+}
+
+.activity-card-small .activity-card-image-wrapper {
+  height: 160px;
+}
+
+.activity-card-small .activity-card-title {
+  font-size: var(--font-size-md);
+}
+
+.activity-card-medium {
+  max-width: 320px;
+}
+
+.activity-card-medium .activity-card-image-wrapper {
+  height: 180px;
+}
+
+.activity-card-large {
+  max-width: 100%;
+}
+
+.activity-card-large .activity-card-image-wrapper {
+  height: 240px;
+}
+
+.activity-card-large .activity-card-title {
+  font-size: var(--font-size-xl);
+}
+
+.activity-card-large .activity-card-info {
+  font-size: var(--font-size-md);
+}
+
+/* 响应式设计 */
+@media (max-width: var(--breakpoint-md)) {
+  .activity-card-medium {
+    max-width: 100%;
+  }
+  
+  .activity-card-medium .activity-card-image-wrapper {
+    height: 160px;
+  }
+}
+
+@media (max-width: var(--breakpoint-sm)) {
+  .activity-card {
+    border-radius: var(--border-radius-md);
+  }
+  
+  .activity-card-small .activity-card-image-wrapper {
+    height: 140px;
+  }
+  
+  .activity-card-medium .activity-card-image-wrapper {
+    height: 140px;
+  }
+  
+  .activity-card-large .activity-card-image-wrapper {
+    height: 200px;
+  }
+  
+  .activity-card-title {
+    font-size: var(--font-size-md);
+  }
+  
+  .activity-card-info {
+    gap: 6px 12px;
+    font-size: var(--font-size-xs);
+  }
+}

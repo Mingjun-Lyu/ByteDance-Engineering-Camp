@@ -1,0 +1,154 @@
+.activity-home {
+  min-height: 100vh;
+  background-color: var(--color-bg-1);
+}
+
+.activity-home-header {
+  background-color: var(--color-bg-2);
+  box-shadow: var(--shadow-sm);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.activity-home-header-content {
+  max-width: var(--max-width-desktop);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+}
+
+.activity-home-title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.activity-home-content {
+  max-width: var(--max-width-desktop);
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+.activity-home-banner {
+  margin-bottom: var(--space-xl);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.activity-home-skeleton-banner {
+  width: 100%;
+  border-radius: var(--border-radius-md);
+}
+
+.activity-home-categories {
+  margin-bottom: var(--space-xl);
+}
+
+.activity-home-featured,
+.activity-home-upcoming {
+  margin-bottom: var(--space-2xl);
+}
+
+.activity-home-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.activity-home-section-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-1);
+}
+
+.activity-home-skeleton-card {
+  width: 100%;
+  border-radius: var(--border-radius-sm);
+}
+
+.activity-home-error {
+  background-color: var(--color-bg-error);
+  border: 1px solid var(--color-border-error);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-md);
+  text-align: center;
+  color: var(--color-text-error);
+}
+
+.activity-home-error p {
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.activity-home-error button {
+  background-color: var(--color-text-error);
+  color: var(--color-bg-2);
+  border: none;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  transition: background-color var(--transition-fast) ease;
+}
+
+.activity-home-error button:hover {
+  background-color: var(--color-text-error-hover);
+}
+
+/* 响应式设计 */
+@media (max-width: var(--breakpoint-md)) {
+  .activity-home-header-content {
+    padding: 0 var(--space-md);
+    height: var(--header-height-sm);
+  }
+  
+  .activity-home-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .activity-home-content {
+    padding: var(--space-md);
+  }
+  
+  .activity-home-banner {
+    margin-bottom: var(--space-md);
+  }
+  
+  .activity-home-categories {
+    margin-bottom: var(--space-md);
+  }
+  
+  .activity-home-featured,
+  .activity-home-upcoming {
+    margin-bottom: var(--space-xl);
+  }
+  
+  .activity-home-section-title {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: var(--breakpoint-sm)) {
+  .activity-home-header-content {
+    padding: 0 var(--space-sm);
+    height: var(--header-height-xs);
+  }
+  
+  .activity-home-title {
+    font-size: var(--font-size-base);
+  }
+  
+  .activity-home-content {
+    padding: var(--space-sm);
+  }
+  
+  .activity-home-section-title {
+    font-size: var(--font-size-base);
+  }
+}
