@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Table, Button, Input, Select, DatePicker, Space, Tag, Pagination } from '@douyinfe/semi-ui';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import activityApiService from '../services/apiService';
 import './ActivityList.css';
 
 const ActivityList = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  // 首先定义状态和钩子
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
   // 从URL中获取筛选参数
@@ -33,22 +34,22 @@ const ActivityList = () => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  // 获取活动列表
-  const fetchActivities = async (overrideParams = {}) => {
+  // 获取活动列表 - 简化实现，直接使用最新状态值
+  const fetchActivities = async () => {
     try {
       setLoading(true);
       
-      // 使用当前状态值，结合可选的覆盖参数
-      const currentParams = {
-        page,
-        pageSize,
-        category,
-        status,
-        keyword,
-        startDate: startTime,
-        endDate: endTime,
-        ...overrideParams // 允许传入参数覆盖当前状态
-      };
+      // 直接使用当前最新的状态值
+      const currentParams = {};
+      
+      // 只添加有值的参数，避免传递空字符串
+      if (page !== undefined) currentParams.page = page;
+      if (pageSize !== undefined) currentParams.pageSize = pageSize;
+      if (category) currentParams.category = category;
+      if (status) currentParams.status = status;
+      if (keyword) currentParams.keyword = keyword;
+      if (startTime) currentParams.startDate = startTime;
+      if (endTime) currentParams.endDate = endTime;
       
       const res = await activityApiService.getActivityList(currentParams);
       
@@ -64,12 +65,33 @@ const ActivityList = () => {
   // 初始化时加载数据
   useEffect(() => {
     fetchActivities();
-  }, []);
+  }, []); // 初始化只执行一次
+
+  // 监听URL参数变化，更新分页状态
+  // 这个useEffect只处理从外部直接导航到带参数的URL的情况
+  // 避免在内部更新URL时触发，所以移除page和pageSize作为依赖项
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get('page')) || 1;
+    const urlPageSize = parseInt(searchParams.get('pageSize')) || 10;
+    
+    // 直接更新状态，因为没有page和pageSize作为依赖，不会在内部更新时形成循环
+    setPage(urlPage);
+    setPageSize(urlPageSize);
+  }, [searchParams]);
+  
+  // 监听关键状态变化，自动重新获取数据
+  // 这确保了当任何筛选条件或分页参数变化时，数据都会更新
+  useEffect(() => {
+    fetchActivities();
+  }, [page, pageSize, category, status, keyword, startTime, endTime]); // 监听所有关键状态
   
   // 筛选表单提交
   const handleFilterSubmit = (e) => {
     e.preventDefault();
     const newPage = 1;
+    
+    // 首先更新状态
+    setPage(newPage);
     
     // 更新URL参数
     const params = new URLSearchParams();
@@ -83,17 +105,14 @@ const ActivityList = () => {
     
     navigate({ search: params.toString() }, { replace: true });
     
-    // 更新状态并获取数据
-    setPage(newPage);
-    // 直接传递最新的参数，确保使用的是新的页码
-    fetchActivities({ page: newPage, category, status, keyword, startDate: startTime, endDate: endTime });
+    // 数据会通过useEffect自动更新，不需要手动调用
   };
   
   // 重置筛选条件
   const handleResetFilter = () => {
     const newPage = 1;
     
-    // 清空所有筛选条件状态
+    // 首先清空所有筛选条件状态
     setCategory('');
     setStatus('');
     setKeyword('');
@@ -101,21 +120,24 @@ const ActivityList = () => {
     setEndTime('');
     setPage(newPage);
     
-    // 更新URL参数
+    // 更新URL参数 - 只保留分页信息
     const params = new URLSearchParams();
     params.set('page', newPage);
     params.set('pageSize', pageSize);
     
     navigate({ search: params.toString() }, { replace: true });
     
-    // 重置状态后重新获取数据
-    setTimeout(() => {
-      fetchActivities();
-    }, 0);
+    // 数据会通过useEffect自动更新，不需要手动调用
   };
   
   // 分页变化时更新数据
   const handlePageChange = (current, newPageSize) => {
+    // 直接更新状态
+    setPage(current);
+    
+    // 更新pageSize
+    setPageSize(newPageSize);
+    
     // 更新URL参数
     const params = new URLSearchParams();
     if (category) params.set('category', category);
@@ -128,11 +150,7 @@ const ActivityList = () => {
     
     navigate({ search: params.toString() }, { replace: true });
     
-    // 更新分页状态并获取数据
-    setPage(current);
-    setPageSize(newPageSize);
-    // 直接传递最新的分页参数
-    fetchActivities({ page: current, pageSize: newPageSize, category, status, keyword, startDate: startTime, endDate: endTime });
+    // 数据会通过useEffect自动更新，不需要手动调用fetchActivities
   };
   
   // 获取状态文本和颜色
@@ -155,12 +173,10 @@ const ActivityList = () => {
     };
     return categoryMap[category] || category;
   };
-  
-  return (
-    <div className="activity-list">
-      <h2>活动列表</h2>
-      
-      {/* 筛选表单 */}
+
+  // 渲染筛选表单组件
+  const renderFilterForm = () => {
+    return (
       <Card className="filter-card">
         <div className="filter-form">
           <Space wrap>
@@ -235,78 +251,105 @@ const ActivityList = () => {
           </Space>
         </div>
       </Card>
-      
-      {/* 活动列表 */}
+    );
+  };
+  
+  // 渲染活动表格组件
+  const renderActivityTable = () => {
+    const columns = [
+      {
+        title: '活动标题',
+        dataIndex: 'title',
+        render: (title, record) => (
+          <Link to={`/detail/${record.id}`}>{title}</Link>
+        )
+      },
+      {
+        title: '活动时间',
+        dataIndex: 'startTime',
+        render: (value, record) => (
+          `${new Date(record.startTime).toLocaleDateString()} - ${new Date(record.endTime).toLocaleDateString()}`
+        )
+      },
+      {
+        title: '活动状态',
+        dataIndex: 'status',
+        render: (status) => {
+          const { text, color } = getStatusConfig(status);
+          return <Tag color={color}>{text}</Tag>;
+        }
+      },
+      {
+        title: '活动分类',
+        dataIndex: 'category',
+        render: (category) => {
+          return <Tag color="blue">{getCategoryLabel(category)}</Tag>;
+        }
+      },
+      {
+        title: '主办方',
+        dataIndex: 'organizer'
+      },
+      {
+        title: '参与人数',
+        dataIndex: 'registeredParticipants'
+      },
+      {
+        title: '操作',
+        render: (value, record) => (
+          <Button type="primary" theme="solid">
+            <Link to={`/detail/${record.id}`} style={{ color: '#fff', textDecoration: 'none' }}>查看详情</Link>
+          </Button>
+        )
+      }
+    ];
+    
+    return (
       <Card className="table-card">
         <Table
-          columns={[
-            {
-              title: '活动标题',
-              dataIndex: 'title',
-              render: (title, record) => (
-                <Link to={`/detail/${record.id}`}>{title}</Link>
-              )
-            },
-            {
-              title: '活动时间',
-              dataIndex: ['startTime', 'endTime'],
-              render: (value, record) => (
-                `${new Date(record.startTime).toLocaleDateString()} - ${new Date(record.endTime).toLocaleDateString()}`
-              )
-            },
-            {
-              title: '活动状态',
-              dataIndex: 'status',
-              render: (status) => {
-                const { text, color } = getStatusConfig(status);
-                return <Tag color={color}>{text}</Tag>;
-              }
-            },
-            {
-              title: '活动分类',
-              dataIndex: 'category',
-              render: (category) => {
-                return <Tag color="blue">{getCategoryLabel(category)}</Tag>;
-              }
-            },
-            {
-              title: '主办方',
-              dataIndex: 'organizer'
-            },
-            {
-              title: '参与人数',
-              dataIndex: 'registeredParticipants'
-            },
-            {
-              title: '操作',
-              render: (value, record) => (
-                <Button type="primary" theme="solid">
-                  <Link to={`/detail/${record.id}`} style={{ color: '#fff', textDecoration: 'none' }}>查看详情</Link>
-                </Button>
-              )
-            }
-          ]}
+          columns={columns}
           dataSource={activities}
           pagination={false}
           loading={loading}
           locale={{ emptyText: '暂无活动数据' }}
         />
-        
-        {/* 分页控件 */}
-        {!loading && total > 0 && (
-          <div style={{ marginTop: '20px', textAlign: 'right' }}>
-            <Pagination
-              total={total}
-              current={page}
-              pageSize={pageSize}
-              onChange={handlePageChange}
-              showSizeChanger
-              pageSizeOptions={[10, 20, 50]}
-              showTotal={(total) => `共 ${total} 条记录`}
-            />
-          </div>
-        )}
       </Card>
+    );
+  };
+  
+  // 渲染分页控件组件
+  const renderPagination = () => {
+    // 只有在数据加载完成且有数据时才显示分页控件
+    if (loading || total <= 0) {
+      return null;
+    }
+    
+    return (
+      <div style={{ marginTop: '20px', textAlign: 'right' }}>
+        <Pagination
+          total={total}
+          current={page}
+          pageSize={pageSize}
+          onChange={handlePageChange}
+          showSizeChanger
+          pageSizeOptions={['10', '20', '50']}
+          showTotal={true}
+        />
+      </div>
+    );
+  };
+  
+  // 最后返回渲染结果
+  return (
+    <div className="activity-list">
+      <h2>活动列表</h2>
+      
+      {/* 筛选表单 */}
+      {renderFilterForm()}
+      
+      {/* 活动列表 */}
+      {renderActivityTable()}
+      {renderPagination()}
     </div>
   );
 };

@@ -78,8 +78,8 @@ class ActivityApiService {
         filteredActivities = filteredActivities.filter(activity => activity.status === params.status);
       }
       
-      if (params.categoryId) {
-        filteredActivities = filteredActivities.filter(activity => activity.categoryId === Number(params.categoryId));
+      if (params.category) {
+        filteredActivities = filteredActivities.filter(activity => activity.category === params.category);
       }
       
       if (params.keyword) {
@@ -114,8 +114,8 @@ class ActivityApiService {
       } else if (params.sortBy === 'participants') {
         filteredActivities.sort((a, b) => 
           params.sortOrder === 'desc'
-            ? b.participantCount - a.participantCount
-            : a.participantCount - b.participantCount
+            ? b.registeredParticipants - a.registeredParticipants
+            : a.registeredParticipants - b.registeredParticipants
         );
       }
       
@@ -147,7 +147,11 @@ class ActivityApiService {
     try {
       // const response = await apiClient.get('/activities/highlight');
       await delay(400);
-      return mockHighlightActivities;
+      // 直接从mockActivities中筛选，确保使用最新数据
+      return mockActivities
+        .filter(activity => activity.status === 'ongoing')
+        .sort((a, b) => b.registeredParticipants - a.registeredParticipants)
+        .slice(0, 8);
     } catch (error) {
       console.error('获取重点活动失败:', error);
       throw error;
