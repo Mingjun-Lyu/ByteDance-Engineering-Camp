@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Button, Pagination, Tag, Spin } from '@douyinfe/semi-ui';
+import { Card, Table, Button, Tag, Spin, Select } from '@douyinfe/semi-ui';
 import { Link } from 'react-router-dom';
 import SkeletonLoader from './SkeletonLoader';
 import VirtualList from './VirtualList';
@@ -45,16 +45,28 @@ const ActivityListContent = ({
     {
       title: '活动时间',
       dataIndex: 'startTime',
-      render: (value, record) => (
-        `${new Date(record.startTime).toLocaleDateString()} - ${new Date(record.endTime).toLocaleDateString()}`
-      )
+      render: (value, record) => {
+        try {
+          const startDate = record.startTime ? new Date(record.startTime).toLocaleDateString() : '时间待定';
+          const endDate = record.endTime ? new Date(record.endTime).toLocaleDateString() : '时间待定';
+          return `${startDate} - ${endDate}`;
+        } catch (error) {
+          console.error('日期格式化错误:', error);
+          return '时间格式错误';
+        }
+      }
     },
     {
       title: '活动状态',
       dataIndex: 'status',
       render: (status) => {
-        const { text, color } = getStatusConfig(status);
-        return <Tag color={color}>{text}</Tag>;
+        try {
+          const { text, color } = getStatusConfig(status);
+          return <Tag color={color}>{text}</Tag>;
+        } catch (error) {
+          console.error('状态显示错误:', error);
+          return <Tag color="default">未知</Tag>;
+        }
       }
     },
     {
@@ -147,17 +159,76 @@ const ActivityListContent = ({
             locale={{ emptyText: '暂无活动数据' }}
           />
           {!pagination.disablePagination && activities.length > 0 && (
-            <div style={{ marginTop: '20px', textAlign: 'right' }}>
-              <Pagination
-                key={`pagination-${pagination.currentPage}-${pagination.pageSize}`}
-                total={total}
-                current={pagination.currentPage}
-                pageSize={pagination.pageSize}
-                onChange={(current, pageSize) => handlePageChange(current, pageSize, filters)}
-                showSizeChanger
-                pageSizeOptions={['10', '20', '50']}
-                showTotal={true}
-              />
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              {/* 自定义页码控件 */}
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '16px',
+                border: '1px solid #e0e0e0',
+                borderRadius: '6px',
+                backgroundColor: '#f9f9f9'
+              }}>
+                {/* 页面大小选择器 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14px', color: '#666' }}>每页显示:</span>
+                  <Select
+                    value={pagination.pageSize.toString()}
+                    onChange={(value) => {
+                      handlePageChange(1, parseInt(value), filters);
+                    }}
+                    style={{ width: '80px' }}
+                  >
+                    <Select.Option value="10">10</Select.Option>
+                    <Select.Option value="20">20</Select.Option>
+                    <Select.Option value="50">50</Select.Option>
+                  </Select>
+                </div>
+                
+                {/* 页码导航 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Button
+                    disabled={pagination.currentPage <= 1}
+                    onClick={() => {
+                      handlePageChange(pagination.currentPage - 1, pagination.pageSize, filters);
+                    }}
+                  >
+                    上一页
+                  </Button>
+                  
+                  {/* 页码显示 */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '14px', color: '#666' }}>第</span>
+                    <span style={{ 
+                      fontSize: '16px', 
+                      fontWeight: 'bold', 
+                      color: '#1890ff',
+                      padding: '4px 8px',
+                      border: '1px solid #1890ff',
+                      borderRadius: '4px'
+                    }}>
+                      {pagination.currentPage}
+                    </span>
+                    <span style={{ fontSize: '14px', color: '#666' }}>页，共 {pagination.totalPages} 页</span>
+                  </div>
+                  
+                  <Button
+                    disabled={pagination.currentPage >= pagination.totalPages}
+                    onClick={() => {
+                      handlePageChange(pagination.currentPage + 1, pagination.pageSize, filters);
+                    }}
+                  >
+                    下一页
+                  </Button>
+                </div>
+                
+                {/* 总记录数 */}
+                <div style={{ fontSize: '14px', color: '#666' }}>
+                  共 {total} 条记录
+                </div>
+              </div>
             </div>
           )}
         </>

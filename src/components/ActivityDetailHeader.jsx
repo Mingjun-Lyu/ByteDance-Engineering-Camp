@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Space, Button } from '@douyinfe/semi-ui';
+import { Typography, Space, Button, Icon } from '@douyinfe/semi-ui';
 
 const { Title, Text } = Typography;
 
@@ -11,7 +11,8 @@ const ActivityDetailHeader = ({
   onCancel, 
   onDelete,
   loading,
-  saveLoading 
+  saveLoading,
+  onBack 
 }) => {
   // 格式化日期显示
   const formatDate = (dateString) => {
@@ -26,14 +27,24 @@ const ActivityDetailHeader = ({
   return (
     <div style={{ marginBottom: 24 }}>
       <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-        <div>
-          <Title heading={2} style={{ margin: 0 }}>
-            {activity?.title || '活动详情'}
-          </Title>
-          <Text type="tertiary">
-            ID: {activity?.id} | 创建时间: {formatDate(activity?.createdAt || activity?.createTime)}
-          </Text>
-        </div>
+        <Space>
+          <Button 
+            icon={<Icon type="icon_arrow_left" />} 
+            onClick={onBack}
+            disabled={loading}
+            style={{ marginRight: 16 }}
+          >
+            返回
+          </Button>
+          <div>
+            <Title heading={2} style={{ margin: 0 }}>
+              {activity?.title || '活动详情'}
+            </Title>
+            <Text type="tertiary">
+              ID: {activity?.id} | 创建时间: {formatDate(activity?.createdAt || activity?.createTime)}
+            </Text>
+          </div>
+        </Space>
         
         <Space>
           {isEditing ? (

@@ -17,8 +17,17 @@ const usePagination = () => {
   
   // 分页变化
   const handlePageChange = useCallback((currentPage, pageSize, filters) => {
-    const newPagination = { currentPage, pageSize, disablePagination: false };
-    setPagination(newPagination);
+    // 使用函数式更新确保获取最新的pagination状态
+    setPagination(prevPagination => {
+      const newPagination = { 
+        ...prevPagination, 
+        currentPage, 
+        pageSize, 
+        disablePagination: false 
+      };
+      
+      return newPagination;
+    });
     
     // 更新URL参数
     const params = new URLSearchParams();
@@ -41,10 +50,12 @@ const usePagination = () => {
     };
     setPagination(newPagination);
     
-    // 更新URL参数
+    // 更新URL参数 - 清理空值
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.set(key, value);
+      if (value && value !== '' && value !== null && value !== undefined) {
+        params.set(key, value);
+      }
     });
     
     if (disablePagination) {

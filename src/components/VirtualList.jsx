@@ -4,11 +4,18 @@ import React, { useState, useCallback, useRef } from 'react';
 const useVirtualScroll = (items, itemHeight = 80, containerHeight = 400) => {
   const containerRef = useRef(null);
   const [scrollTop, setScrollTop] = useState(0);
+  const scrollTimeoutRef = useRef(null);
   
   // 防抖滚动处理
   const handleScroll = useCallback((e) => {
-    const scrollTop = e.target.scrollTop;
-    setScrollTop(scrollTop);
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      const scrollTop = e.target.scrollTop;
+      setScrollTop(scrollTop);
+    }, 16); // 约60fps的防抖
   }, []);
   
   // 计算可见区域

@@ -52,14 +52,14 @@ const ActivityList = () => {
     } else {
       fetchActivities(filters, pagination);
     }
-  }, [filters, pagination, fetchActivities, fetchAllActivities, pagination.disablePagination]);
+  }, [filters, pagination.currentPage, pagination.pageSize, pagination.disablePagination]);
   
   // 预加载下一页
   useEffect(() => {
     if (!pagination.disablePagination && activities.length > 0) {
       prefetchNextPage(filters, pagination);
     }
-  }, [filters, pagination, prefetchNextPage, pagination.disablePagination, activities.length]);
+  }, [filters, pagination.currentPage, pagination.pageSize, pagination.disablePagination, activities.length]);
   
   // 错误处理
   if (error) {
@@ -80,18 +80,18 @@ const ActivityList = () => {
   
   return (
     <div className="activity-list-container">
-      <h1>活动列表</h1>
+      {/* <h1>活动列表</h1> */}
       
       {/* 筛选表单 */}
       <FilterForm
-        tempFilters={tempFilters}
-        updateTempFilter={updateTempFilter}
-        handleFilterSubmit={handleFilterSubmit}
-        handleReset={handleReset}
-        pagination={pagination}
-        togglePagination={togglePagination}
-        filters={filters}
-      />
+          tempFilters={tempFilters}
+          updateTempFilter={updateTempFilter}
+          handleFilterSubmit={handleFilterSubmit}
+          handleReset={handleReset}
+          pagination={pagination}
+          togglePagination={togglePagination}
+          filters={filters}
+        />
       
       {/* 加载状态 */}
       {(loading || (pagination.disablePagination && loadingAll)) && (

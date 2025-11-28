@@ -29,21 +29,40 @@ const useFilterLogic = () => {
   
   // 防抖搜索
   const debouncedSearch = useCallback((keyword, callback) => {
-    const timeoutId = setTimeout(() => {
-      callback(keyword);
-    }, 300);
+    let timeoutId;
     
-    return () => clearTimeout(timeoutId);
+    return (newKeyword) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        callback(newKeyword);
+      }, 300);
+    };
   }, []);
   
   // 筛选提交
   const handleFilterSubmit = useCallback(() => {
-    setFilters(tempFilters);
+    // 清理空值并转换日期参数名称
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(tempFilters).filter(([_, value]) => 
+        value !== '' && value !== null && value !== undefined
+      ).map(([key, value]) => {
+        // 转换日期参数名称以匹配API期望的参数
+        if (key === 'startTime') return ['startDate', value];
+        if (key === 'endTime') return ['endDate', value];
+        return [key, value];
+      })
+    );
     
-    // 更新URL参数
+
+    
+    setFilters(cleanedFilters);
+    
+    // 更新URL参数（保持原始参数名称）
     const params = new URLSearchParams();
     Object.entries(tempFilters).forEach(([key, value]) => {
-      if (value) params.set(key, value);
+      if (value && value !== '' && value !== null && value !== undefined) {
+        params.set(key, value);
+      }
     });
     params.set('page', '1'); // 重置到第一页
     

@@ -40,7 +40,7 @@ const ActivityCategories = ({ categories }) => {
         {categories.map((category) => (
           <Col xs={24} sm={12} md={6} key={category.value}>
             <Link
-              to={`/activities?category=${category.value}`}
+              to={`/list?category=${category.value}`}
               onClick={() => handleCategoryClick(category)}
               style={{ textDecoration: 'none' }}
             >

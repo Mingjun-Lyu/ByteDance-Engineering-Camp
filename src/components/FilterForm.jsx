@@ -62,9 +62,10 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
             <span>开始时间：</span>
             <DatePicker
               value={tempFilters.startTime ? new Date(tempFilters.startTime) : null}
-              onChange={(value) => updateTempFilter('startTime', value ? value.toISOString() : '')}
+              onChange={(value) => updateTempFilter('startTime', value ? value.toISOString() : null)}
               style={{ width: '200px' }}
               type="date"
+              clearable
             />
           </div>
           
@@ -72,9 +73,10 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
             <span>结束时间：</span>
             <DatePicker
               value={tempFilters.endTime ? new Date(tempFilters.endTime) : null}
-              onChange={(value) => updateTempFilter('endTime', value ? value.toISOString() : '')}
+              onChange={(value) => updateTempFilter('endTime', value ? value.toISOString() : null)}
               style={{ width: '200px' }}
               type="date"
+              clearable
             />
           </div>
           

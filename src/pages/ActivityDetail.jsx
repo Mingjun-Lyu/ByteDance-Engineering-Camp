@@ -79,7 +79,7 @@ const ActivityDetail = () => {
 
   // 处理返回
   const handleBack = () => {
-    navigate('/activities');
+    navigate(-1); // 使用-1返回到上一个页面
   };
 
 
@@ -132,6 +132,7 @@ const ActivityDetail = () => {
         onSave={handleSave}
         onCancel={cancelEdit}
         onDelete={handleDelete}
+        onBack={handleBack}
         loading={loading}
         saveLoading={saveLoading}
       />
