@@ -165,11 +165,10 @@ const ActivityList = () => {
 
   const getCategoryLabel = (category) => {
     const categoryMap = {
-      tech: '科技',
-      art: '艺术',
-      sports: '体育',
-      culture: '文化',
-      education: '教育'
+      promotion: '促销',
+      offline: '线下',
+      festival: '节日',
+      exclusive: '专属'
     };
     return categoryMap[category] || category;
   };
@@ -189,11 +188,10 @@ const ActivityList = () => {
                 placeholder="全部分类"
               >
                 <Select.Option value="">全部分类</Select.Option>
-                <Select.Option value="tech">科技</Select.Option>
-                <Select.Option value="art">艺术</Select.Option>
-                <Select.Option value="sports">体育</Select.Option>
-                <Select.Option value="culture">文化</Select.Option>
-                <Select.Option value="education">教育</Select.Option>
+                <Select.Option value="promotion">促销活动</Select.Option>
+                <Select.Option value="offline">线下活动</Select.Option>
+                <Select.Option value="festival">节日活动</Select.Option>
+                <Select.Option value="exclusive">专属活动</Select.Option>
               </Select>
             </div>
             

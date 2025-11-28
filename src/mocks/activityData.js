@@ -2,13 +2,12 @@ import Mock from 'mockjs';
 
 // 生成随机活动数据
 const generateActivities = () => {
-  const categories = ['tech', 'art', 'sports', 'culture', 'education'];
+  const categories = ['promotion', 'offline', 'festival', 'exclusive'];
   const categoryLabels = {
-    tech: '科技活动',
-    art: '艺术活动',
-    sports: '体育活动',
-    culture: '文化活动',
-    education: '教育活动'
+    promotion: '促销活动',
+    offline: '线下活动',
+    festival: '节日活动',
+    exclusive: '专属活动'
   };
   
   const activities = [];
@@ -128,11 +127,10 @@ const generateCategoryBanners = (activities = mockActivities, count = 3) => {
 // 生成分类数据
 const generateCategories = () => {
   return [
-    { value: 'tech', label: '科技', count: 50 },
-    { value: 'art', label: '艺术', count: 50 },
-    { value: 'sports', label: '体育', count: 50 },
-    { value: 'culture', label: '文化', count: 50 },
-    { value: 'education', label: '教育', count: 50 }
+    { value: 'promotion', label: '促销', count: 50 },
+    { value: 'offline', label: '线下', count: 50 },
+    { value: 'festival', label: '节日', count: 50 },
+    { value: 'exclusive', label: '专属', count: 50 }
   ];
 };
 

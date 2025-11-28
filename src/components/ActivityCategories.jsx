@@ -5,9 +5,29 @@ import { Card, Typography, Row, Col } from '@douyinfe/semi-ui';
 const ActivityCategories = ({ categories }) => {
   const { Title } = Typography;
 
+  // 根据分类值获取对应的图标和颜色
+  const getCategoryIcon = (value) => {
+    const iconMap = {
+      promotion: '💼', // 促销活动图标
+      offline: '🏢',   // 线下活动图标
+      festival: '🎉',  // 节日活动图标
+      exclusive: '✨'  // 专属活动图标
+    };
+    return iconMap[value] || '📋';
+  };
+
+  const getCategoryColor = (value) => {
+    const colorMap = {
+      promotion: '#ff4d4f', // 红色 - 促销
+      offline: '#1890ff',   // 蓝色 - 线下
+      festival: '#52c41a',  // 绿色 - 节日
+      exclusive: '#722ed1'  // 紫色 - 专属
+    };
+    return colorMap[value] || '#1890ff';
+  };
+
   // 处理分类点击事件
   const handleCategoryClick = (category) => {
-    // 这里可以添加分类点击后的逻辑
     console.log('分类点击:', category);
   };
 
@@ -18,9 +38,9 @@ const ActivityCategories = ({ categories }) => {
       </Title>
       <Row gutter={16}>
         {categories.map((category) => (
-          <Col xs={24} sm={12} md={8} key={category.id}>
+          <Col xs={24} sm={12} md={6} key={category.value}>
             <Link
-              to={`/activities/category/${category.id}`}
+              to={`/activities?category=${category.value}`}
               onClick={() => handleCategoryClick(category)}
               style={{ textDecoration: 'none' }}
             >
@@ -34,36 +54,39 @@ const ActivityCategories = ({ categories }) => {
                   justifyContent: 'center',
                   padding: '24px',
                   transition: 'all 0.3s',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  backgroundColor: getCategoryColor(category.value) + '15' // 15% opacity for background
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-4px)';
                   e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.1)';
+                  e.currentTarget.style.backgroundColor = getCategoryColor(category.value) + '25'; // 25% opacity on hover
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                  e.currentTarget.style.backgroundColor = getCategoryColor(category.value) + '15'; // Reset background
                 }}
               >
                 <div
                   style={{
-                    backgroundColor: category.color || '#1890ff',
                     width: '64px',
                     height: '64px',
                     marginBottom: '16px',
-                    fontSize: '24px',
-                    borderRadius: '50%',
+                    fontSize: '32px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white'
+                    justifyContent: 'center'
                   }}
                 >
-                  {category.icon || '分'}
+                  {getCategoryIcon(category.value)}
                 </div>
-                <Title heading={5} style={{ margin: 0 }}>
-                  {category.name}
+                <Title heading={5} style={{ margin: 0, color: getCategoryColor(category.value) }}>
+                  {category.label}活动
                 </Title>
+                <Typography.Text style={{ marginTop: '8px', color: '#666' }}>
+                  {category.count}个活动
+                </Typography.Text>
               </Card>
             </Link>
           </Col>

@@ -24,7 +24,17 @@ const Notice = ({ notices }) => {
                   {notice.title}
                 </Title>
                 <Text type="tertiary" size="small">
-                  {new Date(notice.createTime).toLocaleString()}
+                  {(() => {
+                    try {
+                      const date = new Date(notice.createdAt || notice.createTime);
+                      if (isNaN(date.getTime())) {
+                        return '日期未知';
+                      }
+                      return date.toLocaleString();
+                    } catch (error) {
+                      return '日期未知';
+                    }
+                  })()}
                 </Text>
               </div>
             }
