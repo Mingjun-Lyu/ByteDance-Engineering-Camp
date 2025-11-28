@@ -47,7 +47,7 @@ const generateActivities = () => {
         image: `https://picsum.photos/400/300?random=${Math.floor(Math.random() * 1000) + 100}`,
         category: category,
         categoryLabel: categoryLabels[category].replace('活动', ''),
-        organizer: Mock.mock('@cname() 主办方'),
+        creator: Mock.mock('@cname() 创建人'),
         location: Mock.mock('@county(true)'),
         startTime: formatDate(startTime),
         endTime: formatDate(endTime),

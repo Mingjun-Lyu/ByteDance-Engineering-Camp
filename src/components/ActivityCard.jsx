@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, Badge } from 'react-bootstrap';
 
 const ActivityCard = ({ activity }) => {
+  const navigate = useNavigate();
+  
   if (!activity) {
     return null;
   }
@@ -18,12 +20,17 @@ const ActivityCard = ({ activity }) => {
 
   const statusConfig = getStatusConfig(activity.status);
 
+  const handleCardClick = () => {
+    navigate(`/detail/${activity.id}`);
+  };
+
   return (
     <Card 
       className="h-100 shadow-sm"
       style={{ transition: 'all 0.3s', cursor: 'pointer' }}
       onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
       onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+      onClick={handleCardClick}
     >
       <div className="position-relative" style={{ height: '180px', overflow: 'hidden' }}>
         <img 
@@ -44,12 +51,7 @@ const ActivityCard = ({ activity }) => {
         )}
       </div>
       <Card.Body className="d-flex flex-column">
-        <Link 
-          to={`/detail/${activity.id}`}
-          className="text-decoration-none text-dark"
-        >
-          <Card.Title className="h6 mb-2 text-truncate">{activity.title}</Card.Title>
-        </Link>
+        <Card.Title className="h6 mb-2 text-truncate">{activity.title}</Card.Title>
         <Card.Text 
           className="text-muted small flex-grow-1"
           style={{ 
@@ -66,7 +68,7 @@ const ActivityCard = ({ activity }) => {
             {activity.startTime ? new Date(activity.startTime).toLocaleDateString() : '时间待定'} - 
             {activity.endTime ? new Date(activity.endTime).toLocaleDateString() : '时间待定'}
           </span>
-          <span>参与人数: {activity.participants || 0}</span>
+          <span>参与人数: {activity.registeredParticipants || 0}</span>
         </div>
       </Card.Body>
     </Card>

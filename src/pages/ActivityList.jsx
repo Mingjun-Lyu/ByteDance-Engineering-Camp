@@ -77,7 +77,7 @@ const ActivityList = () => {
   }
   
   return (
-    <Container className="activity-list-container">
+    <Container fluid className="activity-list-container">
       {/* <h1>活动列表</h1> */}
       
       {/* 筛选表单 */}

@@ -24,7 +24,6 @@ export const useActivityDetail = (activityId) => {
       banner: activityData.banner || '',
       isPinned: activityData.isPinned || activityData.isFeatured || false,
       creator: activityData.creator || '',
-      organizer: activityData.organizer || '',
       maxParticipants: activityData.maxParticipants || 0,
       registeredParticipants: activityData.registeredParticipants || 0,
       views: activityData.views || 0

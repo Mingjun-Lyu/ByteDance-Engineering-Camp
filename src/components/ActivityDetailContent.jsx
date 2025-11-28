@@ -274,35 +274,10 @@ const ActivityDetailContent = ({
     </Card>
   );
 
-  const renderActions = () => (
-    <div className="d-flex gap-3 mt-4">
-      {isEditing ? (
-        <>
-          <Button variant="primary" onClick={handleSave}>
-            保存
-          </Button>
-          <Button variant="outline-secondary" onClick={handleCancel}>
-            取消
-          </Button>
-        </>
-      ) : (
-        <>
-          <Button variant="primary" onClick={handleEdit}>
-            编辑
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            删除
-          </Button>
-        </>
-      )}
-    </div>
-  );
-
   return (
     <div>
       {renderBasicInfo()}
       {renderActivityRules()}
-      {renderActions()}
     </div>
   );
 };

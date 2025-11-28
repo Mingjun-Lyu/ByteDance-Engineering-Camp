@@ -27,7 +27,7 @@ const AppContent = () => {
     <div className="app-container">
       {/* 导航栏 - 使用React Bootstrap */}
       <Navbar bg="light" expand="lg" className="shadow-sm">
-        <Container>
+        <Container fluid>
           <Navbar.Brand as={Link} to="/" className="fw-bold text-primary fs-4">
             活动管理平台
           </Navbar.Brand>

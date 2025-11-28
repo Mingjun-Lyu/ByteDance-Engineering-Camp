@@ -56,7 +56,7 @@ const ActivityListContent = ({
         <td>
           <Badge bg="primary">{categoryLabel}</Badge>
         </td>
-        <td>{activity.organizer}</td>
+        <td>{activity.creator}</td>
         <td>{activity.registeredParticipants}</td>
         <td>
           <Button variant="primary" size="sm">
@@ -89,7 +89,7 @@ const ActivityListContent = ({
         <div className="d-flex gap-2 align-items-center">
           <Badge bg={statusVariant}>{statusText}</Badge>
           <Badge bg="primary">{categoryLabel}</Badge>
-          <span className="small text-muted">{activity.organizer}</span>
+          <span className="small text-muted">{activity.creator}</span>
           <span className="small text-muted">{activity.registeredParticipants}人</span>
           <Button variant="primary" size="sm">
             <Link to={`/detail/${activity.id}`} className="text-decoration-none text-white">
@@ -138,7 +138,7 @@ const ActivityListContent = ({
                   <th>活动时间</th>
                   <th>活动状态</th>
                   <th>活动分类</th>
-                  <th>主办方</th>
+                  <th>创建人</th>
                   <th>参与人数</th>
                   <th>操作</th>
                 </tr>

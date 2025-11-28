@@ -1,7 +1,10 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Notice = ({ notices }) => {
+  const navigate = useNavigate();
+  
   if (!notices || notices.length === 0) {
     return null;
   }
@@ -17,6 +20,16 @@ const Notice = ({ notices }) => {
       return '日期未知';
     }
   };
+
+  const handleNoticeClick = (notice) => {
+    // 如果是活动相关的公告，路由到对应的活动详情页
+    if (notice.type === 'activity' && notice.id) {
+      // 从公告ID中提取活动ID（公告ID格式为活动ID * 10 + 序号）
+      const activityId = Math.floor(notice.id / 10);
+      navigate(`/detail/${activityId}`);
+    }
+    // 如果是系统公告，可以添加其他处理逻辑
+  };
   
   return (
     <Card className="mb-4">
@@ -31,6 +44,7 @@ const Notice = ({ notices }) => {
             style={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
             onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
             onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+            onClick={() => handleNoticeClick(notice)}
           >
             <div className="d-flex justify-content-between align-items-start mb-2">
               <h6 className="mb-0 fw-bold">{notice.title}</h6>
