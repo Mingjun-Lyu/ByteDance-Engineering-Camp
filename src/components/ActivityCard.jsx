@@ -13,7 +13,7 @@ const ActivityCard = ({ activity }) => {
       pending: { text: '待开始', color: 'blue' },
       ended: { text: '已结束', color: 'grey' }
     };
-    return statusMap[status] || { text: status, color: 'default' };
+    return statusMap[status] || { text: status, color: 'grey' };
   };
 
   const { Text } = Typography;

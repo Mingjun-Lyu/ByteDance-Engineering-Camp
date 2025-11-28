@@ -28,14 +28,14 @@ const HighlightActivities = ({ activities }) => {
         </Title>
         <div>
           <Button 
-            type={layout === 'grid' ? 'primary' : 'default'}
+            type={layout === 'grid' ? 'primary' : 'secondary'}
             style={{ marginRight: '8px' }}
             onClick={() => setLayout('grid')}
           >
             宫格布局
           </Button>
           <Button 
-            type={layout === 'carousel' ? 'primary' : 'default'}
+            type={layout === 'carousel' ? 'primary' : 'secondary'}
             onClick={() => setLayout('carousel')}
           >
             轮播布局

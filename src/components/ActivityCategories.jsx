@@ -45,7 +45,7 @@ const ActivityCategories = ({ categories }) => {
               style={{ textDecoration: 'none' }}
             >
               <Card
-                hoverable
+                hoverable="true"
                 style={{
                   height: '100%',
                   display: 'flex',
