@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@douyinfe/semi-ui';
+import { Card } from 'react-bootstrap';
 
 // 骨架屏组件
 const SkeletonLoader = ({ count = 10 }) => {

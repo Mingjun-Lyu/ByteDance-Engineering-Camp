@@ -1,7 +1,5 @@
 import React from 'react';
-import { Card, Typography, List, Button, Space } from '@douyinfe/semi-ui';
-
-const { Text } = Typography;
+import { Card, Button, ListGroup } from 'react-bootstrap';
 
 const RelatedActivities = ({ 
   relatedActivities = [], 
@@ -9,44 +7,44 @@ const RelatedActivities = ({
   onCreateActivity 
 }) => {
   return (
-    <Card title="相关活动" style={{ marginTop: 16 }}>
-      {relatedActivities.length > 0 ? (
-        <List
-          dataSource={relatedActivities}
-          renderItem={(activity) => (
-            <List.Item
-              main={
-                <Space vertical align="start">
-                  <Text strong>{activity.name}</Text>
-                  <Text type="tertiary" size="small">
+    <Card className="mt-3">
+      <Card.Header>
+        <h6 className="mb-0">相关活动</h6>
+      </Card.Header>
+      <Card.Body className="p-0">
+        {relatedActivities.length > 0 ? (
+          <ListGroup variant="flush">
+            {relatedActivities.map((activity) => (
+              <ListGroup.Item key={activity.id} className="d-flex justify-content-between align-items-center">
+                <div>
+                  <div className="fw-bold">{activity.name}</div>
+                  <small className="text-muted">
                     {activity.type} | {activity.status}
-                  </Text>
-                </Space>
-              }
-              extra={
+                  </small>
+                </div>
                 <Button 
-                  size="small" 
+                  variant="outline-primary" 
+                  size="sm"
                   onClick={() => onViewActivity(activity.id)}
                 >
                   查看
                 </Button>
-              }
-            />
-          )}
-        />
-      ) : (
-        <div style={{ textAlign: 'center', padding: 20 }}>
-          <Text type="tertiary">暂无相关活动</Text>
-          <br />
-          <Button 
-            type="primary" 
-            onClick={onCreateActivity}
-            style={{ marginTop: 10 }}
-          >
-            创建新活动
-          </Button>
-        </div>
-      )}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        ) : (
+          <div className="text-center p-4">
+            <p className="text-muted">暂无相关活动</p>
+            <Button 
+              variant="primary" 
+              onClick={onCreateActivity}
+              className="mt-2"
+            >
+              创建新活动
+            </Button>
+          </div>
+        )}
+      </Card.Body>
     </Card>
   );
 };

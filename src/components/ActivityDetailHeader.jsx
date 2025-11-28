@@ -1,7 +1,5 @@
 import React from 'react';
-import { Typography, Space, Button, Icon } from '@douyinfe/semi-ui';
-
-const { Title, Text } = Typography;
+import { Button } from 'react-bootstrap';
 
 const ActivityDetailHeader = ({ 
   activity, 
@@ -25,38 +23,39 @@ const ActivityDetailHeader = ({
   };
 
   return (
-    <div style={{ marginBottom: 24 }}>
-      <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-        <Space>
+    <div className="mb-4">
+      <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center">
           <Button 
-            icon={<Icon type="icon_arrow_left" />} 
+            variant="outline-secondary" 
             onClick={onBack}
             disabled={loading}
-            style={{ marginRight: 16 }}
+            className="me-3"
           >
-            返回
+            ← 返回
           </Button>
           <div>
-            <Title heading={2} style={{ margin: 0 }}>
+            <h2 className="mb-1">
               {activity?.title || '活动详情'}
-            </Title>
-            <Text type="tertiary">
+            </h2>
+            <small className="text-muted">
               ID: {activity?.id} | 创建时间: {formatDate(activity?.createdAt || activity?.createTime)}
-            </Text>
+            </small>
           </div>
-        </Space>
+        </div>
         
-        <Space>
+        <div className="d-flex gap-2">
           {isEditing ? (
             <>
               <Button 
-                type="primary" 
+                variant="primary" 
                 onClick={onSave}
-                loading={saveLoading || loading}
+                disabled={saveLoading || loading}
               >
-                保存
+                {saveLoading ? '保存中...' : '保存'}
               </Button>
               <Button 
+                variant="outline-secondary" 
                 onClick={onCancel}
                 disabled={saveLoading || loading}
               >
@@ -66,14 +65,14 @@ const ActivityDetailHeader = ({
           ) : (
             <>
               <Button 
-                type="primary" 
+                variant="primary" 
                 onClick={onEdit}
                 disabled={loading}
               >
                 编辑
               </Button>
               <Button 
-                type="danger" 
+                variant="danger" 
                 onClick={onDelete}
                 disabled={loading}
               >
@@ -81,8 +80,8 @@ const ActivityDetailHeader = ({
               </Button>
             </>
           )}
-        </Space>
-      </Space>
+        </div>
+      </div>
     </div>
   );
 };

@@ -96,33 +96,7 @@ const generateBanners = (activities = mockActivities) => {
   }));
 };
 
-// 从活动数据中生成分类Banner数据
-const generateCategoryBanners = (activities = mockActivities, count = 3) => {
-  // 优先选择即将开始的活动
-  const upcomingActivities = activities
-    .filter(activity => activity.status === 'upcoming')
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  
-  const selectedActivities = upcomingActivities.slice(0, count);
-  
-  if (selectedActivities.length < count) {
-    // 如果即将开始的活动不足，从所有活动中补充
-    const remainingCount = count - selectedActivities.length;
-    const allActivitiesShuffled = [...activities].sort(() => 0.5 - Math.random());
-    const additionalActivities = allActivitiesShuffled.filter(activity => 
-      !selectedActivities.find(a => a.id === activity.id)
-    ).slice(0, remainingCount);
-    
-    selectedActivities.push(...additionalActivities);
-  }
-  
-  return selectedActivities.map((activity, index) => ({
-    id: activity.id + 100, // 添加偏移避免ID冲突
-    image: activity.image || Mock.mock('@image(1200x300)'),
-    title: activity.title,
-    link: `/detail/${activity.id}`
-  }));
-};
+// 从活动数据中生成分类Banner数据（保留注释但移除未使用的函数）
 
 // 生成分类数据
 const generateCategories = () => {

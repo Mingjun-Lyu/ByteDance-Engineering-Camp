@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Layout, Nav } from '@douyinfe/semi-ui';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import './App.css';
 
 // 导入页面组件（后续会重新创建）
@@ -21,46 +21,47 @@ const AnimatedRoute = ({ children }) => {
 const AppContent = () => {
   const location = useLocation();
   
-  // 根据当前路径设置激活的导航项
-  const getActiveItemKey = () => {
-    const pathname = location.pathname;
-    if (pathname === '/') return ['home'];
-    if (pathname.startsWith('/list')) return ['list'];
-    return [];
-  };
+  // 根据当前路径设置激活的导航项（保留注释但移除未使用的函数）
   
   return (
     <div className="app-container">
-      {/* 导航栏 */}
-      <Nav 
-        mode="horizontal" 
-        theme="light" 
-        style={{ backgroundColor: '#fff', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-      >
-        <Nav.Item itemKey="logo" style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>
-          <Link to="/">活动管理平台</Link>
-        </Nav.Item>
-        <Nav.Item 
-          itemKey="home"
-          className={location.pathname === '/' ? 'nav-item-active' : ''}
-        >
-          <Link to="/">首页</Link>
-        </Nav.Item>
-        <Nav.Item 
-          itemKey="list"
-          className={location.pathname.startsWith('/list') ? 'nav-item-active' : ''}
-        >
-          <Link to="/list">活动列表</Link>
-        </Nav.Item>
-      </Nav>
+      {/* 导航栏 - 使用React Bootstrap */}
+      <Navbar bg="light" expand="lg" className="shadow-sm">
+        <Container>
+          <Navbar.Brand as={Link} to="/" className="fw-bold text-primary fs-4">
+            活动管理平台
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto">
+              <Nav.Link 
+                as={Link} 
+                to="/" 
+                className={location.pathname === '/' ? 'active fw-bold' : ''}
+              >
+                首页
+              </Nav.Link>
+              <Nav.Link 
+                as={Link} 
+                to="/list" 
+                className={location.pathname.startsWith('/list') ? 'active fw-bold' : ''}
+              >
+                活动列表
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
       
       {/* 路由内容 */}
       <main className="main-content">
-        <Routes location={location}>
-          <Route path="/" element={<AnimatedRoute><ActivityHome /></AnimatedRoute>} />
-          <Route path="/list" element={<AnimatedRoute><ActivityList /></AnimatedRoute>} />
-          <Route path="/detail/:id" element={<AnimatedRoute><ActivityDetail /></AnimatedRoute>} />
-        </Routes>
+        <Container fluid className="py-4">
+          <Routes location={location}>
+            <Route path="/" element={<AnimatedRoute><ActivityHome /></AnimatedRoute>} />
+            <Route path="/list" element={<AnimatedRoute><ActivityList /></AnimatedRoute>} />
+            <Route path="/detail/:id" element={<AnimatedRoute><ActivityDetail /></AnimatedRoute>} />
+          </Routes>
+        </Container>
       </main>
     </div>
   );

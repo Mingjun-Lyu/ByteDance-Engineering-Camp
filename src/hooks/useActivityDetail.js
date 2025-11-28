@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import activityApiService from '../services/apiService';
 
 export const useActivityDetail = (activityId) => {
@@ -32,7 +32,7 @@ export const useActivityDetail = (activityId) => {
   };
 
   // 获取活动详情
-  const fetchActivity = async () => {
+  const fetchActivity = useCallback(async () => {
     try {
       setLoading(true);
       const response = await activityApiService.getActivityDetail(activityId);
@@ -45,7 +45,7 @@ export const useActivityDetail = (activityId) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activityId]);
 
   // 更新活动信息
   const updateActivity = async () => {
@@ -133,7 +133,7 @@ export const useActivityDetail = (activityId) => {
     if (activityId) {
       fetchActivity();
     }
-  }, [activityId]);
+  }, [activityId, fetchActivity]);
 
   return {
     activity,

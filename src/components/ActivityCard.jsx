@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Tag, Typography } from '@douyinfe/semi-ui';
+import { Card, Badge } from 'react-bootstrap';
 
 const ActivityCard = ({ activity }) => {
   if (!activity) {
@@ -9,116 +9,66 @@ const ActivityCard = ({ activity }) => {
   
   const getStatusConfig = (status) => {
     const statusMap = {
-      ongoing: { text: '进行中', color: 'green' },
-      pending: { text: '待开始', color: 'blue' },
-      ended: { text: '已结束', color: 'grey' }
+      ongoing: { text: '进行中', variant: 'success' },
+      pending: { text: '待开始', variant: 'primary' },
+      ended: { text: '已结束', variant: 'secondary' }
     };
-    return statusMap[status] || { text: status, color: 'grey' };
+    return statusMap[status] || { text: status, variant: 'secondary' };
   };
 
-  const { Text } = Typography;
   const statusConfig = getStatusConfig(activity.status);
 
   return (
-    <Card
-      style={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        transition: 'box-shadow 0.3s'
-      }}
+    <Card 
+      className="h-100 shadow-sm"
+      style={{ transition: 'all 0.3s', cursor: 'pointer' }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
     >
-      <div style={{
-        position: 'relative',
-        height: '180px',
-        overflow: 'hidden'
-      }}>
+      <div className="position-relative" style={{ height: '180px', overflow: 'hidden' }}>
         <img 
           src={activity.banner || 'https://via.placeholder.com/400x300?text=暂无图片'} 
           alt={activity.title} 
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            transition: 'transform 0.3s'
-          }}
+          className="w-100 h-100 object-fit-cover"
+          style={{ transition: 'transform 0.3s' }}
           onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
           onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
         />
-        <Tag 
-          color={statusConfig.color} 
-          style={{
-            position: 'absolute',
-            top: '12px',
-            left: '12px',
-            zIndex: 1
-          }}
-        >
-          {statusConfig.text}
-        </Tag>
+        <div className="position-absolute top-0 start-0 p-2">
+          <Badge bg={statusConfig.variant}>{statusConfig.text}</Badge>
+        </div>
         {activity.type && (
-          <Tag 
-            color="orange" 
-            style={{
-              position: 'absolute',
-              top: '12px',
-              right: '12px',
-              zIndex: 1
-            }}
-          >
-            {activity.type}
-          </Tag>
+          <div className="position-absolute top-0 end-0 p-2">
+            <Badge bg="warning">{activity.type}</Badge>
+          </div>
         )}
       </div>
-      <div style={{
-        padding: '16px',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+      <Card.Body className="d-flex flex-column">
         <Link 
           to={`/detail/${activity.id}`}
-          style={{
-            textDecoration: 'none',
-            color: 'inherit'
-          }}
+          className="text-decoration-none text-dark"
         >
-          <h3 style={{
-            margin: '0 0 8px 0',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}>
-            {activity.title}
-          </h3>
+          <Card.Title className="h6 mb-2 text-truncate">{activity.title}</Card.Title>
         </Link>
-        <Text 
-          ellipsis={{ rows: 2 }}
-          style={{
-            marginBottom: '12px',
-            color: '#666',
-            flex: 1
+        <Card.Text 
+          className="text-muted small flex-grow-1"
+          style={{ 
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
           }}
         >
           {activity.description || '暂无描述'}
-        </Text>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          fontSize: '14px',
-          color: '#888'
-        }}>
+        </Card.Text>
+        <div className="d-flex justify-content-between align-items-center text-muted small">
           <span>
             {activity.startTime ? new Date(activity.startTime).toLocaleDateString() : '时间待定'} - 
             {activity.endTime ? new Date(activity.endTime).toLocaleDateString() : '时间待定'}
           </span>
           <span>参与人数: {activity.participants || 0}</span>
         </div>
-      </div>
+      </Card.Body>
     </Card>
   );
 };

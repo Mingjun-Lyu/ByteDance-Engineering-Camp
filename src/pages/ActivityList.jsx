@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card, Button } from '@douyinfe/semi-ui';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Card, Button, Container } from 'react-bootstrap';
 import { useActivityData, useFilterLogic, usePagination } from '../hooks';
 import { FilterForm, ActivityListContent, LoadingIndicator } from '../components';
 import './ActivityList.css';
@@ -25,8 +24,7 @@ const ActivityList = () => {
     tempFilters,
     handleFilterSubmit,
     handleReset,
-    updateTempFilter,
-    debouncedSearch
+    updateTempFilter
   } = useFilterLogic();
   
   const { 
@@ -52,34 +50,34 @@ const ActivityList = () => {
     } else {
       fetchActivities(filters, pagination);
     }
-  }, [filters, pagination.currentPage, pagination.pageSize, pagination.disablePagination]);
+  }, [filters, pagination, fetchAllActivities, fetchActivities]);
   
   // 预加载下一页
   useEffect(() => {
     if (!pagination.disablePagination && activities.length > 0) {
       prefetchNextPage(filters, pagination);
     }
-  }, [filters, pagination.currentPage, pagination.pageSize, pagination.disablePagination, activities.length]);
+  }, [filters, pagination, activities.length, prefetchNextPage]);
   
   // 错误处理
   if (error) {
     return (
-      <div className="error-container">
-        <Card>
-          <div style={{ textAlign: 'center', padding: '40px' }}>
+      <Container className="error-container">
+        <Card className="text-center">
+          <Card.Body className="py-5">
             <h3>加载失败</h3>
             <p>{error}</p>
-            <Button type="primary" theme="solid" onClick={() => window.location.reload()}>
+            <Button variant="primary" onClick={() => window.location.reload()}>
               重新加载
             </Button>
-          </div>
+          </Card.Body>
         </Card>
-      </div>
+      </Container>
     );
   }
   
   return (
-    <div className="activity-list-container">
+    <Container className="activity-list-container">
       {/* <h1>活动列表</h1> */}
       
       {/* 筛选表单 */}
@@ -109,7 +107,7 @@ const ActivityList = () => {
         filters={filters}
         total={total}
       />
-    </div>
+    </Container>
   );
 };
 

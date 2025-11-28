@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { mockActivities, mockBanners, mockCategories, mockHighlightActivities } from '../mocks/activityData';
+import { mockActivities, mockBanners, mockCategories } from '../mocks/activityData';
 
 // 创建axios实例
 const apiClient = axios.create({

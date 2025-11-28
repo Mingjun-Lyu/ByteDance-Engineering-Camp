@@ -1,17 +1,12 @@
 import React from 'react';
 import { 
   Card, 
-  Typography, 
-  Input, 
-  TextArea, 
-  Select, 
-  DatePicker, 
-  Switch, 
-  Tag, 
-  Space 
-} from '@douyinfe/semi-ui';
-
-const { Title, Text } = Typography;
+  Form, 
+  Row, 
+  Col, 
+  Badge,
+  Button
+} from 'react-bootstrap';
 
 const ActivityDetailContent = ({ 
   activity, 
@@ -26,12 +21,12 @@ const ActivityDetailContent = ({
   // 获取状态文本和颜色（与原始逻辑保持一致）
   const getStatusConfig = (status) => {
     const statusMap = {
-      ongoing: { text: '进行中', color: 'green' },
-      pending: { text: '待开始', color: 'blue' },
-      upcoming: { text: '待开始', color: 'blue' },
-      ended: { text: '已结束', color: 'grey' }
+      ongoing: { text: '进行中', variant: 'success' },
+      pending: { text: '待开始', variant: 'primary' },
+      upcoming: { text: '待开始', variant: 'primary' },
+      ended: { text: '已结束', variant: 'secondary' }
     };
-    return statusMap[status] || { text: status, color: 'default' };
+    return statusMap[status] || { text: status, variant: 'secondary' };
   };
 
   // 格式化日期显示
@@ -44,195 +39,270 @@ const ActivityDetailContent = ({
     }
   };
 
+  // 编辑相关函数
+  const handleEdit = () => {
+    console.log('开始编辑活动');
+  };
+
+  const handleSave = () => {
+    console.log('保存活动编辑');
+  };
+
+  const handleCancel = () => {
+    console.log('取消编辑');
+  };
+
+  const handleDelete = () => {
+    console.log('删除活动');
+  };
+
   const renderBasicInfo = () => (
-    <Card title="基本信息" style={{ marginBottom: 20 }}>
-      {isEditing ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>活动标题</label>
-            <Input
-              value={formData.title || ''}
-              onChange={(value) => handleInputChange('title', value)}
-              required
-              style={{ width: '400px' }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>活动类型</label>
-            <Select
-              value={formData.category || formData.type}
-              onChange={(value) => handleInputChange('category', value)}
-              style={{ width: '400px' }}
-            >
-              <Select.Option value="promotion">促销活动</Select.Option>
-              <Select.Option value="offline">线下活动</Select.Option>
-              <Select.Option value="festival">节日活动</Select.Option>
-              <Select.Option value="exclusive">专属活动</Select.Option>
-            </Select>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>开始时间</label>
-            <DatePicker
-              value={formData.startTime}
-              onChange={(value) => handleInputChange('startTime', value)}
-              showTime
-              style={{ width: '400px' }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>结束时间</label>
-            <DatePicker
-              value={formData.endTime}
-              onChange={(value) => handleInputChange('endTime', value)}
-              showTime
-              style={{ width: '400px' }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right', marginTop: '8px' }}>活动描述</label>
-            <TextArea
-              value={formData.description || ''}
-              onChange={(value) => handleInputChange('description', value)}
-              rows={4}
-              style={{ width: '400px' }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>活动状态</label>
-            <Select
-              value={formData.status}
-              onChange={(value) => handleInputChange('status', value)}
-              style={{ width: '400px' }}
-            >
-              <Select.Option value="ongoing">进行中</Select.Option>
-              <Select.Option value="pending">待开始</Select.Option>
-              <Select.Option value="upcoming">待开始</Select.Option>
-              <Select.Option value="ended">已结束</Select.Option>
-            </Select>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>是否置顶</label>
-            <Switch
-              checked={formData.isPinned || formData.isFeatured || false}
-              onChange={(checked) => handleInputChange('isPinned', checked)}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <label style={{ width: '100px', textAlign: 'right' }}>Banner图片URL</label>
-            <Input
-              value={formData.banner || ''}
-              onChange={(value) => handleInputChange('banner', value)}
-              style={{ width: '400px' }}
-            />
-          </div>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>活动标题</div>
-            <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{activity.title}</div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>活动类型</div>
-            <div style={{ fontSize: '16px' }}>{activity.category || activity.type}</div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>活动状态</div>
-            <div style={{ fontSize: '16px' }}>
-              {(() => {
-                const { text, color } = getStatusConfig(activity.status);
-                return <Tag color={color}>{text}</Tag>;
-              })()}
-            </div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>活动时间</div>
-            <div style={{ fontSize: '16px' }}>
-              {formatDate(activity.startTime)} - {formatDate(activity.endTime)}
-            </div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>创建人</div>
-            <div style={{ fontSize: '16px' }}>{activity.creator || '-'}</div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>创建时间</div>
-            <div style={{ fontSize: '16px' }}>
-              {formatDate(activity.createdAt || activity.createTime)}
-            </div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>是否置顶</div>
-            <div style={{ fontSize: '16px' }}>{(activity.isPinned || activity.isFeatured) ? '是' : '否'}</div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gridColumn: '1 / -1' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>活动描述</div>
-            <div style={{ fontSize: '16px', whiteSpace: 'pre-line' }}>{activity.description || '暂无描述'}</div>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gridColumn: '1 / -1' }}>
-            <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>Banner图片</div>
-            <div>
-              {activity.banner ? (
-                <img 
-                  src={activity.banner} 
-                  alt={activity.title} 
-                  style={{ maxWidth: '400px', maxHeight: '200px', objectFit: 'cover', borderRadius: '4px' }}
+    <Card className="mb-4">
+      <Card.Header>
+        <h5 className="mb-0">基本信息</h5>
+      </Card.Header>
+      <Card.Body>
+        {isEditing ? (
+          <Form>
+            <Row className="g-3">
+              <Col md={6}>
+                <Form.Label>活动标题</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.title || ''}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  required
                 />
-              ) : (
-                <span>暂无图片</span>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+              </Col>
+              
+              <Col md={6}>
+                <Form.Label>活动类型</Form.Label>
+                <Form.Select
+                  value={formData.category || formData.type}
+                  onChange={(e) => handleInputChange('category', e.target.value)}
+                >
+                  <option value="promotion">促销活动</option>
+                  <option value="offline">线下活动</option>
+                  <option value="festival">节日活动</option>
+                  <option value="exclusive">专属活动</option>
+                </Form.Select>
+              </Col>
+              
+              <Col md={6}>
+                <Form.Label>开始时间</Form.Label>
+                <Form.Control
+                  type="datetime-local"
+                  value={formData.startTime ? new Date(formData.startTime).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => handleInputChange('startTime', e.target.value ? new Date(e.target.value) : null)}
+                />
+              </Col>
+              
+              <Col md={6}>
+                <Form.Label>结束时间</Form.Label>
+                <Form.Control
+                  type="datetime-local"
+                  value={formData.endTime ? new Date(formData.endTime).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => handleInputChange('endTime', e.target.value ? new Date(e.target.value) : null)}
+                />
+              </Col>
+              
+              <Col md={6}>
+                <Form.Label>活动状态</Form.Label>
+                <Form.Select
+                  value={formData.status}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                >
+                  <option value="ongoing">进行中</option>
+                  <option value="pending">待开始</option>
+                  <option value="upcoming">待开始</option>
+                  <option value="ended">已结束</option>
+                </Form.Select>
+              </Col>
+              
+              <Col md={6}>
+                <Form.Label>是否置顶</Form.Label>
+                <Form.Check
+                  type="switch"
+                  checked={formData.isPinned || formData.isFeatured || false}
+                  onChange={(e) => handleInputChange('isPinned', e.target.checked)}
+                  label={formData.isPinned || formData.isFeatured ? '是' : '否'}
+                />
+              </Col>
+              
+              <Col md={12}>
+                <Form.Label>活动描述</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={4}
+                  value={formData.description || ''}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                />
+              </Col>
+              
+              <Col md={12}>
+                <Form.Label>Banner图片URL</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.banner || ''}
+                  onChange={(e) => handleInputChange('banner', e.target.value)}
+                />
+              </Col>
+            </Row>
+          </Form>
+        ) : (
+          <Row className="g-3">
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">活动标题</small>
+                <div className="fw-bold">{activity.title}</div>
+              </div>
+            </Col>
+            
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">活动类型</small>
+                <div>{activity.category || activity.type}</div>
+              </div>
+            </Col>
+            
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">活动状态</small>
+                <div>
+                  {(() => {
+                    const { text, variant } = getStatusConfig(activity.status);
+                    return <Badge bg={variant}>{text}</Badge>;
+                  })()}
+                </div>
+              </div>
+            </Col>
+            
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">活动时间</small>
+                <div>
+                  {formatDate(activity.startTime)} - {formatDate(activity.endTime)}
+                </div>
+              </div>
+            </Col>
+            
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">创建人</small>
+                <div>{activity.creator || '-'}</div>
+              </div>
+            </Col>
+            
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">创建时间</small>
+                <div>
+                  {formatDate(activity.createdAt || activity.createTime)}
+                </div>
+              </div>
+            </Col>
+            
+            <Col md={6}>
+              <div className="mb-3">
+                <small className="text-muted">是否置顶</small>
+                <div>{(activity.isPinned || activity.isFeatured) ? '是' : '否'}</div>
+              </div>
+            </Col>
+            
+            <Col md={12}>
+              <div className="mb-3">
+                <small className="text-muted">活动描述</small>
+                <div className="white-space-pre-line">{activity.description || '暂无描述'}</div>
+              </div>
+            </Col>
+            
+            <Col md={12}>
+              <div className="mb-3">
+                <small className="text-muted">Banner图片</small>
+                <div>
+                  {activity.banner ? (
+                    <img 
+                      src={activity.banner} 
+                      alt={activity.title} 
+                      className="img-fluid"
+                      style={{ maxWidth: '400px', maxHeight: '200px', objectFit: 'cover', borderRadius: '4px' }}
+                    />
+                  ) : (
+                    <span>暂无图片</span>
+                  )}
+                </div>
+              </div>
+            </Col>
+          </Row>
+        )}
+      </Card.Body>
     </Card>
   );
 
   const renderActivityRules = () => (
-    <Card title="活动规则" style={{ marginBottom: 20 }}>
-      {isEditing ? (
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-          <label style={{ width: '100px', textAlign: 'right', marginTop: '8px' }}>活动规则</label>
-          <TextArea
-            value={formData.rules || ''}
-            onChange={(value) => handleInputChange('rules', value)}
-            rows={6}
-            style={{ width: '600px' }}
-          />
-        </div>
-      ) : (
-        <div style={{ whiteSpace: 'pre-line' }}>
-          {activity.rules ? (
-            activity.rules.split('\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))
-          ) : (
-            <p>暂无规则</p>
-          )}
-        </div>
-      )}
+    <Card className="mb-4">
+      <Card.Header>
+        <h5 className="mb-0">活动规则</h5>
+      </Card.Header>
+      <Card.Body>
+        {isEditing ? (
+          <Form>
+            <Row>
+              <Col md={12}>
+                <Form.Label>活动规则</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={6}
+                  value={formData.rules || ''}
+                  onChange={(e) => handleInputChange('rules', e.target.value)}
+                />
+              </Col>
+            </Row>
+          </Form>
+        ) : (
+          <div className="white-space-pre-line">
+            {activity.rules ? (
+              activity.rules.split('\n').map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))
+            ) : (
+              <p>暂无规则</p>
+            )}
+          </div>
+        )}
+      </Card.Body>
     </Card>
+  );
+
+  const renderActions = () => (
+    <div className="d-flex gap-3 mt-4">
+      {isEditing ? (
+        <>
+          <Button variant="primary" onClick={handleSave}>
+            保存
+          </Button>
+          <Button variant="outline-secondary" onClick={handleCancel}>
+            取消
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button variant="primary" onClick={handleEdit}>
+            编辑
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            删除
+          </Button>
+        </>
+      )}
+    </div>
   );
 
   return (
     <div>
       {renderBasicInfo()}
       {renderActivityRules()}
+      {renderActions()}
     </div>
   );
 };

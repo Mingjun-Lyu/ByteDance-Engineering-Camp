@@ -43,7 +43,7 @@ const useFilterLogic = () => {
   const handleFilterSubmit = useCallback(() => {
     // 清理空值并转换日期参数名称
     const cleanedFilters = Object.fromEntries(
-      Object.entries(tempFilters).filter(([_, value]) => 
+      Object.entries(tempFilters).filter(([, value]) => 
         value !== '' && value !== null && value !== undefined
       ).map(([key, value]) => {
         // 转换日期参数名称以匹配API期望的参数

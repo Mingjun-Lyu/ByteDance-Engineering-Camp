@@ -1,7 +1,5 @@
 import React from 'react';
-import { Card, Typography, Button, Space, Tag } from '@douyinfe/semi-ui';
-
-const { Text } = Typography;
+import { Card, Button, Badge } from 'react-bootstrap';
 
 const ActivityDetailSidebar = ({ 
   activity, 
@@ -9,74 +7,88 @@ const ActivityDetailSidebar = ({
   onViewParticipants,
   onViewStatistics 
 }) => {
-  const getStatusColor = (status) => {
+  const getStatusVariant = (status) => {
     switch (status) {
-      case '进行中': return 'green';
-      case '已结束': return 'grey';
-      case '未开始': return 'blue';
-      default: return 'grey';
+      case '进行中': return 'success';
+      case '已结束': return 'secondary';
+      case '未开始': return 'primary';
+      default: return 'secondary';
     }
   };
 
   return (
     <div style={{ width: 300 }}>
-      <Card title="活动状态" style={{ marginBottom: 16 }}>
-        <Space vertical align="start" style={{ width: '100%' }}>
-          <Tag color={getStatusColor(activity?.status)}>
-            {activity?.status || '未知'}
-          </Tag>
-          <Text type="tertiary">
-            创建时间: {activity?.createdAt}
-          </Text>
-          <Text type="tertiary">
-            最后更新: {activity?.updatedAt}
-          </Text>
-        </Space>
+      <Card className="mb-3">
+        <Card.Header>
+          <h6 className="mb-0">活动状态</h6>
+        </Card.Header>
+        <Card.Body>
+          <div className="d-flex flex-column gap-2">
+            <Badge bg={getStatusVariant(activity?.status)}>
+              {activity?.status || '未知'}
+            </Badge>
+            <small className="text-muted">
+              创建时间: {activity?.createdAt}
+            </small>
+            <small className="text-muted">
+              最后更新: {activity?.updatedAt}
+            </small>
+          </div>
+        </Card.Body>
       </Card>
 
-      <Card title="快速操作" style={{ marginBottom: 16 }}>
-        <Space vertical style={{ width: '100%' }}>
-          <Button 
-            type="primary" 
-            block 
-            onClick={onExportData}
-          >
-            导出数据
-          </Button>
-          <Button 
-            block 
-            onClick={onViewParticipants}
-          >
-            查看参与者
-          </Button>
-          <Button 
-            block 
-            onClick={onViewStatistics}
-          >
-            查看统计
-          </Button>
-        </Space>
+      <Card className="mb-3">
+        <Card.Header>
+          <h6 className="mb-0">快速操作</h6>
+        </Card.Header>
+        <Card.Body>
+          <div className="d-grid gap-2">
+            <Button 
+              variant="primary" 
+              onClick={onExportData}
+            >
+              导出数据
+            </Button>
+            <Button 
+              variant="outline-secondary" 
+              onClick={onViewParticipants}
+            >
+              查看参与者
+            </Button>
+            <Button 
+              variant="outline-secondary" 
+              onClick={onViewStatistics}
+            >
+              查看统计
+            </Button>
+          </div>
+        </Card.Body>
       </Card>
 
-      <Card title="统计信息">
-        <Space vertical align="start" style={{ width: '100%' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Text>参与人数:</Text>
-            <Text strong>{activity?.participants || 0}</Text>
+      <Card>
+        <Card.Header>
+          <h6 className="mb-0">统计信息</h6>
+        </Card.Header>
+        <Card.Body>
+          <div className="d-flex flex-column gap-2">
+            <div className="d-flex justify-content-between">
+              <span>参与人数:</span>
+              <strong>{activity?.participants || 0}</strong>
+            </div>
+            <div className="d-flex justify-content-between">
+              <span>完成人数:</span>
+              <strong>{activity?.completed || 0}</strong>
+            </div>
+            <div className="d-flex justify-content-between">
+              <span>成功率:</span>
+              <strong>{activity?.successRate || '0%'}</strong>
+            </div>
+            <div className="d-flex justify-content-between">
+              <span>平均用时:</span>
+              <strong>{activity?.averageTime || '0分钟'}</strong>
+            </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Text>完成人数:</Text>
-            <Text strong>{activity?.completed || 0}</Text>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Text>成功率:</Text>
-            <Text strong>{activity?.successRate || '0%'}</Text>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Text>平均用时:</Text>
-            <Text strong>{activity?.averageTime || '0分钟'}</Text>
-          </div>
-        </Space>
+        </Card.Body>
       </Card>
     </div>
   );

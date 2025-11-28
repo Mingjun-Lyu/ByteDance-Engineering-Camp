@@ -1,59 +1,45 @@
 import React from 'react';
-import { Card, List, Typography } from '@douyinfe/semi-ui';
+import { Card, ListGroup } from 'react-bootstrap';
 
 const Notice = ({ notices }) => {
   if (!notices || notices.length === 0) {
     return null;
   }
 
-  const { Title, Text } = Typography;
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return '日期未知';
+      }
+      return date.toLocaleString();
+    } catch {
+      return '日期未知';
+    }
+  };
   
   return (
-    <Card style={{ margin: '20px 0' }}>
-      <Title heading={4} style={{ marginBottom: '16px', marginTop: 0 }}>
-        公告信息
-      </Title>
-      <List
-        dataSource={notices}
-        renderItem={(notice) => (
-          <List.Item
+    <Card className="mb-4">
+      <Card.Header className="bg-light">
+        <h4 className="mb-0">公告信息</h4>
+      </Card.Header>
+      <ListGroup variant="flush">
+        {notices.map((notice) => (
+          <ListGroup.Item 
             key={notice.id}
-            header={
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title heading={5} style={{ margin: 0 }}>
-                  {notice.title}
-                </Title>
-                <Text type="tertiary" size="small">
-                  {(() => {
-                    try {
-                      const date = new Date(notice.createdAt || notice.createTime);
-                      if (isNaN(date.getTime())) {
-                        return '日期未知';
-                      }
-                      return date.toLocaleString();
-                    } catch (error) {
-                      return '日期未知';
-                    }
-                  })()}
-                </Text>
-              </div>
-            }
-            main={
-              <Text ellipsis={{ rows: 2 }} style={{ width: '100%' }}>
-                {notice.content}
-              </Text>
-            }
-            style={{ 
-              borderBottom: '1px solid #f0f0f0',
-              padding: '12px 0',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#fafafa'}
+            className="border-0"
+            style={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
             onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-          />
-        )}
-      />
+          >
+            <div className="d-flex justify-content-between align-items-start mb-2">
+              <h6 className="mb-0 fw-bold">{notice.title}</h6>
+              <small className="text-muted">{formatDate(notice.createdAt || notice.createTime)}</small>
+            </div>
+            <p className="mb-0 text-muted small">{notice.content}</p>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
     </Card>
   );
 };

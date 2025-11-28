@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Button, Tag, Spin, Select } from '@douyinfe/semi-ui';
+import { Card, Table, Button, Badge, Spinner, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import SkeletonLoader from './SkeletonLoader';
 import VirtualList from './VirtualList';
@@ -17,11 +17,11 @@ const ActivityListContent = ({
 }) => {
   const getStatusConfig = (status) => {
     const statusMap = {
-      ongoing: { text: '进行中', color: 'green' },
-      upcoming: { text: '待开始', color: 'blue' },
-      ended: { text: '已结束', color: 'grey' }
+      ongoing: { text: '进行中', variant: 'success' },
+      upcoming: { text: '待开始', variant: 'primary' },
+      ended: { text: '已结束', variant: 'secondary' }
     };
-    return statusMap[status] || { text: status, color: 'default' };
+    return statusMap[status] || { text: status, variant: 'secondary' };
   };
 
   const getCategoryLabel = (category) => {
@@ -34,88 +34,67 @@ const ActivityListContent = ({
     return categoryMap[category] || category;
   };
 
-  const columns = [
-    {
-      title: '活动标题',
-      dataIndex: 'title',
-      render: (title, record) => (
-        <Link to={`/detail/${record.id}`}>{title}</Link>
-      )
-    },
-    {
-      title: '活动时间',
-      dataIndex: 'startTime',
-      render: (value, record) => {
-        try {
-          const startDate = record.startTime ? new Date(record.startTime).toLocaleDateString() : '时间待定';
-          const endDate = record.endTime ? new Date(record.endTime).toLocaleDateString() : '时间待定';
-          return `${startDate} - ${endDate}`;
-        } catch (error) {
-          console.error('日期格式化错误:', error);
-          return '时间格式错误';
-        }
-      }
-    },
-    {
-      title: '活动状态',
-      dataIndex: 'status',
-      render: (status) => {
-        try {
-          const { text, color } = getStatusConfig(status);
-          return <Tag color={color}>{text}</Tag>;
-        } catch (error) {
-          console.error('状态显示错误:', error);
-          return <Tag color="default">未知</Tag>;
-        }
-      }
-    },
-    {
-      title: '活动分类',
-      dataIndex: 'category',
-      render: (category) => {
-        return <Tag color="blue">{getCategoryLabel(category)}</Tag>;
-      }
-    },
-    {
-      title: '主办方',
-      dataIndex: 'organizer'
-    },
-    {
-      title: '参与人数',
-      dataIndex: 'registeredParticipants'
-    },
-    {
-      title: '操作',
-      render: (value, record) => (
-        <Button type="primary" theme="solid">
-          <Link to={`/detail/${record.id}`} style={{ color: '#fff', textDecoration: 'none' }}>查看详情</Link>
-        </Button>
-      )
-    }
-  ];
-
-  // 渲染单个活动项
-  const renderActivityItem = (activity) => {
-    const { text: statusText, color: statusColor } = getStatusConfig(activity.status);
+  // 渲染表格行
+  const renderTableRow = (activity) => {
+    const { text: statusText, variant: statusVariant } = getStatusConfig(activity.status);
     const categoryLabel = getCategoryLabel(activity.category);
     
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-            <Link to={`/detail/${activity.id}`}>{activity.title}</Link>
+      <tr key={activity.id}>
+        <td>
+          <Link to={`/detail/${activity.id}`} className="text-decoration-none">
+            {activity.title}
+          </Link>
+        </td>
+        <td>
+          {activity.startTime ? new Date(activity.startTime).toLocaleDateString() : '时间待定'} - 
+          {activity.endTime ? new Date(activity.endTime).toLocaleDateString() : '时间待定'}
+        </td>
+        <td>
+          <Badge bg={statusVariant}>{statusText}</Badge>
+        </td>
+        <td>
+          <Badge bg="primary">{categoryLabel}</Badge>
+        </td>
+        <td>{activity.organizer}</td>
+        <td>{activity.registeredParticipants}</td>
+        <td>
+          <Button variant="primary" size="sm">
+            <Link to={`/detail/${activity.id}`} className="text-decoration-none text-white">
+              查看详情
+            </Link>
+          </Button>
+        </td>
+      </tr>
+    );
+  };
+
+  // 渲染单个活动项
+  const renderActivityItem = (activity) => {
+    const { text: statusText, variant: statusVariant } = getStatusConfig(activity.status);
+    const categoryLabel = getCategoryLabel(activity.category);
+    
+    return (
+      <div className="d-flex align-items-center justify-content-between p-3 border-bottom">
+        <div className="flex-grow-1">
+          <div className="fw-bold mb-1">
+            <Link to={`/detail/${activity.id}`} className="text-decoration-none">
+              {activity.title}
+            </Link>
           </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+          <div className="small text-muted">
             {`${new Date(activity.startTime).toLocaleDateString()} - ${new Date(activity.endTime).toLocaleDateString()}`}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <Tag color={statusColor} size="small">{statusText}</Tag>
-          <Tag color="blue" size="small">{categoryLabel}</Tag>
-          <span style={{ fontSize: '12px', color: '#999' }}>{activity.organizer}</span>
-          <span style={{ fontSize: '12px', color: '#999' }}>{activity.registeredParticipants}人</span>
-          <Button type="primary" theme="solid" size="small">
-            <Link to={`/detail/${activity.id}`} style={{ color: '#fff', textDecoration: 'none' }}>查看</Link>
+        <div className="d-flex gap-2 align-items-center">
+          <Badge bg={statusVariant}>{statusText}</Badge>
+          <Badge bg="primary">{categoryLabel}</Badge>
+          <span className="small text-muted">{activity.organizer}</span>
+          <span className="small text-muted">{activity.registeredParticipants}人</span>
+          <Button variant="primary" size="sm">
+            <Link to={`/detail/${activity.id}`} className="text-decoration-none text-white">
+              查看
+            </Link>
           </Button>
         </div>
       </div>
@@ -124,115 +103,123 @@ const ActivityListContent = ({
 
   return (
     <Card className="table-card">
-      {loading || (pagination.disablePagination && loadingAll) ? (
-        <SkeletonLoader count={pagination.pageSize} />
-      ) : pagination.disablePagination ? (
-        // 取消分页模式 - 使用虚拟滚动
-        <>
-          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 'bold' }}>所有活动 ({allActivities.length}项)</span>
-            <span style={{ fontSize: '12px', color: '#666' }}>
-              使用虚拟滚动优化，仅渲染可见区域内容
-            </span>
-          </div>
-          {allActivities.length > 0 ? (
-            <VirtualList
-              items={allActivities}
-              itemHeight={80}
-              containerHeight={500}
-              renderItem={renderActivityItem}
-            />
-          ) : (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-              暂无活动数据
+      <Card.Body>
+        {loading || (pagination.disablePagination && loadingAll) ? (
+          <SkeletonLoader count={pagination.pageSize} />
+        ) : pagination.disablePagination ? (
+          // 取消分页模式 - 使用虚拟滚动
+          <>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <span className="fw-bold">所有活动 ({allActivities.length}项)</span>
+              <span className="small text-muted">
+                使用虚拟滚动优化，仅渲染可见区域内容
+              </span>
             </div>
-          )}
-        </>
-      ) : (
-        // 分页模式
-        <>
-          <Table
-            columns={columns}
-            dataSource={activities}
-            pagination={false}
-            loading={false}
-            locale={{ emptyText: '暂无活动数据' }}
-          />
-          {!pagination.disablePagination && activities.length > 0 && (
-            <div style={{ marginTop: '20px', textAlign: 'center' }}>
-              {/* 自定义页码控件 */}
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                gap: '8px',
-                padding: '16px',
-                border: '1px solid #e0e0e0',
-                borderRadius: '6px',
-                backgroundColor: '#f9f9f9'
-              }}>
-                {/* 页面大小选择器 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '14px', color: '#666' }}>每页显示:</span>
-                  <Select
-                    value={pagination.pageSize.toString()}
-                    onChange={(value) => {
-                      handlePageChange(1, parseInt(value), filters);
-                    }}
-                    style={{ width: '80px' }}
-                  >
-                    <Select.Option value="10">10</Select.Option>
-                    <Select.Option value="20">20</Select.Option>
-                    <Select.Option value="50">50</Select.Option>
-                  </Select>
-                </div>
-                
-                {/* 页码导航 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Button
-                    disabled={pagination.currentPage <= 1}
-                    onClick={() => {
-                      handlePageChange(pagination.currentPage - 1, pagination.pageSize, filters);
-                    }}
-                  >
-                    上一页
-                  </Button>
-                  
-                  {/* 页码显示 */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ fontSize: '14px', color: '#666' }}>第</span>
-                    <span style={{ 
-                      fontSize: '16px', 
-                      fontWeight: 'bold', 
-                      color: '#1890ff',
-                      padding: '4px 8px',
-                      border: '1px solid #1890ff',
-                      borderRadius: '4px'
-                    }}>
-                      {pagination.currentPage}
-                    </span>
-                    <span style={{ fontSize: '14px', color: '#666' }}>页，共 {pagination.totalPages} 页</span>
+            {allActivities.length > 0 ? (
+              <VirtualList
+                items={allActivities}
+                itemHeight={80}
+                containerHeight={500}
+                renderItem={renderActivityItem}
+              />
+            ) : (
+              <div className="text-center py-5 text-muted">
+                暂无活动数据
+              </div>
+            )}
+          </>
+        ) : (
+          // 分页模式
+          <>
+            <Table responsive striped hover>
+              <thead>
+                <tr>
+                  <th>活动标题</th>
+                  <th>活动时间</th>
+                  <th>活动状态</th>
+                  <th>活动分类</th>
+                  <th>主办方</th>
+                  <th>参与人数</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activities.length > 0 ? (
+                  activities.map(renderTableRow)
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center py-4 text-muted">
+                      暂无活动数据
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+            {!pagination.disablePagination && activities.length > 0 && (
+              <div className="mt-4">
+                {/* 分页控件 */}
+                <div className="d-flex align-items-center justify-content-between bg-light p-3 rounded">
+                  <div className="d-flex align-items-center gap-3">
+                    {/* 页面大小选择器 */}
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="small text-muted">每页显示:</span>
+                      <Form.Select
+                        value={pagination.pageSize}
+                        onChange={(e) => {
+                          handlePageChange(1, parseInt(e.target.value), filters);
+                        }}
+                        style={{ width: '80px' }}
+                        size="sm"
+                      >
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                      </Form.Select>
+                    </div>
+                    
+                    {/* 总记录数 */}
+                    <span className="small text-muted">共 {total} 条记录</span>
                   </div>
                   
-                  <Button
-                    disabled={pagination.currentPage >= pagination.totalPages}
-                    onClick={() => {
-                      handlePageChange(pagination.currentPage + 1, pagination.pageSize, filters);
-                    }}
-                  >
-                    下一页
-                  </Button>
-                </div>
-                
-                {/* 总记录数 */}
-                <div style={{ fontSize: '14px', color: '#666' }}>
-                  共 {total} 条记录
+                  {/* 页码导航 */}
+                  <div className="d-flex align-items-center gap-2">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      disabled={pagination.currentPage <= 1}
+                      onClick={() => {
+                        handlePageChange(pagination.currentPage - 1, pagination.pageSize, filters);
+                      }}
+                    >
+                      上一页
+                    </Button>
+                    
+                    {/* 页码显示 */}
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="small text-muted">第</span>
+                      <span className="fw-bold text-primary px-2 py-1 border border-primary rounded">
+                        {pagination.currentPage}
+                      </span>
+                      <span className="small text-muted">页，共 {pagination.totalPages} 页</span>
+                    </div>
+                    
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      disabled={pagination.currentPage >= pagination.totalPages}
+                      onClick={() => {
+                        handlePageChange(pagination.currentPage + 1, pagination.pageSize, filters);
+                      }}
+                    >
+                      下一页
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
+      </Card.Body>
     </Card>
   );
 };

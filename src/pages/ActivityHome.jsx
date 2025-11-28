@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import Banner from '../components/Banner';
 import ActivityCategories from '../components/ActivityCategories';
 import Notice from '../components/Notice';
@@ -56,23 +57,46 @@ const ActivityHome = () => {
   }, []);
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>;
+    return (
+      <Container fluid className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+        <div className="text-center">
+          <Spinner animation="border" variant="primary" className="mb-3" />
+          <div>加载中...</div>
+        </div>
+      </Container>
+    );
   }
 
   return (
-    <div>
+    <Container fluid>
       {/* Banner轮播 */}
-      <Banner banners={banners} />
+      <Row>
+        <Col>
+          <Banner banners={banners} />
+        </Col>
+      </Row>
       
       {/* 活动分类 */}
-      <ActivityCategories categories={categories} />
+      <Row>
+        <Col>
+          <ActivityCategories categories={categories} />
+        </Col>
+      </Row>
       
       {/* 公告信息 */}
-      <Notice notices={notices} />
+      <Row>
+        <Col>
+          <Notice notices={notices} />
+        </Col>
+      </Row>
       
       {/* 重点活动 */}
-      <HighlightActivities activities={highlightActivities} />
-    </div>
+      <Row>
+        <Col>
+          <HighlightActivities activities={highlightActivities} />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

@@ -1,56 +1,30 @@
 import React from 'react';
-import { Carousel } from '@douyinfe/semi-ui';
+import { Carousel, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Banner = ({ banners }) => {
   if (!banners || banners.length === 0) {
     return (
-      <div style={{ 
-        width: '100%', 
-        height: '200px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundColor: '#f5f5f5',
-        color: '#999'
-      }}>
-        没有轮播图数据
-      </div>
+      <Card className="text-center p-5 mb-4">
+        <Card.Body>
+          <Card.Text className="text-muted">没有轮播图数据</Card.Text>
+        </Card.Body>
+      </Card>
     );
   }
   
   return (
-    <div style={{ width: '100%', overflow: 'hidden', marginBottom: '20px' }}>
-      <Carousel 
-        autoplay
-        autoplayInterval={3000} 
-        dotPosition="bottom" 
-        style={{ width: '100%', height: '300px' }}
-        indicators={true}
-        controls={true}
-        theme="dark"
-      >
-        {banners.map((banner) => (
-          <Link 
-            key={banner.id} 
-            to={banner.link || '/'} 
-            style={{ 
-              display: 'block',
-              width: '100%',
-              height: '100%',
-              textDecoration: 'none'
-            }}
-          >
+    <Carousel className="mb-4" interval={3000} indicators={true} controls={true}>
+      {banners.map((banner) => (
+        <Carousel.Item key={banner.id}>
+          <Link to={banner.link || '/'} style={{ textDecoration: 'none' }}>
             <div 
+              className="d-flex align-items-center justify-content-center"
               style={{ 
-                width: '100%',
-                height: '100%',
+                height: '300px',
                 backgroundImage: `url('${banner.image}')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 position: 'relative',
                 overflow: 'hidden'
               }}
@@ -61,25 +35,16 @@ const Banner = ({ banners }) => {
               }}
             >
               {/* 添加半透明遮罩层增强标题可读性 */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                color: 'white',
-                padding: '20px',
-                textAlign: 'center'
-              }}>
-                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>
+              <div className="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-50 text-white p-4 text-center">
+                <h3 className="h4 mb-0 fw-bold">
                   {banner.title || '活动标题'}
                 </h3>
               </div>
             </div>
           </Link>
-        ))}
-      </Carousel>
-    </div>
+        </Carousel.Item>
+      ))}
+    </Carousel>
   );
 };
 

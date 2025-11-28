@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Layout, Toast } from '@douyinfe/semi-ui';
+import { Container, Toast } from 'react-bootstrap';
 import { 
   ActivityDetailHeader, 
   ActivityDetailContent,
@@ -9,8 +9,6 @@ import {
 } from '../components';
 import { useActivityDetail } from '../hooks';
 import './ActivityDetail.css';
-
-const { Content } = Layout;
 
 const ActivityDetail = () => {
   const { id } = useParams();
@@ -36,7 +34,8 @@ const ActivityDetail = () => {
   // 处理保存
   const handleSave = async () => {
     if (!formData.title?.trim()) {
-      Toast.error('活动标题不能为空');
+      // 使用React Bootstrap的Toast
+      Toast.show('活动标题不能为空', { variant: 'danger' });
       return;
     }
     
@@ -55,11 +54,11 @@ const ActivityDetail = () => {
       
       const success = await updateActivity();
       if (success) {
-        Toast.success('保存成功');
+        Toast.show('保存成功', { variant: 'success' });
       }
     } catch (error) {
       console.error('保存活动详情失败:', error);
-      Toast.error('保存失败');
+      Toast.show('保存失败', { variant: 'danger' });
     } finally {
       setSaveLoading(false);
     }
@@ -72,7 +71,7 @@ const ActivityDetail = () => {
     
     const success = await deleteActivity();
     if (success) {
-      Toast.success('删除成功');
+      Toast.show('删除成功', { variant: 'success' });
       navigate('/activities');
     }
   };
@@ -87,20 +86,16 @@ const ActivityDetail = () => {
   // 错误处理
   if (error) {
     return (
-      <div style={{ 
-        textAlign: 'center', 
-        padding: '50px', 
-        color: 'red' 
-      }}>
+      <Container className="text-center py-5 text-danger">
         {error}
         <br />
         <button 
+          className="btn btn-primary mt-3"
           onClick={() => fetchActivity()} 
-          style={{ marginTop: '10px' }}
         >
           重新加载
         </button>
-      </div>
+      </Container>
     );
   }
 
@@ -112,18 +107,14 @@ const ActivityDetail = () => {
   // 没有数据
   if (!activity) {
     return (
-      <div style={{ 
-        textAlign: 'center', 
-        padding: '50px', 
-        color: 'red' 
-      }}>
+      <Container className="text-center py-5 text-danger">
         活动不存在或已被删除
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <Container className="py-4">
       {/* 头部组件 */}
       <ActivityDetailHeader
         activity={activity}
@@ -147,7 +138,7 @@ const ActivityDetail = () => {
 
       {/* 全局加载指示器 */}
       {loading && <LoadingIndicator />}
-    </div>
+    </Container>
   );
 };
 
