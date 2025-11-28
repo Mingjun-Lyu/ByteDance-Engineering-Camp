@@ -3,6 +3,7 @@ import useHomeData from './useHomeData';
 import useActivityData from './useActivityData';
 import useFilterLogic from './useFilterLogic';
 import usePagination from './usePagination';
+import { useActivityDetail } from './useActivityDetail';
 
 // 导出所有hooks
 export {
@@ -10,7 +11,8 @@ export {
   useHomeData,
   useActivityData,
   useFilterLogic,
-  usePagination
+  usePagination,
+  useActivityDetail
 };
 
 export default {
@@ -18,5 +20,6 @@ export default {
   useHomeData,
   useActivityData,
   useFilterLogic,
-  usePagination
+  usePagination,
+  useActivityDetail
 };

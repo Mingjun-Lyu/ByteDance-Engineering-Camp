@@ -9,3 +9,7 @@ export { default as ActivityListContent } from './ActivityListContent';
 export { default as VirtualList } from './VirtualList';
 export { default as SkeletonLoader } from './SkeletonLoader';
 export { default as LoadingIndicator } from './LoadingIndicator';
+export { default as ActivityDetailHeader } from './ActivityDetailHeader';
+export { default as ActivityDetailContent } from './ActivityDetailContent';
+export { default as ActivityDetailSidebar } from './ActivityDetailSidebar';
+export { default as RelatedActivities } from './RelatedActivities';
