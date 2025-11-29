@@ -25,3 +25,6 @@ dist-ssr
 
 # Documentation directories
 docs
+
+# Onboarding module documentation
+src/onboarding/README.md

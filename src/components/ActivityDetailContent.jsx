@@ -39,23 +39,6 @@ const ActivityDetailContent = ({
     }
   };
 
-  // 编辑相关函数
-  const handleEdit = () => {
-    console.log('开始编辑活动');
-  };
-
-  const handleSave = () => {
-    console.log('保存活动编辑');
-  };
-
-  const handleCancel = () => {
-    console.log('取消编辑');
-  };
-
-  const handleDelete = () => {
-    console.log('删除活动');
-  };
-
   const renderBasicInfo = () => (
     <Card className="mb-4">
       <Card.Header>
