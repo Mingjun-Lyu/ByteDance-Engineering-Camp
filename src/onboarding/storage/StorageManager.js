@@ -75,7 +75,7 @@ export class StorageManager {
     try {
       const storage = this.getStorage();
       const serializedData = JSON.stringify(data);
-      storage.setItem(this.key, serializedData);
+      storage.setItem(this.storageKey, serializedData);
       return true;
     } catch {
       return false;
@@ -85,9 +85,16 @@ export class StorageManager {
   async load() {
     try {
       const storage = this.getStorage();
-      const data = storage.getItem(this.key);
-      return data ? JSON.parse(data) : null;
-    } catch {
+      const data = storage.getItem(this.storageKey);
+      
+      // 如果数据不存在或为null，返回null
+      if (data === null || data === undefined) {
+        return null;
+      }
+      
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('StorageManager load error:', error);
       return null;
     }
   }

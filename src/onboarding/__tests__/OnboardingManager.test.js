@@ -158,6 +158,11 @@ describe('OnboardingManager', () => {
   });
   
   describe('State Persistence', () => {
+    beforeEach(() => {
+      // Clear storage before each test in this describe block
+      mockStorage.data.clear();
+    });
+    
     test('should save and load state', async () => {
       const managerWithAutoSave = new OnboardingManager({
         autoSave: true
@@ -171,9 +176,24 @@ describe('OnboardingManager', () => {
       await managerWithAutoSave.startGuide('test-guide');
       await managerWithAutoSave.completeGuide();
       
+      // Check that first manager has completed the guide
+      expect(managerWithAutoSave.getState().completedGuides.has('test-guide')).toBe(true);
+      
+      // Add a small delay to ensure storage operations complete
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
       // Create new manager to test state loading
       const newManager = new OnboardingManager({
         autoSave: true
+      });
+      
+      // Wait for the new manager to finish initialization
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      // Register the same guide in the new manager
+      newManager.registerGuide('test-guide', {
+        name: 'Test Guide',
+        steps: [{ id: 'step1', title: 'Step 1' }]
       });
       
       // State should be loaded from storage
@@ -183,14 +203,12 @@ describe('OnboardingManager', () => {
 });
 
 describe('StorageManager', () => {
-  let storageManager;
-  
   beforeEach(() => {
     mockStorage.data.clear();
-    storageManager = new StorageManager('test_key');
   });
   
   test('should save and load data', async () => {
+    const storageManager = new StorageManager('test_key_1');
     const testData = { key: 'value', number: 123 };
     
     await storageManager.save(testData);
@@ -200,11 +218,18 @@ describe('StorageManager', () => {
   });
   
   test('should return null for non-existent data', async () => {
+    const storageManager = new StorageManager('test_key_2');
+    
+    // 确保存储是空的
+    expect(mockStorage.data.size).toBe(0);
+    
     const loadedData = await storageManager.load();
     expect(loadedData).toBeNull();
   });
   
   test('should clear data', async () => {
+    const storageManager = new StorageManager('test_key_3');
+    
     await storageManager.save({ test: 'data' });
     await storageManager.clear();
     

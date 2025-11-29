@@ -45,7 +45,16 @@ export class OnboardingManager extends EventEmitter {
       // 从存储中恢复状态
       const savedState = await this.storage.load();
       if (savedState) {
-        this.state = { ...this.state, ...savedState };
+        // 恢复Set对象
+        this.state.completedGuides = new Set(savedState.completedGuides || []);
+        this.state.skippedGuides = new Set(savedState.skippedGuides || []);
+        
+        // 恢复其他状态
+        this.state.currentGuide = savedState.currentGuide || null;
+        this.state.currentStep = savedState.currentStep || null;
+        this.state.isActive = savedState.isActive || false;
+        this.state.isPaused = savedState.isPaused || false;
+        
         this.log('State restored from storage');
       }
       
@@ -284,10 +293,12 @@ export class OnboardingManager extends EventEmitter {
         isPaused: this.state.isPaused
       };
       
-      await this.storage.save(stateToSave);
+      const result = await this.storage.save(stateToSave);
       this.log('State saved to storage');
+      return result;
     } catch (error) {
       this.handleError('Failed to save state', error);
+      return false;
     }
   }
   
