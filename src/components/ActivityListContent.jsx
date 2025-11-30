@@ -10,10 +10,14 @@ const ActivityListContent = ({
   allActivities, 
   loading, 
   loadingAll,
+  loadingMore,
   pagination, 
   handlePageChange, 
   filters,
-  total 
+  total,
+  hasMore,
+  fetchLazyActivities,
+  error
 }) => {
   const getStatusConfig = (status) => {
     const statusMap = {
@@ -32,6 +36,13 @@ const ActivityListContent = ({
       exclusive: '专属'
     };
     return categoryMap[category] || category;
+  };
+
+  // 懒加载处理函数
+  const handleLoadMore = () => {
+    if (pagination.disablePagination && hasMore && !loadingMore) {
+      fetchLazyActivities(filters, { append: true });
+    }
   };
 
   // 渲染表格行
@@ -101,9 +112,61 @@ const ActivityListContent = ({
     );
   };
 
+  // 渲染错误提示
+  const renderError = () => {
+    if (!error) return null;
+    
+    return (
+      <div className="alert alert-danger d-flex align-items-center" role="alert">
+        <div className="flex-grow-1">
+          <strong>加载失败:</strong> {error}
+        </div>
+        <Button 
+          variant="outline-danger" 
+          size="sm" 
+          onClick={() => {
+            if (pagination.disablePagination) {
+              fetchLazyActivities(filters, { reset: true });
+            } else {
+              handlePageChange(pagination.currentPage, pagination.pageSize, filters);
+            }
+          }}
+        >
+          重试
+        </Button>
+      </div>
+    );
+  };
+
+  // 渲染加载更多状态指示器
+  const renderLoadMoreIndicator = () => {
+    if (!pagination.disablePagination || !loadingMore) return null;
+    
+    return (
+      <div className="d-flex justify-content-center align-items-center py-3">
+        <Spinner animation="border" size="sm" className="me-2" />
+        <span className="text-muted">正在加载更多数据...</span>
+      </div>
+    );
+  };
+
+  // 渲染无更多数据提示
+  const renderNoMoreData = () => {
+    if (!pagination.disablePagination || hasMore || allActivities.length === 0) return null;
+    
+    return (
+      <div className="text-center py-3 text-muted">
+        <span>已加载全部数据</span>
+      </div>
+    );
+  };
+
   return (
     <Card className="table-card">
       <Card.Body>
+        {/* 错误提示 */}
+        {renderError()}
+        
         {loading || (pagination.disablePagination && loadingAll) ? (
           <SkeletonLoader count={pagination.pageSize} />
         ) : pagination.disablePagination ? (
@@ -112,16 +175,23 @@ const ActivityListContent = ({
             <div className="d-flex justify-content-between align-items-center mb-3">
               <span className="fw-bold">所有活动 ({allActivities.length}项)</span>
               <span className="small text-muted">
-                使用虚拟滚动优化，仅渲染可见区域内容
+                使用虚拟滚动优化，数据懒加载并仅渲染可见区域内容
               </span>
             </div>
-            {allActivities.length > 0 ? (
-              <VirtualList
-                items={allActivities}
-                itemHeight={80}
-                containerHeight={500}
-                renderItem={renderActivityItem}
-              />
+            {allActivities.length > 0 || loadingMore ? (
+              <>
+                <VirtualList
+                  items={allActivities}
+                  itemHeight={80}
+                  containerHeight={500}
+                  renderItem={renderActivityItem}
+                  onLoadMore={handleLoadMore}
+                  hasMore={hasMore}
+                  loadingMore={loadingMore}
+                />
+                {renderLoadMoreIndicator()}
+                {renderNoMoreData()}
+              </>
             ) : (
               <div className="text-center py-5 text-muted">
                 暂无活动数据

@@ -12,11 +12,13 @@ const ActivityList = () => {
     allActivities,
     loading, 
     loadingAll,
+    loadingMore,
     error, 
     total, 
+    hasMore,
     fetchActivities, 
-    fetchAllActivities,
-    prefetchNextPage 
+    fetchLazyActivities,
+    prefetchNextPage
   } = useActivityData();
   
   const { 
@@ -46,11 +48,12 @@ const ActivityList = () => {
   // 数据获取
   useEffect(() => {
     if (pagination.disablePagination) {
-      fetchAllActivities(filters);
+      // 使用懒加载模式
+      fetchLazyActivities(filters, { reset: true });
     } else {
       fetchActivities(filters, pagination);
     }
-  }, [filters, pagination, fetchAllActivities, fetchActivities]);
+  }, [filters, pagination, fetchLazyActivities, fetchActivities]);
   
   // 预加载下一页
   useEffect(() => {
@@ -102,10 +105,14 @@ const ActivityList = () => {
         allActivities={allActivities}
         loading={loading}
         loadingAll={loadingAll}
+        loadingMore={loadingMore}
         pagination={pagination}
         handlePageChange={handlePageChange}
         filters={filters}
         total={total}
+        hasMore={hasMore}
+        fetchLazyActivities={fetchLazyActivities}
+        error={error}
       />
     </Container>
   );

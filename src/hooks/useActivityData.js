@@ -1,18 +1,27 @@
 import { useState, useCallback, useRef } from 'react';
 import activityApiService from '../services/apiService';
 
-// 自定义Hook：数据管理
+// 自定义Hook：数据管理（支持懒加载）
 const useActivityData = () => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
   const [allActivities, setAllActivities] = useState([]);
-  const [loadingAll, setLoadingAll] = useState(false);
+  const [loadingAll] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   
   // 请求缓存
   const requestCache = useRef(new Map());
-  
+  // 懒加载状态
+  const lazyLoadState = useRef({
+    currentPage: 1,
+    pageSize: 20,
+    isLoading: false,
+    hasMore: true
+  });
+
   const fetchActivities = useCallback(async (filters, pagination) => {
     const cacheKey = JSON.stringify({ filters, pagination });
     
@@ -57,26 +66,31 @@ const useActivityData = () => {
       setLoading(false);
     }
   }, []);
-  
-  // 获取所有数据（取消分页时使用）
-  const fetchAllActivities = useCallback(async (filters) => {
-    const cacheKey = JSON.stringify({ filters, all: true });
+
+  // 懒加载获取数据（按需加载）
+  const fetchLazyActivities = useCallback(async (filters, options = {}) => {
+    const { reset = false, append = true } = options;
     
-    // 检查缓存
-    if (requestCache.current.has(cacheKey)) {
-      const cachedData = requestCache.current.get(cacheKey);
-      setAllActivities(cachedData.list);
-      setTotal(cachedData.pagination.total);
-      return;
-    }
+    if (lazyLoadState.current.isLoading) return;
     
     try {
-      setLoadingAll(true);
-      setError(null);
+      lazyLoadState.current.isLoading = true;
+      setLoadingMore(true);
+      
+      if (reset) {
+        // 重置状态
+        lazyLoadState.current.currentPage = 1;
+        lazyLoadState.current.hasMore = true;
+        setHasMore(true);
+        setAllActivities([]);
+        setTotal(0);
+      }
+      
+      if (!lazyLoadState.current.hasMore) return;
       
       const params = {
-        page: 1,
-        pageSize: 1000, // 获取大量数据
+        page: lazyLoadState.current.currentPage,
+        pageSize: lazyLoadState.current.pageSize,
         ...filters
       };
       
@@ -89,19 +103,29 @@ const useActivityData = () => {
       
       const res = await activityApiService.getActivityList(params);
       
-      // 缓存结果
-      requestCache.current.set(cacheKey, res);
+      // 更新状态
+      lazyLoadState.current.currentPage += 1;
+      lazyLoadState.current.hasMore = res.list.length === lazyLoadState.current.pageSize;
+      setHasMore(lazyLoadState.current.hasMore);
       
-      setAllActivities(res.list);
+      // 更新数据
+      if (append) {
+        setAllActivities(prev => [...prev, ...res.list]);
+      } else {
+        setAllActivities(res.list);
+      }
+      
       setTotal(res.pagination.total);
+      
     } catch (err) {
       setError(err.message);
-      console.error('获取所有活动数据失败:', err);
+      console.error('懒加载活动数据失败:', err);
     } finally {
-      setLoadingAll(false);
+      lazyLoadState.current.isLoading = false;
+      setLoadingMore(false);
     }
   }, []);
-  
+
   // 预加载下一页数据
   const prefetchNextPage = useCallback((filters, pagination) => {
     const nextPage = pagination.currentPage + 1;
@@ -119,17 +143,33 @@ const useActivityData = () => {
       });
     }
   }, []);
-  
+
+  // 重置懒加载状态
+  const resetLazyLoad = useCallback(() => {
+    lazyLoadState.current = {
+      currentPage: 1,
+      pageSize: 20,
+      isLoading: false,
+      hasMore: true
+    };
+    setHasMore(true);
+    setAllActivities([]);
+    setTotal(0);
+  }, []);
+
   return { 
     activities, 
     allActivities,
     loading, 
     loadingAll,
+    loadingMore,
     error, 
     total, 
+    hasMore,
     fetchActivities, 
-    fetchAllActivities,
-    prefetchNextPage 
+    fetchLazyActivities,
+    prefetchNextPage,
+    resetLazyLoad
   };
 };
 
