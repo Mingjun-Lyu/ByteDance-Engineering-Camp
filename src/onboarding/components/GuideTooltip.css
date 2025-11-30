@@ -1,0 +1,250 @@
+/* 步骤提示框组件样式 */
+
+.guide-tooltip-simple {
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+  max-width: 320px;
+  min-width: 250px;
+  animation: guide-tooltip-fade-in 0.3s ease-out;
+  z-index: 9998;
+}
+
+/* 箭头样式 */
+.guide-tooltip-arrow {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  border: 1px solid #e0e0e0;
+}
+
+.guide-tooltip-arrow--top {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  border-top: none;
+  border-left: none;
+}
+
+.guide-tooltip-arrow--bottom {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  border-bottom: none;
+  border-right: none;
+}
+
+.guide-tooltip-arrow--left {
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  border-left: none;
+  border-bottom: none;
+}
+
+.guide-tooltip-arrow--right {
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  border-right: none;
+  border-top: none;
+}
+
+/* 内容区域 */
+.guide-tooltip-simple-content {
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.guide-tooltip-title {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.guide-tooltip-content {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.guide-tooltip-content p {
+  margin: 0;
+}
+
+/* 操作按钮 */
+.guide-tooltip-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.guide-tooltip-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+}
+
+.guide-tooltip-button--primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.guide-tooltip-button--primary:hover {
+  background-color: #0056b3;
+}
+
+.guide-tooltip-button--secondary {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.guide-tooltip-button--secondary:hover {
+  background-color: #e9ecef;
+}
+
+.guide-tooltip-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.guide-tooltip-close:hover {
+  background-color: #f8f9fa;
+  color: #666;
+}
+
+/* 动画效果 */
+@keyframes guide-tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 位置变体的动画 */
+.guide-tooltip-simple--top {
+  animation: guide-tooltip-slide-top 0.3s ease-out;
+}
+
+.guide-tooltip-simple--bottom {
+  animation: guide-tooltip-slide-bottom 0.3s ease-out;
+}
+
+.guide-tooltip-simple--left {
+  animation: guide-tooltip-slide-left 0.3s ease-out;
+}
+
+.guide-tooltip-simple--right {
+  animation: guide-tooltip-slide-right 0.3s ease-out;
+}
+
+@keyframes guide-tooltip-slide-top {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes guide-tooltip-slide-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes guide-tooltip-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes guide-tooltip-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .guide-tooltip-simple {
+    max-width: calc(100vw - 40px);
+    min-width: auto;
+    margin: 0 20px;
+  }
+  
+  .guide-tooltip-simple-content {
+    padding: 12px;
+  }
+  
+  .guide-tooltip-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .guide-tooltip-button {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .guide-tooltip-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* 无障碍支持 */
+.guide-tooltip-simple:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.guide-tooltip-button:focus,
+.guide-tooltip-close:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 1px;
+}

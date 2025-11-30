@@ -8,7 +8,6 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
-    ignores: ['**/__tests__/**'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -29,11 +28,27 @@ export default defineConfig([
   },
   {
     files: ['**/__tests__/**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
     languageOptions: {
+      ecmaVersion: 2020,
       globals: {
         ...globals.browser,
         ...globals.jest,
+        global: 'readonly',
       },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-undef': 'off',
     },
   },
 ])

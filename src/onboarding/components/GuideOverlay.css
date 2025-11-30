@@ -1,0 +1,238 @@
+/* 引导遮罩组件样式 */
+
+.guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: guide-fade-in 0.3s ease-out;
+}
+
+/* 高亮目标元素 */
+.guide-highlight {
+  position: absolute;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.1),
+              0 0 20px rgba(0, 123, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+  animation: guide-pulse 2s infinite;
+}
+
+/* 引导提示框 */
+.guide-tooltip {
+  position: absolute;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  min-width: 300px;
+  z-index: 2;
+  animation: guide-slide-in 0.3s ease-out;
+}
+
+/* 提示框位置变体 */
+.guide-tooltip--top {
+  transform: translateY(-20px);
+}
+
+.guide-tooltip--bottom {
+  transform: translateY(20px);
+}
+
+.guide-tooltip--left {
+  transform: translateX(-20px);
+}
+
+.guide-tooltip--right {
+  transform: translateX(20px);
+}
+
+/* 提示框内容 */
+.guide-tooltip-content {
+  padding: 24px 24px 16px;
+}
+
+.guide-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+.guide-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
+}
+
+.guide-content p {
+  margin: 0;
+}
+
+/* 控制面板 */
+.guide-controls {
+  padding: 0 24px 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 进度指示器 */
+.guide-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.guide-progress-text {
+  font-size: 12px;
+  color: #999;
+  min-width: 40px;
+}
+
+.guide-progress-bar {
+  flex: 1;
+  height: 4px;
+  background-color: #f0f0f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.guide-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* 按钮组 */
+.guide-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.guide-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.guide-button--primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.guide-button--primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.guide-button--secondary {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.guide-button--secondary:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.guide-button--text {
+  background: transparent;
+  color: #6c757d;
+  border: none;
+}
+
+.guide-button--text:hover {
+  color: #495057;
+  background-color: #f8f9fa;
+}
+
+/* 动画效果 */
+@keyframes guide-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes guide-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes guide-pulse {
+  0% {
+    box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.1),
+                0 0 20px rgba(0, 123, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.15),
+                0 0 30px rgba(0, 123, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.1),
+                0 0 20px rgba(0, 123, 255, 0.3);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .guide-tooltip {
+    max-width: calc(100vw - 40px);
+    min-width: auto;
+    margin: 20px;
+  }
+  
+  .guide-tooltip-content {
+    padding: 20px 20px 12px;
+  }
+  
+  .guide-controls {
+    padding: 0 20px 20px;
+  }
+  
+  .guide-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .guide-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* 无障碍支持 */
+.guide-overlay:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.guide-button:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}

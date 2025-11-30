@@ -1,0 +1,354 @@
+/* 引导控制面板组件样式 */
+
+.guide-control-panel {
+  position: fixed;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e8e8e8;
+  min-width: 280px;
+  max-width: 350px;
+  z-index: 9997;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  animation: guide-control-slide-in 0.3s ease-out;
+}
+
+/* 位置变体 */
+.guide-control-panel--top-left {
+  top: 20px;
+  left: 20px;
+}
+
+.guide-control-panel--top-right {
+  top: 20px;
+  right: 20px;
+}
+
+.guide-control-panel--bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+.guide-control-panel--bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+
+/* 紧凑模式 */
+.guide-control-panel--compact {
+  min-width: auto;
+  width: auto;
+}
+
+.guide-control-panel--compact .guide-control-content {
+  display: none;
+}
+
+.guide-control-panel--compact .guide-control-content.guide-control-content--expanded {
+  display: block;
+}
+
+/* 切换按钮 */
+.guide-control-toggle {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  background: #007bff;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.guide-control-toggle:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+}
+
+.guide-control-toggle-icon {
+  line-height: 1;
+}
+
+/* 面板内容 */
+.guide-control-content {
+  padding: 0;
+}
+
+/* 头部 */
+.guide-control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.guide-control-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.guide-control-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.guide-control-close:hover {
+  background-color: #f8f9fa;
+  color: #666;
+}
+
+/* 进度条 */
+.guide-control-progress {
+  padding: 16px 20px 12px;
+}
+
+.guide-control-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.guide-control-step-text {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.guide-control-percentage {
+  font-size: 14px;
+  color: #007bff;
+  font-weight: 600;
+}
+
+.guide-control-progress-bar {
+  height: 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.guide-control-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* 步骤信息 */
+.guide-control-step-info {
+  padding: 0 20px 16px;
+}
+
+.guide-control-current-step {
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
+}
+
+/* 按钮组 */
+.guide-control-buttons {
+  padding: 0 20px 16px;
+}
+
+.guide-control-primary-buttons,
+.guide-control-navigation,
+.guide-control-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.guide-control-navigation {
+  justify-content: space-between;
+}
+
+.guide-control-actions {
+  justify-content: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+}
+
+.guide-control-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  flex: 1;
+}
+
+.guide-control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.guide-control-button--primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.guide-control-button--primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.guide-control-button--secondary {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.guide-control-button--secondary:hover:not(:disabled) {
+  background-color: #e9ecef;
+}
+
+.guide-control-button--text {
+  background: transparent;
+  color: #6c757d;
+  border: none;
+  min-width: auto;
+  flex: none;
+}
+
+.guide-control-button--text:hover {
+  color: #495057;
+  background-color: #f8f9fa;
+}
+
+/* 状态指示器 */
+.guide-control-status {
+  padding: 12px 20px 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.guide-control-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.guide-control-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #28a745;
+  animation: guide-status-pulse 2s infinite;
+}
+
+.guide-control-status-indicator--paused .guide-control-status-dot {
+  background-color: #ffc107;
+  animation: none;
+}
+
+.guide-control-status-text {
+  color: #666;
+  font-weight: 500;
+}
+
+/* 动画效果 */
+@keyframes guide-control-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes guide-status-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .guide-control-panel {
+    max-width: calc(100vw - 40px);
+    min-width: auto;
+    margin: 20px;
+  }
+  
+  .guide-control-panel--top-left,
+  .guide-control-panel--top-right,
+  .guide-control-panel--bottom-left,
+  .guide-control-panel--bottom-right {
+    top: auto;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+  }
+  
+  .guide-control-header {
+    padding: 12px 16px;
+  }
+  
+  .guide-control-progress,
+  .guide-control-step-info,
+  .guide-control-buttons,
+  .guide-control-status {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .guide-control-buttons {
+    padding-bottom: 12px;
+  }
+  
+  .guide-control-primary-buttons,
+  .guide-control-navigation,
+  .guide-control-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .guide-control-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* 无障碍支持 */
+.guide-control-panel:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.guide-control-button:focus,
+.guide-control-close:focus,
+.guide-control-toggle:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 1px;
+}

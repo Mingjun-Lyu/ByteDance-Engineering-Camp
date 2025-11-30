@@ -40,7 +40,6 @@ global.document = {
 
 describe('StepExecutor', () => {
   let executor;
-  let mockAnimationManager;
   
   const mockStep = {
     id: 'test-step',
@@ -56,7 +55,6 @@ describe('StepExecutor', () => {
   };
   
   beforeEach(() => {
-    mockAnimationManager = new AnimationManager();
     executor = new StepExecutor({
       debug: false,
       enableFade: true,
@@ -131,7 +129,7 @@ describe('StepExecutor', () => {
     });
     
     test('should cache step result', async () => {
-      const result = await executor.executeStep(mockStep, mockContext);
+      await executor.executeStep(mockStep, mockContext);
       
       // Check if result is cached
       const cachedResult = executor.stepCache.get(mockStep.id);

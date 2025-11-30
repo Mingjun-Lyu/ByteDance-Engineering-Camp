@@ -410,7 +410,7 @@ describe('ElementLocator', () => {
         await locator.locate({
           selector: '#non-existent'
         });
-      } catch (error) {
+      } catch {
         // 预期会抛出错误
       }
       
