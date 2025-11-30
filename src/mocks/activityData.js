@@ -43,7 +43,7 @@ const generateActivities = () => {
         id: id++,
         title: `${categoryLabels[category]}${i}`,
         description: Mock.mock('@cparagraph(1, 3)'),
-        banner: `https://picsum.photos/800/400?random=${Math.floor(Math.random() * 1000)}`,
+        banner: `https://picsum.photos/1200/600?random=${Math.floor(Math.random() * 1000)}`,
         image: `https://picsum.photos/400/300?random=${Math.floor(Math.random() * 1000) + 100}`,
         category: category,
         categoryLabel: categoryLabels[category].replace('活动', ''),
@@ -89,7 +89,7 @@ const generateBanners = (activities = mockActivities) => {
   // 将活动数据转换为Banner格式
   return selectedActivities.map((activity, index) => ({
     id: activity.id,
-    image: activity.image || Mock.mock('@image(1200x400)'),
+    image: activity.banner || Mock.mock('@image(1200x400)'),
     title: activity.title,
     link: `/detail/${activity.id}`,
     priority: 10 - index // 添加优先级
@@ -160,7 +160,7 @@ const generateNotices = (activities) => {
   allNotices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   
   // 限制公告数量在5-10条
-  const noticeCount = Math.min(allNotices.length, Math.floor(Math.random() * 6) + 5);
+  const noticeCount = Math.min(allNotices.length, Math.floor(Math.random() * 6) + 2);
   return allNotices.slice(0, noticeCount);
 };
 
