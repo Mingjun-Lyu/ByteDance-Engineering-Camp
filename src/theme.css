@@ -421,8 +421,8 @@ img {
   }
 }
 
-/* 响应式容器 */
-.container {
+/* 响应式容器 - 仅用于自定义容器，不影响Bootstrap组件 */
+.custom-container {
   width: 100%;
   max-width: var(--max-width-desktop);
   margin: 0 auto;
@@ -439,7 +439,7 @@ img {
     --header-height: 56px;
   }
   
-  .container {
+  .custom-container {
     padding: 0 var(--space-md);
   }
 }
@@ -452,7 +452,7 @@ img {
     --header-height: 52px;
   }
   
-  .container {
+  .custom-container {
     padding: 0 var(--space-sm);
   }
 }

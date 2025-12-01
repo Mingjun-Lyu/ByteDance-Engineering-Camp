@@ -395,8 +395,8 @@ blockquote {
   box-shadow: var(--shadow-md);
 }
 
-/* 布局工具类 */
-.container {
+/* 布局工具类 - 仅用于自定义容器，不影响Bootstrap组件 */
+.custom-container {
   width: 100%;
   max-width: var(--max-width-desktop);
   margin-right: auto;
@@ -405,7 +405,7 @@ blockquote {
   padding-left: var(--space-lg);
 }
 
-.container-fluid {
+.custom-container-fluid {
   width: 100%;
   padding-right: var(--space-lg);
   padding-left: var(--space-lg);

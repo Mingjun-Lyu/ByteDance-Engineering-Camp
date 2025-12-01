@@ -62,8 +62,8 @@ a {
   background: #a8a8a8;
 }
 
-/* 响应式容器 */
-.container {
+/* 响应式容器 - 仅用于自定义容器，不影响Bootstrap组件 */
+.custom-container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
