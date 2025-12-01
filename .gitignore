@@ -26,3 +26,6 @@ dist-ssr
 # Documentation directories
 docs
 README.md
+
+# DriverJS directory
+src/driverjs

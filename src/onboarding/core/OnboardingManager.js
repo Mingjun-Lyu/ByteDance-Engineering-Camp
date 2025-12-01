@@ -3,6 +3,7 @@ import { StorageManager } from '../storage/StorageManager.js';
 import { StepExecutor } from './StepExecutor.js';
 import { StepNavigationManager } from './StepNavigationManager.js';
 import { StepStateManager } from './StepStateManager.js';
+import { DriverJSAdapter } from '../adapters/driverjs-adapter.js';
 
 /**
  * 新手引导管理器核心类
@@ -32,6 +33,19 @@ export class OnboardingManager extends EventEmitter {
         saveInterval: 1000,
         maxStateHistory: 20
       },
+      // DriverJS UI配置
+      ui: {
+        animate: true,
+        allowClose: true,
+        overlayClickBehavior: 'close',
+        overlayOpacity: 0.7,
+        smoothScroll: true,
+        disableActiveInteraction: false,
+        showProgress: true,
+        stagePadding: 10,
+        stageRadius: 5,
+        showButtons: ['next', 'previous', 'close']
+      },
       ...options
     };
     
@@ -56,8 +70,12 @@ export class OnboardingManager extends EventEmitter {
     this.stepNavigation = new StepNavigationManager(this.options.navigation);
     this.stepStateManager = new StepStateManager(this.options.stateManagement);
     
+    // 初始化DriverJS适配器
+    this.driverAdapter = DriverJSAdapter;
+    
     // 绑定事件
     this.bindStepEngineEvents();
+    this.bindDriverEvents();
     
     // 初始化
     this.initialize();
@@ -105,9 +123,61 @@ export class OnboardingManager extends EventEmitter {
         this.log('State restored from storage');
       }
       
+      // 初始化DriverJS适配器
+      this.driverAdapter.init(this.options.ui);
+      this.log('DriverJS adapter initialized');
+      
       this.emit('initialized', this.state);
     } catch (error) {
       this.handleError('Failed to initialize', error);
+    }
+  }
+  
+  /**
+   * 绑定DriverJS适配器事件
+   */
+  bindDriverEvents() {
+    // 绑定DriverJS事件到OnboardingManager
+    this.driverAdapter.on('nextClick', () => this.nextStep());
+    this.driverAdapter.on('prevClick', () => this.previousStep());
+    this.driverAdapter.on('closeClick', () => this.handleCloseClick());
+    this.driverAdapter.on('overlayClick', () => this.handleOverlayClick());
+    
+    this.log('DriverJS events bound');
+  }
+  
+  /**
+   * 处理关闭按钮点击事件
+   */
+  async handleCloseClick() {
+    if (!this.state.isActive) return;
+    
+    const guideId = this.state.currentGuide;
+    
+    // 根据配置决定是暂停还是跳过引导
+    if (this.options.navigation.allowSkip) {
+      await this.skipGuide(guideId);
+    } else {
+      this.pauseGuide();
+    }
+  }
+  
+  /**
+   * 处理遮罩层点击事件
+   */
+  handleOverlayClick() {
+    const behavior = this.options.ui.overlayClickBehavior || 'close';
+    
+    switch (behavior) {
+      case 'next':
+        this.nextStep();
+        break;
+      case 'close':
+        this.handleCloseClick();
+        break;
+      case 'none':
+      default:
+        break;
     }
   }
   
@@ -388,6 +458,9 @@ export class OnboardingManager extends EventEmitter {
       return;
     }
     
+    // 清理UI显示
+    this.clearCurrentUI();
+    
     this.state.isPaused = true;
     this.log('Guide paused');
     this.emit('guidePaused', { guideId: this.state.currentGuide });
@@ -418,6 +491,9 @@ export class OnboardingManager extends EventEmitter {
     if (this.stepStateManager.state.currentExecution) {
       this.stepStateManager.resumeStepExecution(this.stepStateManager.state.currentExecution.id);
     }
+    
+    // 重新初始化DriverJS适配器
+    this.driverAdapter.init(this.options.ui);
     
     // 重新执行当前步骤
     await this.executeCurrentStep();
@@ -455,6 +531,36 @@ export class OnboardingManager extends EventEmitter {
   /**
    * 执行当前步骤
    */
+  /**
+   * 准备DriverJS步骤配置
+   */
+  prepareDriverStep(currentStep, guide, stepIndex) {
+    const driverStep = {
+      element: currentStep.selector || currentStep.element,
+      popover: {
+        title: currentStep.title,
+        description: currentStep.content || currentStep.description,
+        nextBtnText: currentStep.nextButtonText || '下一步',
+        prevBtnText: currentStep.prevButtonText || '上一步',
+        side: currentStep.side || 'bottom',
+        showButtons: currentStep.showButtons,
+        disableButtons: currentStep.disableButtons,
+        showProgress: currentStep.showProgress
+      },
+      disableActiveInteraction: currentStep.disableInteraction
+    };
+    
+    // 添加进度信息
+    if (guide.steps && guide.steps.length > 0) {
+      driverStep.popover.progressText = `${stepIndex + 1} of ${guide.steps.length}`;
+    }
+    
+    return driverStep;
+  }
+  
+  /**
+   * 执行当前步骤
+   */
   async executeCurrentStep() {
     if (!this.state.isActive || this.state.isPaused) {
       return;
@@ -473,6 +579,10 @@ export class OnboardingManager extends EventEmitter {
       this.handleError(`Step not found at index: ${currentStepIndex}`);
       return;
     }
+    
+    // 准备并显示DriverJS高亮和提示
+    const driverStep = this.prepareDriverStep(currentStep, guide, currentStepIndex);
+    this.driverAdapter.highlightElement(driverStep);
     
     let executionId;
     try {
@@ -511,6 +621,18 @@ export class OnboardingManager extends EventEmitter {
         stepIndex: currentStepIndex 
       });
       throw error;
+    }
+  }
+  
+  /**
+   * 清理当前UI显示
+   */
+  clearCurrentUI() {
+    try {
+      this.driverAdapter.destroy();
+      this.log('UI cleared');
+    } catch (error) {
+      this.handleError('Failed to clear UI', error);
     }
   }
   
@@ -575,6 +697,9 @@ export class OnboardingManager extends EventEmitter {
     
     const guideId = this.state.currentGuide;
     
+    // 清理UI显示
+    this.clearCurrentUI();
+    
     // 重置步骤执行状态
     this.stepStateManager.reset();
     
@@ -603,6 +728,9 @@ export class OnboardingManager extends EventEmitter {
    */
   async skipGuide(guideId) {
     if (this.state.isActive && this.state.currentGuide === guideId) {
+      // 清理UI显示
+      this.clearCurrentUI();
+      
       this.state.isActive = false;
       this.state.currentGuide = null;
       this.state.currentStep = null;
@@ -626,8 +754,11 @@ export class OnboardingManager extends EventEmitter {
       this.state.completedGuides.delete(guideId);
       this.state.skippedGuides.delete(guideId);
       
-      // 如果重置的是当前活动引导，则清理步骤引擎
+      // 如果重置的是当前活动引导，则清理步骤引擎和UI
       if (this.state.currentGuide === guideId) {
+        // 清理UI显示
+        this.clearCurrentUI();
+        
         this.stepExecutor.reset();
         this.stepNavigation.reset();
         this.stepStateManager.reset();
@@ -640,6 +771,9 @@ export class OnboardingManager extends EventEmitter {
       
       this.log(`Guide reset: ${guideId}`);
     } else {
+      // 清理UI显示
+      this.clearCurrentUI();
+      
       this.state.completedGuides.clear();
       this.state.skippedGuides.clear();
       
