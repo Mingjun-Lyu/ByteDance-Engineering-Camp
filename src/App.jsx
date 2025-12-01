@@ -8,8 +8,9 @@ import ActivityHome from './pages/ActivityHome';
 import ActivityList from './pages/ActivityList';
 import ActivityDetail from './pages/ActivityDetail';
 
-// 导入onboarding工具
+// 导入onboarding工具和组件
 import { useOnboarding } from './onboarding/hooks/useOnboarding';
+import { GuideOverlay } from './onboarding/components';
 
 // 导入引导配置
 import { activityPlatformGuideConfig } from './onboarding/guides/activityPlatformGuide';
@@ -38,7 +39,8 @@ const AppContent = () => {
     resumeGuide,
     completeStep,
     skipGuide,
-    isGuideActive
+    isGuideActive,
+    getGuide
   } = useOnboarding({
     debug: true,
     autoSave: true
@@ -114,74 +116,23 @@ const AppContent = () => {
         </Container>
       </main>
       
-      {/* 引导UI */}
-      {isActive && (
-        <div className="onboarding-overlay">
-          <div 
-            className="onboarding-backdrop" 
-            onClick={() => {
-              if (isPaused) {
-                resumeGuide();
-              } else {
-                pauseGuide();
-              }
-            }}
-          />
-          <div className="onboarding-tooltip">
-            <div className="tooltip-header">
-              <h5>
-                {isPaused ? '引导已暂停' : '引导提示'}
-                {isPaused && <span className="badge bg-warning ms-2">已暂停</span>}
-              </h5>
-              <button 
-                className="close-button"
-                onClick={() => skipGuide('activity-platform-guide')}
-              >
-                ×
-              </button>
-            </div>
-            <div className="tooltip-content">
-              {currentStep >= 0 && activityPlatformGuideConfig.steps[currentStep] ? (
-                <>
-                  <h6 className="fw-bold">{activityPlatformGuideConfig.steps[currentStep].title}</h6>
-                  <p className="mb-0">{activityPlatformGuideConfig.steps[currentStep].content}</p>
-                </>
-              ) : (
-                <p>请按照提示完成平台功能引导</p>
-              )}
-            </div>
-            <div className="tooltip-footer">
-              <span className="step-progress">
-                步骤 {currentStep + 1} / {activityPlatformGuideConfig.steps.length}
-                {isPaused && <span className="text-warning ms-2">已暂停</span>}
-              </span>
-              <div className="tooltip-actions">
-                <button 
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={() => skipGuide('activity-platform-guide')}
-                >
-                  跳过
-                </button>
-                {isPaused ? (
-                  <button 
-                    className="btn btn-success btn-sm ms-2"
-                    onClick={resumeGuide}
-                  >
-                    继续引导
-                  </button>
-                ) : (
-                  <button 
-                    className="btn btn-primary btn-sm ms-2"
-                    onClick={completeStep}
-                  >
-                    {currentStep === activityPlatformGuideConfig.steps.length - 1 ? '完成' : '下一步'}
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 引导UI - 使用onboarding组件 */}
+      <GuideOverlay
+        isActive={isActive}
+        step={currentStep >= 0 ? {
+          ...activityPlatformGuideConfig.steps[currentStep],
+          progress: {
+            current: currentStep + 1,
+            total: activityPlatformGuideConfig.steps.length
+          },
+          isLast: currentStep === activityPlatformGuideConfig.steps.length - 1
+        } : null}
+        onNext={completeStep}
+        onSkip={() => skipGuide('activity-platform-guide')}
+        onClose={() => skipGuide('activity-platform-guide')}
+        showProgress={true}
+        showControls={true}
+      />
     </div>
   );
 };
