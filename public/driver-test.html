@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver.js 引导程序测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #4facfe;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .demo-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .demo-controls .btn {
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-controls">
+        <button class="btn btn-primary" id="startTour">开始引导</button>
+        <button class="btn btn-secondary" id="highlightDemo">高亮演示</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Driver.js 引导程序演示</h1>
+            <p>这是一个完整的引导程序测试页面，展示了Driver.js的各种功能</p>
+        </div>
+        
+        <div class="content">
+            <div class="sidebar">
+                <h2>功能特性</h2>
+                <ul class="feature-list">
+                    <li>✅ 逐步引导用户界面</li>
+                    <li>✅ 自定义弹窗内容</li>
+                    <li>✅ 响应式设计支持</li>
+                    <li>✅ 键盘导航支持</li>
+                    <li>✅ 进度指示器</li>
+                    <li>✅ 自定义按钮配置</li>
+                </ul>
+                
+                <div class="form-group">
+                    <label for="userName">您的姓名</label>
+                    <input type="text" id="userName" placeholder="请输入您的姓名">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">邮箱地址</label>
+                    <input type="email" id="userEmail" placeholder="请输入邮箱地址">
+                </div>
+                
+                <button class="btn btn-success" id="submitBtn">提交信息</button>
+            </div>
+            
+            <div class="main-content">
+                <div class="card" id="welcomeCard">
+                    <h2>欢迎使用我们的应用</h2>
+                    <p>这是一个演示页面，展示了如何使用Driver.js创建用户引导程序。通过引导程序，您可以向用户介绍应用的重要功能。</p>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="actionBtn1">主要操作</button>
+                        <button class="btn btn-secondary" id="actionBtn2">次要操作</button>
+                    </div>
+                </div>
+                
+                <div class="card" id="featuresCard">
+                    <h2>核心功能</h2>
+                    <p>我们的应用提供了以下核心功能：</p>
+                    <ul>
+                        <li><span class="highlight">数据管理</span> - 高效的数据存储和检索</li>
+                        <li><span class="highlight">用户界面</span> - 直观易用的操作界面</li>
+                        <li><span class="highlight">分析报告</span> - 详细的数据分析和可视化</li>
+                    </ul>
+                </div>
+                
+                <div class="card" id="settingsCard">
+                    <h2>设置选项</h2>
+                    <p>在这里您可以配置应用的各项设置：</p>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="settingsBtn">打开设置</button>
+                        <button class="btn btn-secondary" id="helpBtn">帮助文档</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2024 演示应用. 所有权利保留.</p>
+            <p>使用Driver.js构建的用户引导演示</p>
+        </div>
+    </div>
+
+    <!-- 引入Driver.js -->
+    <script type="module">
+        // 动态加载driver.js模块
+        async function loadDriver() {
+            try {
+                // 使用相对路径导入driver.js模块
+                const driverModule = await import('/src/driver/driver.js');
+                // driver.js使用命名导出，所以需要访问driver属性
+                return driverModule.driver;
+            } catch (error) {
+                console.error('加载Driver.js失败:', error);
+                alert('无法加载引导程序模块。请确保项目已正确构建并运行在HTTP服务器上。');
+                return null;
+            }
+        }
+        
+        // 引导步骤配置
+        const tourSteps = [
+            {
+                element: '#welcomeCard',
+                popover: {
+                    title: '欢迎使用',
+                    description: '这是我们的欢迎卡片，包含主要的功能介绍和操作按钮。',
+                    side: 'bottom',
+                    align: 'center'
+                }
+            },
+            {
+                element: '#actionBtn1',
+                popover: {
+                    title: '主要操作按钮',
+                    description: '点击此按钮可以执行应用的主要功能操作。',
+                    side: 'bottom',
+                    align: 'center'
+                }
+            },
+            {
+                element: '#featuresCard',
+                popover: {
+                    title: '核心功能',
+                    description: '这里列出了应用的所有核心功能特性。',
+                    side: 'left',
+                    align: 'center'
+                }
+            },
+            {
+                element: '#userName',
+                popover: {
+                    title: '用户信息',
+                    description: '在这里输入您的姓名，我们会为您提供个性化服务。',
+                    side: 'right',
+                    align: 'center'
+                }
+            },
+            {
+                element: '#userEmail',
+                popover: {
+                    title: '邮箱地址',
+                    description: '请输入有效的邮箱地址以便接收重要通知。',
+                    side: 'right',
+                    align: 'center'
+                }
+            },
+            {
+                element: '#submitBtn',
+                popover: {
+                    title: '提交信息',
+                    description: '点击此按钮提交您的个人信息。',
+                    side: 'top',
+                    align: 'center'
+                }
+            },
+            {
+                element: '#settingsCard',
+                popover: {
+                    title: '设置选项',
+                    description: '这里是应用的设置区域，您可以配置各种选项。',
+                    side: 'top',
+                    align: 'center',
+                    doneBtnText: '完成引导'
+                }
+            }
+        ];
+        
+        // 高亮演示步骤
+        const highlightSteps = [
+            {
+                element: '#actionBtn2',
+                popover: {
+                    title: '次要操作',
+                    description: '这是次要操作按钮，用于辅助功能。',
+                    showButtons: [] // 不显示导航按钮
+                }
+            },
+            {
+                element: '#helpBtn',
+                popover: {
+                    title: '帮助文档',
+                    description: '点击这里可以查看详细的帮助文档。',
+                    showButtons: []
+                }
+            }
+        ];
+        
+        let tourDriver = null;
+        
+        // 初始化引导程序
+        async function initializeDriver() {
+            const driverFunction = await loadDriver();
+            if (!driverFunction) return null;
+            
+            return driverFunction({
+                animate: true,
+                allowClose: true,
+                overlayClickBehavior: 'next',
+                showProgress: true,
+                showButtons: ['next', 'previous', 'close'],
+                progressText: '步骤 {{current}} / {{total}}',
+                nextBtnText: '下一步',
+                prevBtnText: '上一步',
+                doneBtnText: '完成',
+                
+                onHighlightStarted: (element, step) => {
+                    console.log('开始高亮:', step.popover?.title);
+                },
+                
+                onDeselected: (element, step) => {
+                    console.log('离开步骤:', step.popover?.title);
+                },
+                
+                onDestroyed: () => {
+                    console.log('引导程序已结束');
+                }
+            });
+        }
+        
+        // 开始引导按钮事件
+        document.getElementById('startTour').addEventListener('click', async () => {
+            if (!tourDriver) {
+                tourDriver = await initializeDriver();
+                if (!tourDriver) return;
+                tourDriver.setSteps(tourSteps);
+            }
+            tourDriver.drive();
+        });
+        
+        // 高亮演示按钮事件
+        document.getElementById('highlightDemo').addEventListener('click', async () => {
+            if (!tourDriver) {
+                tourDriver = await initializeDriver();
+                if (!tourDriver) return;
+            }
+            
+            // 随机选择一个高亮步骤
+            const randomStep = highlightSteps[Math.floor(Math.random() * highlightSteps.length)];
+            tourDriver.highlight(randomStep);
+        });
+        
+        // 为其他按钮添加点击事件
+        document.getElementById('actionBtn1').addEventListener('click', () => {
+            alert('主要操作按钮被点击！');
+        });
+        
+        document.getElementById('actionBtn2').addEventListener('click', () => {
+            alert('次要操作按钮被点击！');
+        });
+        
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            alert('设置按钮被点击！');
+        });
+        
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            alert('帮助按钮被点击！');
+        });
+        
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            
+            if (name && email) {
+                alert(`感谢提交！姓名: ${name}, 邮箱: ${email}`);
+            } else {
+                alert('请填写完整信息！');
+            }
+        });
+        
+        console.log('Driver.js 引导程序测试页面已加载完成！');
+        console.log('点击"开始引导"按钮开始体验引导程序');
+    </script>
+</body>
+</html>
