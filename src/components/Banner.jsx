@@ -14,12 +14,12 @@ const Banner = ({ banners }) => {
   }
   
   return (
-    <Carousel className="mb-4" interval={3000} indicators={true} controls={true}>
-      {banners.map((banner) => (
-        <Carousel.Item key={banner.id}>
-          <Link to={banner.link || '/'} style={{ textDecoration: 'none' }}>
+    <Carousel className="mb-4 banner-carousel" interval={3000} indicators={true} controls={true}>
+      {banners.map((banner, index) => (
+        <Carousel.Item key={banner.id} className={index === 0 ? 'first-banner-item' : 'banner-item'}>
+          <Link to={banner.link || '/'} style={{ textDecoration: 'none' }} className="banner-link">
             <div 
-              className="d-flex align-items-center justify-content-center"
+              className="d-flex align-items-center justify-content-center banner-image-container"
               style={{ 
                 height: '300px',
                 backgroundImage: `url('${banner.image}')`,
@@ -35,8 +35,8 @@ const Banner = ({ banners }) => {
               }}
             >
               {/* 添加半透明遮罩层增强标题可读性 */}
-              <div className="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-50 text-white p-4 text-center">
-                <h3 className="h4 mb-0 fw-bold">
+              <div className="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-50 text-white p-4 text-center banner-overlay">
+                <h3 className="h4 mb-0 fw-bold banner-title">
                   {banner.title || '活动标题'}
                 </h3>
               </div>

@@ -68,30 +68,30 @@ const ActivityHome = () => {
   }
 
   return (
-    <Container fluid>
+    <Container fluid className="activity-home-page">
       {/* Banner轮播 */}
-      <Row>
+      <Row className="banner-section">
         <Col>
           <Banner banners={banners} />
         </Col>
       </Row>
       
       {/* 活动分类 */}
-      <Row>
+      <Row className="categories-section">
         <Col>
           <ActivityCategories categories={categories} />
         </Col>
       </Row>
       
       {/* 公告信息 */}
-      <Row>
+      <Row className="notice-section">
         <Col>
           <Notice notices={notices} />
         </Col>
       </Row>
       
       {/* 重点活动 */}
-      <Row>
+      <Row className="highlight-activities-section">
         <Col>
           <HighlightActivities activities={highlightActivities} />
         </Col>

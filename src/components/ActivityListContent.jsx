@@ -46,12 +46,12 @@ const ActivityListContent = ({
   };
 
   // 渲染表格行
-  const renderTableRow = (activity) => {
+  const renderTableRow = (activity, index) => {
     const { text: statusText, variant: statusVariant } = getStatusConfig(activity.status);
     const categoryLabel = getCategoryLabel(activity.category);
     
     return (
-      <tr key={activity.id}>
+      <tr key={activity.id} className={index === 0 ? 'first-activity-row' : ''}>
         <td>
           <Link to={`/detail/${activity.id}`} className="text-decoration-none">
             {activity.title}
@@ -70,7 +70,7 @@ const ActivityListContent = ({
         <td>{activity.creator}</td>
         <td>{activity.registeredParticipants}</td>
         <td>
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" className="view-detail-btn">
             <Link to={`/detail/${activity.id}`} className="text-decoration-none text-white">
               查看详情
             </Link>
@@ -162,7 +162,7 @@ const ActivityListContent = ({
   };
 
   return (
-    <Card className="table-card">
+    <Card className="table-card activity-list-content">
       <Card.Body>
         {/* 错误提示 */}
         {renderError()}
@@ -188,6 +188,7 @@ const ActivityListContent = ({
                   onLoadMore={handleLoadMore}
                   hasMore={hasMore}
                   loadingMore={loadingMore}
+                  className="virtual-list"
                 />
                 {renderLoadMoreIndicator()}
                 {renderNoMoreData()}
@@ -201,7 +202,7 @@ const ActivityListContent = ({
         ) : (
           // 分页模式
           <>
-            <Table responsive striped hover>
+            <Table responsive striped hover className="activity-table">
               <thead>
                 <tr>
                   <th>活动标题</th>
@@ -215,7 +216,9 @@ const ActivityListContent = ({
               </thead>
               <tbody>
                 {activities.length > 0 ? (
-                  activities.map(renderTableRow)
+                  activities.map((activity, index) => (
+                    renderTableRow(activity, index)
+                  ))
                 ) : (
                   <tr>
                     <td colSpan="7" className="text-center py-4 text-muted">
@@ -228,7 +231,7 @@ const ActivityListContent = ({
             {!pagination.disablePagination && activities.length > 0 && (
               <div className="mt-4">
                 {/* 分页控件 */}
-                <div className="d-flex align-items-center justify-content-between bg-light p-3 rounded">
+                <div className="d-flex align-items-center justify-content-between bg-light p-3 rounded pagination-controls">
                   <div className="d-flex align-items-center gap-3">
                     {/* 页面大小选择器 */}
                     <div className="d-flex align-items-center gap-2">
@@ -240,6 +243,7 @@ const ActivityListContent = ({
                         }}
                         style={{ width: '80px' }}
                         size="sm"
+                        className="page-size-selector"
                       >
                         <option value="10">10</option>
                         <option value="20">20</option>
@@ -252,7 +256,7 @@ const ActivityListContent = ({
                   </div>
                   
                   {/* 页码导航 */}
-                  <div className="d-flex align-items-center gap-2">
+                  <div className="d-flex align-items-center gap-2 pagination-nav">
                     <Button
                       variant="outline-primary"
                       size="sm"
@@ -260,6 +264,7 @@ const ActivityListContent = ({
                       onClick={() => {
                         handlePageChange(pagination.currentPage - 1, pagination.pageSize, filters);
                       }}
+                      className="prev-page-btn"
                     >
                       上一页
                     </Button>
@@ -267,7 +272,7 @@ const ActivityListContent = ({
                     {/* 页码显示 */}
                     <div className="d-flex align-items-center gap-2">
                       <span className="small text-muted">第</span>
-                      <span className="fw-bold text-primary px-2 py-1 border border-primary rounded">
+                      <span className="fw-bold text-primary px-2 py-1 border border-primary rounded current-page">
                         {pagination.currentPage}
                       </span>
                       <span className="small text-muted">页，共 {pagination.totalPages} 页</span>
@@ -280,6 +285,7 @@ const ActivityListContent = ({
                       onClick={() => {
                         handlePageChange(pagination.currentPage + 1, pagination.pageSize, filters);
                       }}
+                      className="next-page-btn"
                     >
                       下一页
                     </Button>

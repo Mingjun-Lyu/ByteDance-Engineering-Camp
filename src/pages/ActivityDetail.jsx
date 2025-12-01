@@ -114,7 +114,7 @@ const ActivityDetail = () => {
   }
 
   return (
-    <Container fluid className="py-4">
+    <Container fluid className="py-4 activity-detail-page">
       {/* 头部组件 */}
       <ActivityDetailHeader
         activity={activity}
@@ -126,6 +126,7 @@ const ActivityDetail = () => {
         onBack={handleBack}
         loading={loading}
         saveLoading={saveLoading}
+        className="activity-detail-header"
       />
 
       {/* 内容组件 */}
@@ -134,6 +135,7 @@ const ActivityDetail = () => {
         isEditing={isEditing}
         formData={formData}
         onFormDataChange={updateFormData}
+        className="activity-detail-content"
       />
 
       {/* 全局加载指示器 */}

@@ -15,21 +15,32 @@ export function useOnboarding(options = {}) {
   
   const managerRef = useRef(null);
   
+  // 监听状态变化的回调函数
+  const updateState = useCallback(() => {
+    if (managerRef.current) {
+      const managerState = managerRef.current.getState();
+      setState(prevState => {
+        // 只有当状态真正改变时才更新，避免不必要的渲染
+        if (prevState.isActive === managerState.isActive &&
+            prevState.currentGuide === managerState.currentGuide &&
+            prevState.currentStep === managerState.currentStep &&
+            prevState.isPaused === managerState.isPaused) {
+          return prevState;
+        }
+        return {
+          isActive: managerState.isActive,
+          currentGuide: managerState.currentGuide,
+          currentStep: managerState.currentStep,
+          isPaused: managerState.isPaused
+        };
+      });
+    }
+  }, []);
+
   // 初始化管理器
   useEffect(() => {
     const manager = new OnboardingManager(options);
     managerRef.current = manager;
-    
-    // 监听状态变化
-    const updateState = () => {
-      const managerState = manager.getState();
-      setState({
-        isActive: managerState.isActive,
-        currentGuide: managerState.currentGuide,
-        currentStep: managerState.currentStep,
-        isPaused: managerState.isPaused
-      });
-    };
     
     // 监听相关事件
     const events = [
@@ -54,7 +65,7 @@ export function useOnboarding(options = {}) {
         manager.off(event, updateState);
       });
     };
-  }, [options]);
+  }, [options, updateState]);
   
   // 注册引导配置
   const registerGuide = useCallback((guideId, config) => {

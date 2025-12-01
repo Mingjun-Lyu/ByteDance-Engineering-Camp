@@ -68,6 +68,27 @@ export class OnboardingManager extends EventEmitter {
    */
   async initialize() {
     try {
+      // 开发环境下重置状态，避免缓存问题
+      // 在浏览器环境中，通过URL或hostname判断是否为开发环境
+      const isDevelopment = 
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1' ||
+        window.location.port === '5173' || // Vite开发服务器默认端口
+        window.location.href.includes('localhost');
+      
+      if (isDevelopment) {
+        // 开发环境下检查是否需要重置状态
+        const lastResetTime = await this.storage.load('last_reset_time');
+        const currentTime = Date.now();
+        
+        // 如果超过5分钟没有重置，或者没有记录重置时间，则重置状态
+        if (!lastResetTime || (currentTime - lastResetTime > 5 * 60 * 1000)) {
+          await this.storage.clear();
+          await this.storage.save('last_reset_time', currentTime);
+          this.log('Development state reset');
+        }
+      }
+      
       // 从存储中恢复状态
       const savedState = await this.storage.load();
       if (savedState) {
@@ -676,6 +697,33 @@ export class OnboardingManager extends EventEmitter {
       return result;
     } catch (error) {
       this.handleError('Failed to save state', error);
+      return false;
+    }
+  }
+  
+  /**
+   * 清除所有存储数据
+   */
+  async clearAllStorage() {
+    try {
+      // 清除主状态数据
+      await this.storage.clear();
+      
+      // 清除重置时间记录
+      await this.storage.clear('last_reset_time');
+      
+      // 重置内存状态
+      this.state.completedGuides.clear();
+      this.state.skippedGuides.clear();
+      this.state.currentGuide = null;
+      this.state.currentStep = 0;
+      this.state.isActive = false;
+      this.state.isPaused = false;
+      
+      this.log('All storage cleared');
+      return true;
+    } catch (error) {
+      this.handleError('Failed to clear storage', error);
       return false;
     }
   }

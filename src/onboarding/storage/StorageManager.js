@@ -70,22 +70,29 @@ export class StorageManager {
   /**
    * 保存数据
    * @param {any} data - 要保存的数据
+   * @param {string} key - 存储键名（可选，默认为主键）
    */
-  async save(data) {
+  async save(data, key = null) {
     try {
       const storage = this.getStorage();
+      const storageKey = key ? `${this.storageKey}_${key}` : this.storageKey;
       const serializedData = JSON.stringify(data);
-      storage.setItem(this.storageKey, serializedData);
+      storage.setItem(storageKey, serializedData);
       return true;
     } catch {
       return false;
     }
   }
 
-  async load() {
+  /**
+   * 加载数据
+   * @param {string} key - 存储键名（可选，默认为主键）
+   */
+  async load(key = null) {
     try {
       const storage = this.getStorage();
-      const data = storage.getItem(this.storageKey);
+      const storageKey = key ? `${this.storageKey}_${key}` : this.storageKey;
+      const data = storage.getItem(storageKey);
       
       // 如果数据不存在或为null，返回null
       if (data === null || data === undefined) {
@@ -101,10 +108,12 @@ export class StorageManager {
   
   /**
    * 清除数据
+   * @param {string} key - 存储键名（可选，默认为主键）
    */
-  async clear() {
+  async clear(key = null) {
     try {
-      this.storage.removeItem(this.storageKey);
+      const storageKey = key ? `${this.storageKey}_${key}` : this.storageKey;
+      this.storage.removeItem(storageKey);
       return true;
     } catch {
       return false;

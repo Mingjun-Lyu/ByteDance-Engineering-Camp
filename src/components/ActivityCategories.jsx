@@ -30,13 +30,13 @@ const ActivityCategories = ({ categories }) => {
   };
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 activity-categories">
       <Card.Header className="bg-light">
         <h4 className="mb-0">活动分类</h4>
       </Card.Header>
       <Card.Body>
         <Row className="g-3">
-          {categories.map((category) => (
+          {categories.map((category, index) => (
             <Col xs={12} sm={6} md={3} key={category.value}>
               <Link
                 to={`/list?category=${category.value}`}
@@ -44,7 +44,7 @@ const ActivityCategories = ({ categories }) => {
                 style={{ textDecoration: 'none' }}
               >
                 <Card 
-                  className={`text-center h-100 border-${getCategoryColor(category.value)} shadow-sm`}
+                  className={`text-center h-100 border-${getCategoryColor(category.value)} shadow-sm category-card ${index === 0 ? 'first-category-card' : ''}`}
                   style={{ transition: 'all 0.3s', cursor: 'pointer' }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-4px)';

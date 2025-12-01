@@ -438,13 +438,25 @@ export class StepExecutor extends EventEmitter {
       return null;
     }
     
-    // 这里将集成ElementLocator类
-    // 暂时使用简单的CSS选择器定位
-    if (targetConfig.selector) {
-      return document.querySelector(targetConfig.selector);
+    // 支持直接传递CSS选择器字符串或包含selector属性的对象
+    let selector;
+    if (typeof targetConfig === 'string') {
+      selector = targetConfig;
+    } else if (targetConfig.selector) {
+      selector = targetConfig.selector;
+    } else {
+      return null;
     }
     
-    return null;
+    // 使用简单的CSS选择器定位
+    const element = document.querySelector(selector);
+    
+    if (!element) {
+      this.log(`Target element not found with selector: ${selector}`, 'warn');
+      return null;
+    }
+    
+    return element;
   }
   
   /**

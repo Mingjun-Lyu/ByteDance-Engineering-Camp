@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Badge } from 'react-bootstrap';
 
-const ActivityCard = ({ activity }) => {
+const ActivityCard = ({ activity, className = '' }) => {
   const navigate = useNavigate();
   
   if (!activity) {
@@ -26,7 +26,7 @@ const ActivityCard = ({ activity }) => {
 
   return (
     <Card 
-      className="h-100 shadow-sm"
+      className={`h-100 shadow-sm ${className}`}
       style={{ transition: 'all 0.3s', cursor: 'pointer' }}
       onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
       onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}

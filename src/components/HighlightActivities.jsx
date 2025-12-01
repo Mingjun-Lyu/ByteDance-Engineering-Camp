@@ -15,19 +15,21 @@ const HighlightActivities = ({ activities }) => {
   }
   
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 highlight-activities">
       <Card.Header className="bg-light d-flex justify-content-between align-items-center">
         <h4 className="mb-0">重点活动</h4>
         <ButtonGroup size="sm">
           <Button 
             variant={layout === 'grid' ? 'primary' : 'outline-primary'}
             onClick={() => setLayout('grid')}
+            className="grid-layout-btn"
           >
             宫格布局
           </Button>
           <Button 
             variant={layout === 'carousel' ? 'primary' : 'outline-primary'}
             onClick={() => setLayout('carousel')}
+            className="carousel-layout-btn"
           >
             轮播布局
           </Button>
@@ -36,17 +38,17 @@ const HighlightActivities = ({ activities }) => {
       <Card.Body>
         {layout === 'grid' ? (
           <Row className="g-3">
-            {activities.map(activity => (
+            {activities.map((activity, index) => (
               <Col xs={12} sm={6} md={4} lg={3} key={activity.id}>
-                <ActivityCard activity={activity} />
+                <ActivityCard activity={activity} className={index === 0 ? 'first-activity-card' : ''} />
               </Col>
             ))}
           </Row>
         ) : (
           // 使用React Bootstrap的Carousel组件实现轮播
-          <Carousel interval={3000} indicators={true} controls={true}>
-            {activities.map(activity => (
-              <Carousel.Item key={activity.id}>
+          <Carousel interval={3000} indicators={true} controls={true} className="highlight-carousel">
+            {activities.map((activity, index) => (
+              <Carousel.Item key={activity.id} className={index === 0 ? 'first-carousel-item' : ''}>
                 <Link to={`/detail/${activity.id}`} style={{ textDecoration: 'none' }}>
                   <div 
                     className="d-flex align-items-center justify-content-center"

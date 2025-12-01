@@ -5,7 +5,7 @@ import { Card, Button, Form, Row, Col } from 'react-bootstrap';
 const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleReset, pagination, togglePagination, filters }) => {
 
   return (
-    <Card className="filter-card">
+    <Card className="filter-card filter-form-section">
       <Card.Body>
         <Form>
           <Row className="g-3 align-items-end">
@@ -14,6 +14,7 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
               <Form.Select
                 value={tempFilters.category}
                 onChange={(e) => updateTempFilter('category', e.target.value)}
+                className="category-filter"
               >
                 <option value="">全部分类</option>
                 <option value="promotion">促销活动</option>
@@ -28,6 +29,7 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
               <Form.Select
                 value={tempFilters.status}
                 onChange={(e) => updateTempFilter('status', e.target.value)}
+                className="status-filter"
               >
                 <option value="">全部状态</option>
                 <option value="ongoing">进行中</option>
@@ -43,6 +45,7 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
                 placeholder="搜索活动标题或描述"
                 value={tempFilters.keyword}
                 onChange={(e) => updateTempFilter('keyword', e.target.value)}
+                className="keyword-filter"
               />
             </Col>
             
@@ -52,6 +55,7 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
                 type="date"
                 value={tempFilters.startTime ? new Date(tempFilters.startTime).toISOString().split('T')[0] : ''}
                 onChange={(e) => updateTempFilter('startTime', e.target.value ? new Date(e.target.value).toISOString() : null)}
+                className="start-time-filter"
               />
             </Col>
             
@@ -61,20 +65,22 @@ const FilterForm = ({ tempFilters, updateTempFilter, handleFilterSubmit, handleR
                 type="date"
                 value={tempFilters.endTime ? new Date(tempFilters.endTime).toISOString().split('T')[0] : ''}
                 onChange={(e) => updateTempFilter('endTime', e.target.value ? new Date(e.target.value).toISOString() : null)}
+                className="end-time-filter"
               />
             </Col>
             
             <Col md={2}>
-              <div className="d-flex gap-2">
-                <Button variant="primary" onClick={handleFilterSubmit}>
+              <div className="d-flex gap-2 filter-buttons">
+                <Button variant="primary" onClick={handleFilterSubmit} className="filter-submit-btn">
                   筛选
                 </Button>
-                <Button variant="outline-secondary" onClick={handleReset}>
+                <Button variant="outline-secondary" onClick={handleReset} className="filter-reset-btn">
                   重置
                 </Button>
                 <Button 
                   variant={pagination.disablePagination ? "primary" : "outline-primary"}
                   onClick={() => togglePagination(!pagination.disablePagination, filters)}
+                  className="pagination-toggle-btn"
                 >
                   {pagination.disablePagination ? "恢复分页" : "取消分页"}
                 </Button>

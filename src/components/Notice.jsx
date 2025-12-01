@@ -32,15 +32,15 @@ const Notice = ({ notices }) => {
   };
   
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 notice-section">
       <Card.Header className="bg-light">
         <h4 className="mb-0">公告信息</h4>
       </Card.Header>
       <ListGroup variant="flush">
-        {notices.map((notice) => (
+        {notices.map((notice, index) => (
           <ListGroup.Item 
             key={notice.id}
-            className="border-0"
+            className={`border-0 notice-item ${index === 0 ? 'first-notice' : ''}`}
             style={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
             onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
             onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}

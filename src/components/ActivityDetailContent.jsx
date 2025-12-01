@@ -12,7 +12,8 @@ const ActivityDetailContent = ({
   activity, 
   isEditing, 
   formData, 
-  onFormDataChange 
+  onFormDataChange,
+  className = '' 
 }) => {
   const handleInputChange = (field, value) => {
     onFormDataChange(field, value);
@@ -40,11 +41,11 @@ const ActivityDetailContent = ({
   };
 
   const renderBasicInfo = () => (
-    <Card className="mb-4">
-      <Card.Header>
+    <Card className="mb-4 basic-info-card">
+      <Card.Header className="basic-info-header">
         <h5 className="mb-0">基本信息</h5>
       </Card.Header>
-      <Card.Body>
+      <Card.Body className="basic-info-body">
         {isEditing ? (
           <Form>
             <Row className="g-3">
@@ -223,11 +224,11 @@ const ActivityDetailContent = ({
   );
 
   const renderActivityRules = () => (
-    <Card className="mb-4">
-      <Card.Header>
+    <Card className="mb-4 activity-rules-card">
+      <Card.Header className="activity-rules-header">
         <h5 className="mb-0">活动规则</h5>
       </Card.Header>
-      <Card.Body>
+      <Card.Body className="activity-rules-body">
         {isEditing ? (
           <Form>
             <Row>
@@ -258,7 +259,7 @@ const ActivityDetailContent = ({
   );
 
   return (
-    <div>
+    <div className={`activity-detail-content-wrapper ${className}`}>
       {renderBasicInfo()}
       {renderActivityRules()}
     </div>
