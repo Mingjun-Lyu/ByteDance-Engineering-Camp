@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import './App.css';
 
-// 导入页面组件（后续会重新创建）
+// 导入页面组件
 import ActivityHome from './pages/ActivityHome';
 import ActivityList from './pages/ActivityList';
 import ActivityDetail from './pages/ActivityDetail';
@@ -20,11 +20,6 @@ const AnimatedRoute = ({ children }) => {
 // 将路由逻辑封装到Router内部的组件中
 const AppContent = () => {
   const location = useLocation();
-  
-  // 处理开始引导按钮点击 - 改为空操作
-  const handleStartGuide = () => {
-    console.log('开始引导按钮被点击（空操作）');
-  };
   
   return (
     <div className="app-container">
@@ -51,14 +46,6 @@ const AppContent = () => {
               >
                 活动列表
               </Nav.Link>
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
-                className="ms-2 start-guide-btn"
-                onClick={handleStartGuide}
-              >
-                开始引导
-              </Button>
             </Nav>
           </Navbar.Collapse>
         </Container>
