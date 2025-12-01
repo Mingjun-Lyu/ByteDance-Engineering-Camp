@@ -1,0 +1,97 @@
+{
+  "tourSteps": [
+    {
+      "element": "#welcomeCard",
+      "popover": {
+        "title": "欢迎使用",
+        "description": "这是我们的欢迎卡片，包含主要的功能介绍和操作按钮。",
+        "side": "bottom",
+        "align": "center"
+      }
+    },
+    {
+      "element": "#actionBtn1",
+      "popover": {
+        "title": "主要操作按钮",
+        "description": "点击此按钮可以执行应用的主要功能操作。",
+        "side": "bottom",
+        "align": "center"
+      }
+    },
+    {
+      "element": "#featuresCard",
+      "popover": {
+        "title": "核心功能",
+        "description": "这里列出了应用的所有核心功能特性。",
+        "side": "left",
+        "align": "center"
+      }
+    },
+    {
+      "element": "#userName",
+      "popover": {
+        "title": "用户信息",
+        "description": "在这里输入您的姓名，我们会为您提供个性化服务。",
+        "side": "right",
+        "align": "center"
+      }
+    },
+    {
+      "element": "#userEmail",
+      "popover": {
+        "title": "邮箱地址",
+        "description": "请输入有效的邮箱地址以便接收重要通知。",
+        "side": "right",
+        "align": "center"
+      }
+    },
+    {
+      "element": "#submitBtn",
+      "popover": {
+        "title": "提交信息",
+        "description": "点击此按钮提交您的个人信息。",
+        "side": "top",
+        "align": "center"
+      }
+    },
+    {
+      "element": "#settingsCard",
+      "popover": {
+        "title": "设置选项",
+        "description": "这里是应用的设置区域，您可以配置各种选项。",
+        "side": "top",
+        "align": "center",
+        "doneBtnText": "完成引导"
+      }
+    }
+  ],
+  "highlightSteps": [
+    {
+      "element": "#actionBtn2",
+      "popover": {
+        "title": "次要操作",
+        "description": "这是次要操作按钮，用于辅助功能。",
+        "showButtons": []
+      }
+    },
+    {
+      "element": "#helpBtn",
+      "popover": {
+        "title": "帮助文档",
+        "description": "点击这里可以查看详细的帮助文档。",
+        "showButtons": []
+      }
+    }
+  ],
+  "driverOptions": {
+    "animate": true,
+    "allowClose": true,
+    "overlayClickBehavior": "next",
+    "showProgress": true,
+    "showButtons": ["next", "previous", "close"],
+    "progressText": "步骤 {{current}} / {{total}}",
+    "nextBtnText": "下一步",
+    "prevBtnText": "上一步",
+    "doneBtnText": "完成"
+  }
+}

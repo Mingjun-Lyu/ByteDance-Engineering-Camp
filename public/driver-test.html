@@ -297,102 +297,42 @@
             }
         }
         
-        // 引导步骤配置
-        const tourSteps = [
-            {
-                element: '#welcomeCard',
-                popover: {
-                    title: '欢迎使用',
-                    description: '这是我们的欢迎卡片，包含主要的功能介绍和操作按钮。',
-                    side: 'bottom',
-                    align: 'center'
+        // 从JSON配置文件加载引导配置
+        async function loadGuideConfig() {
+            try {
+                const response = await fetch('/guide-config.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            },
-            {
-                element: '#actionBtn1',
-                popover: {
-                    title: '主要操作按钮',
-                    description: '点击此按钮可以执行应用的主要功能操作。',
-                    side: 'bottom',
-                    align: 'center'
-                }
-            },
-            {
-                element: '#featuresCard',
-                popover: {
-                    title: '核心功能',
-                    description: '这里列出了应用的所有核心功能特性。',
-                    side: 'left',
-                    align: 'center'
-                }
-            },
-            {
-                element: '#userName',
-                popover: {
-                    title: '用户信息',
-                    description: '在这里输入您的姓名，我们会为您提供个性化服务。',
-                    side: 'right',
-                    align: 'center'
-                }
-            },
-            {
-                element: '#userEmail',
-                popover: {
-                    title: '邮箱地址',
-                    description: '请输入有效的邮箱地址以便接收重要通知。',
-                    side: 'right',
-                    align: 'center'
-                }
-            },
-            {
-                element: '#submitBtn',
-                popover: {
-                    title: '提交信息',
-                    description: '点击此按钮提交您的个人信息。',
-                    side: 'top',
-                    align: 'center'
-                }
-            },
-            {
-                element: '#settingsCard',
-                popover: {
-                    title: '设置选项',
-                    description: '这里是应用的设置区域，您可以配置各种选项。',
-                    side: 'top',
-                    align: 'center',
-                    doneBtnText: '完成引导'
-                }
+                const config = await response.json();
+                console.log('引导配置加载成功:', config);
+                return config;
+            } catch (error) {
+                console.error('加载引导配置失败:', error);
+                // 如果JSON加载失败，使用默认配置
+                return {
+                    tourSteps: [],
+                    highlightSteps: [],
+                    driverOptions: {}
+                };
             }
-        ];
-        
-        // 高亮演示步骤
-        const highlightSteps = [
-            {
-                element: '#actionBtn2',
-                popover: {
-                    title: '次要操作',
-                    description: '这是次要操作按钮，用于辅助功能。',
-                    showButtons: [] // 不显示导航按钮
-                }
-            },
-            {
-                element: '#helpBtn',
-                popover: {
-                    title: '帮助文档',
-                    description: '点击这里可以查看详细的帮助文档。',
-                    showButtons: []
-                }
-            }
-        ];
+        }
         
         let tourDriver = null;
+        let guideConfig = null;
         
         // 初始化引导程序
         async function initializeDriver() {
             const driverFunction = await loadDriver();
             if (!driverFunction) return null;
             
-            return driverFunction({
+            // 加载JSON配置
+            if (!guideConfig) {
+                guideConfig = await loadGuideConfig();
+            }
+            
+            // 合并默认选项和JSON配置中的选项
+            const driverOptions = {
                 animate: true,
                 allowClose: true,
                 overlayClickBehavior: 'next',
@@ -402,6 +342,7 @@
                 nextBtnText: '下一步',
                 prevBtnText: '上一步',
                 doneBtnText: '完成',
+                ...guideConfig.driverOptions,
                 
                 onHighlightStarted: (element, step) => {
                     console.log('开始高亮:', step.popover?.title);
@@ -414,7 +355,9 @@
                 onDestroyed: () => {
                     console.log('引导程序已结束');
                 }
-            });
+            };
+            
+            return driverFunction(driverOptions);
         }
         
         // 开始引导按钮事件
@@ -422,9 +365,18 @@
             if (!tourDriver) {
                 tourDriver = await initializeDriver();
                 if (!tourDriver) return;
-                tourDriver.setSteps(tourSteps);
             }
-            tourDriver.drive();
+            
+            if (!guideConfig) {
+                guideConfig = await loadGuideConfig();
+            }
+            
+            if (guideConfig.tourSteps && guideConfig.tourSteps.length > 0) {
+                tourDriver.setSteps(guideConfig.tourSteps);
+                tourDriver.drive();
+            } else {
+                alert('引导步骤配置为空或加载失败！');
+            }
         });
         
         // 高亮演示按钮事件
@@ -434,9 +386,17 @@
                 if (!tourDriver) return;
             }
             
-            // 随机选择一个高亮步骤
-            const randomStep = highlightSteps[Math.floor(Math.random() * highlightSteps.length)];
-            tourDriver.highlight(randomStep);
+            if (!guideConfig) {
+                guideConfig = await loadGuideConfig();
+            }
+            
+            if (guideConfig.highlightSteps && guideConfig.highlightSteps.length > 0) {
+                // 随机选择一个高亮步骤
+                const randomStep = guideConfig.highlightSteps[Math.floor(Math.random() * guideConfig.highlightSteps.length)];
+                tourDriver.highlight(randomStep);
+            } else {
+                alert('高亮步骤配置为空或加载失败！');
+            }
         });
         
         // 为其他按钮添加点击事件
