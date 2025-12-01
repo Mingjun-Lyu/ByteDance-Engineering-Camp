@@ -215,10 +215,8 @@ a {
 
 /* 主内容区样式 */
 .app-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 24px var(--padding-lg);
   flex: 1;
+  width: 100%;
 }
 
 /* 路由过渡动画容器 */

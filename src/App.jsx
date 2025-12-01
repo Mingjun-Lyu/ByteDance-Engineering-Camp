@@ -107,13 +107,11 @@ const AppContent = () => {
       
       {/* 路由内容 */}
       <main className="main-content app-main">
-        <Container fluid className="py-4 app-content">
-          <Routes location={location}>
-            <Route path="/" element={<AnimatedRoute><ActivityHome /></AnimatedRoute>} />
-            <Route path="/list" element={<AnimatedRoute><ActivityList /></AnimatedRoute>} />
-            <Route path="/detail/:id" element={<AnimatedRoute><ActivityDetail /></AnimatedRoute>} />
-          </Routes>
-        </Container>
+        <Routes location={location}>
+          <Route path="/" element={<AnimatedRoute><ActivityHome /></AnimatedRoute>} />
+          <Route path="/list" element={<AnimatedRoute><ActivityList /></AnimatedRoute>} />
+          <Route path="/detail/:id" element={<AnimatedRoute><ActivityDetail /></AnimatedRoute>} />
+        </Routes>
       </main>
       
       {/* 引导UI - 使用onboarding组件 */}

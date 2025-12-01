@@ -68,7 +68,7 @@ const ActivityHome = () => {
   }
 
   return (
-    <Container fluid className="activity-home-page">
+    <Container fluid className="activity-home-page py-4">
       {/* Banner轮播 */}
       <Row className="banner-section">
         <Col>

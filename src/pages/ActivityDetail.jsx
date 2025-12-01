@@ -114,7 +114,7 @@ const ActivityDetail = () => {
   }
 
   return (
-    <Container fluid className="py-4 activity-detail-page">
+    <Container fluid className="py-4 activity-detail-page px-4">
       {/* 头部组件 */}
       <ActivityDetailHeader
         activity={activity}

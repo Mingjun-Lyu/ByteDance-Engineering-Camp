@@ -80,7 +80,7 @@ const ActivityList = () => {
   }
   
   return (
-    <Container fluid className="activity-list-container">
+    <Container fluid className="activity-list-container py-4">
       {/* <h1>活动列表</h1> */}
       
       {/* 筛选表单 */}
