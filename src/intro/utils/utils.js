@@ -1,4 +1,4 @@
-import { getConfig } from "./config";
+import { getConfig } from "./config.js";
 
 export function easeInOutQuad(elapsed, initialValue, amountOfChange, duration) {
   if ((elapsed /= duration / 2) < 1) {

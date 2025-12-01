@@ -1,8 +1,8 @@
-import { getConfig, getCurrentDriver } from "./config";
-import { emit } from "./emitter";
+import { getConfig, getCurrentDriver } from "../utils/config";
+import { emit } from "../utils/emitter";
 import { onDriverClick } from "./events";
-import { getState, setState } from "./state";
-import { bringInView, getFocusableElements } from "./utils";
+import { getState, setState } from "../utils/state";
+import { bringInView, getFocusableElements } from "../utils/utils";
 
 export function hidePopover() {
   const popover = getState("popover");

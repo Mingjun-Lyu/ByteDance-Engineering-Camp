@@ -8,6 +8,9 @@ import ActivityHome from './pages/ActivityHome';
 import ActivityList from './pages/ActivityList';
 import ActivityDetail from './pages/ActivityDetail';
 
+// 导入新手引导组件
+import { GuideManager } from './intro';
+
 // 为所有页面组件添加过渡效果
 const AnimatedRoute = ({ children }) => {
   return (
@@ -50,6 +53,9 @@ const AppContent = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      
+      {/* 新手引导组件 */}
+      <GuideManager />
       
       {/* 路由内容 */}
       <main className="main-content app-main">

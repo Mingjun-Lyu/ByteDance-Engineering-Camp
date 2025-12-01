@@ -1,11 +1,11 @@
 import { destroyPopover } from "./popover";
 import { destroyOverlay } from "./overlay";
 import { destroyEvents, initEvents, requireRefresh } from "./events";
-import { configure, getConfig, getCurrentDriver, setCurrentDriver } from "./config";
+import { configure, getConfig, getCurrentDriver, setCurrentDriver } from "../utils/config";
 import { destroyHighlight, highlight } from "./highlight";
-import { destroyEmitter, listen } from "./emitter";
-import { getState, resetState, setState } from "./state";
-import "./driver.css";
+import { destroyEmitter, listen } from "../utils/emitter";
+import { getState, resetState, setState } from "../utils/state";
+import "../styles/driver.css";
 
 export function driver(options = {}) {
   configure(options);

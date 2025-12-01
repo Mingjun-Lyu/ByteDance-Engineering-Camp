@@ -1,8 +1,8 @@
-import { easeInOutQuad } from "./utils";
+import { easeInOutQuad } from "../utils/utils";
 import { onDriverClick } from "./events";
-import { emit } from "./emitter";
-import { getConfig } from "./config";
-import { getState, setState } from "./state";
+import { emit } from "../utils/emitter";
+import { getConfig } from "../utils/config";
+import { getState, setState } from "../utils/state";
 
 // This method calculates the animated new position of the
 // stage (called for each frame by requestAnimationFrame)

@@ -1,8 +1,8 @@
 import { refreshOverlay, trackActiveElement, transitionStage } from "./overlay";
-import { getConfig, getCurrentDriver } from "./config";
+import { getConfig, getCurrentDriver } from "../utils/config";
 import { hidePopover, renderPopover, repositionPopover } from "./popover";
-import { bringInView } from "./utils";
-import { getState, setState } from "./state";
+import { bringInView } from "../utils/utils";
+import { getState, setState } from "../utils/state";
 
 function mountDummyElement() {
   const existingDummy = document.getElementById("driver-dummy-element");

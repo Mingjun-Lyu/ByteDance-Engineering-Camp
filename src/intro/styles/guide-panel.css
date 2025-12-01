@@ -1,0 +1,251 @@
+.guide-panel {
+  position: fixed;
+  z-index: 10000;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: 400px;
+  animation: guidePanelSlideIn 0.3s ease-out;
+}
+
+.guide-panel-top-center {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.guide-panel-top-right {
+  top: 20px;
+  right: 20px;
+}
+
+.guide-panel-top-left {
+  top: 20px;
+  left: 20px;
+}
+
+.guide-panel-content {
+  padding: 0;
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.guide-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.guide-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #95a5a6;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.guide-close-btn:hover {
+  background: #f8f9fa;
+  color: #e74c3c;
+}
+
+.guide-body {
+  padding: 20px;
+}
+
+.guide-body p {
+  margin: 0 0 15px 0;
+  color: #5a6c7d;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.guide-steps-preview h4 {
+  margin: 0 0 10px 0;
+  color: #34495e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.guide-steps-preview ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guide-steps-preview li {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+  font-size: 13px;
+  color: #5a6c7d;
+}
+
+.guide-steps-preview li:last-child {
+  border-bottom: none;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #3498db;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.guide-footer {
+  padding: 15px 20px 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.guide-start-btn {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 120px;
+}
+
+.guide-start-btn:hover {
+  background: linear-gradient(135deg, #2980b9, #2471a3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.guide-reset-btn {
+  background: #f39c12;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 100px;
+}
+
+.guide-reset-btn:hover {
+  background: #e67e22;
+  transform: translateY(-1px);
+}
+
+.guide-skip-btn {
+  background: #ecf0f1;
+  color: #7f8c8d;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 100px;
+}
+
+.guide-skip-btn:hover {
+  background: #d5dbdb;
+  color: #5a6c7d;
+}
+
+/* 小浮标样式 */
+.guide-floating-trigger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  z-index: 9999;
+  transition: all 0.3s;
+  animation: pulse 2s infinite;
+}
+
+.guide-floating-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+/* 动画 */
+@keyframes guidePanelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.6);
+  }
+  100% {
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .guide-panel {
+    max-width: calc(100vw - 40px);
+    margin: 0 20px;
+  }
+  
+  .guide-panel-top-center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .guide-footer {
+    flex-direction: column;
+  }
+  
+  .guide-start-btn,
+  .guide-reset-btn,
+  .guide-skip-btn {
+    min-width: auto;
+    flex: none;
+  }
+}
