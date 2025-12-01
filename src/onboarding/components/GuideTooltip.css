@@ -1,145 +1,227 @@
-/* 步骤提示框组件样式 */
+/* 基于DriverJS设计理念的步骤提示框组件样式 */
 
-.guide-tooltip-simple {
+.driver-popover {
   position: fixed;
-  background: white;
+  background: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
   max-width: 320px;
-  min-width: 250px;
-  animation: guide-tooltip-fade-in 0.3s ease-out;
-  z-index: 9998;
+  min-width: 280px;
+  animation: driver-popover-fade-in 0.2s ease-out;
+  z-index: 10000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
 }
 
-/* 箭头样式 */
-.guide-tooltip-arrow {
+/* 箭头样式 - 基于DriverJS设计 */
+.driver-popover-arrow {
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: white;
+  width: 14px;
+  height: 14px;
+  background: #fff;
   transform: rotate(45deg);
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e5e7eb;
+  z-index: 1;
 }
 
-.guide-tooltip-arrow--top {
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
+/* 顶部箭头 */
+.driver-popover-arrow--top {
+  bottom: -7px;
   border-top: none;
   border-left: none;
 }
 
-.guide-tooltip-arrow--bottom {
-  top: -6px;
+.driver-popover-arrow--top.driver-popover-arrow--start {
+  left: 20px;
+}
+
+.driver-popover-arrow--top.driver-popover-arrow--center {
   left: 50%;
   transform: translateX(-50%) rotate(45deg);
+}
+
+.driver-popover-arrow--top.driver-popover-arrow--end {
+  right: 20px;
+  left: auto;
+}
+
+/* 底部箭头 */
+.driver-popover-arrow--bottom {
+  top: -7px;
   border-bottom: none;
   border-right: none;
 }
 
-.guide-tooltip-arrow--left {
-  right: -6px;
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
+.driver-popover-arrow--bottom.driver-popover-arrow--start {
+  left: 20px;
+}
+
+.driver-popover-arrow--bottom.driver-popover-arrow--center {
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.driver-popover-arrow--bottom.driver-popover-arrow--end {
+  right: 20px;
+  left: auto;
+}
+
+/* 左侧箭头 */
+.driver-popover-arrow--left {
+  right: -7px;
   border-left: none;
   border-bottom: none;
 }
 
-.guide-tooltip-arrow--right {
-  left: -6px;
+.driver-popover-arrow--left.driver-popover-arrow--start {
+  top: 20px;
+}
+
+.driver-popover-arrow--left.driver-popover-arrow--center {
   top: 50%;
   transform: translateY(-50%) rotate(45deg);
+}
+
+.driver-popover-arrow--left.driver-popover-arrow--end {
+  bottom: 20px;
+  top: auto;
+}
+
+/* 右侧箭头 */
+.driver-popover-arrow--right {
+  left: -7px;
   border-right: none;
   border-top: none;
+}
+
+.driver-popover-arrow--right.driver-popover-arrow--start {
+  top: 20px;
+}
+
+.driver-popover-arrow--right.driver-popover-arrow--center {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.driver-popover-arrow--right.driver-popover-arrow--end {
+  bottom: 20px;
+  top: auto;
 }
 
 /* 内容区域 */
-.guide-tooltip-simple-content {
-  padding: 16px;
+.driver-popover-content {
+  padding: 20px;
   position: relative;
   z-index: 1;
 }
 
-.guide-tooltip-title {
-  margin: 0 0 8px 0;
-  font-size: 16px;
+.driver-popover-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #111827;
   line-height: 1.3;
 }
 
-.guide-tooltip-content {
+.driver-popover-description {
   font-size: 14px;
-  line-height: 1.4;
-  color: #666;
-  margin-bottom: 16px;
+  line-height: 1.5;
+  color: #6b7280;
+  margin-bottom: 20px;
 }
 
-.guide-tooltip-content p {
+.driver-popover-description p {
   margin: 0;
 }
 
-/* 操作按钮 */
-.guide-tooltip-actions {
+/* 进度指示器 */
+.driver-popover-progress {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+/* 操作按钮 - 基于DriverJS设计 */
+.driver-popover-footer {
   display: flex;
   gap: 8px;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  margin-top: 16px;
 }
 
-.guide-tooltip-button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
+.driver-popover-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.driver-popover-btn {
+  padding: 8px 16px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 60px;
+  min-width: 80px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.guide-tooltip-button--primary {
-  background-color: #007bff;
+.driver-popover-btn--primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }
 
-.guide-tooltip-button--primary:hover {
-  background-color: #0056b3;
+.driver-popover-btn--primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 
-.guide-tooltip-button--secondary {
-  background-color: #f8f9fa;
-  color: #495057;
-  border: 1px solid #dee2e6;
+.driver-popover-btn--secondary {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
 }
 
-.guide-tooltip-button--secondary:hover {
-  background-color: #e9ecef;
+.driver-popover-btn--secondary:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
 }
 
-.guide-tooltip-close {
+.driver-popover-close-btn {
   background: none;
   border: none;
-  font-size: 18px;
-  color: #999;
+  font-size: 20px;
+  color: #9ca3af;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px;
   border-radius: 4px;
   line-height: 1;
   transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.guide-tooltip-close:hover {
-  background-color: #f8f9fa;
-  color: #666;
+.driver-popover-close-btn:hover {
+  background-color: #f3f4f6;
+  color: #6b7280;
 }
 
-/* 动画效果 */
-@keyframes guide-tooltip-fade-in {
+/* 动画效果 - 基于DriverJS设计 */
+@keyframes driver-popover-fade-in {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(10px);
+    transform: scale(0.95) translateY(-5px);
   }
   to {
     opacity: 1;
@@ -148,26 +230,26 @@
 }
 
 /* 位置变体的动画 */
-.guide-tooltip-simple--top {
-  animation: guide-tooltip-slide-top 0.3s ease-out;
+.driver-popover--top {
+  animation: driver-popover-slide-top 0.2s ease-out;
 }
 
-.guide-tooltip-simple--bottom {
-  animation: guide-tooltip-slide-bottom 0.3s ease-out;
+.driver-popover--bottom {
+  animation: driver-popover-slide-bottom 0.2s ease-out;
 }
 
-.guide-tooltip-simple--left {
-  animation: guide-tooltip-slide-left 0.3s ease-out;
+.driver-popover--left {
+  animation: driver-popover-slide-left 0.2s ease-out;
 }
 
-.guide-tooltip-simple--right {
-  animation: guide-tooltip-slide-right 0.3s ease-out;
+.driver-popover--right {
+  animation: driver-popover-slide-right 0.2s ease-out;
 }
 
-@keyframes guide-tooltip-slide-top {
+@keyframes driver-popover-slide-top {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -175,10 +257,10 @@
   }
 }
 
-@keyframes guide-tooltip-slide-bottom {
+@keyframes driver-popover-slide-bottom {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-15px);
   }
   to {
     opacity: 1;
@@ -186,10 +268,10 @@
   }
 }
 
-@keyframes guide-tooltip-slide-left {
+@keyframes driver-popover-slide-left {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(15px);
   }
   to {
     opacity: 1;
@@ -197,10 +279,10 @@
   }
 }
 
-@keyframes guide-tooltip-slide-right {
+@keyframes driver-popover-slide-right {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-15px);
   }
   to {
     opacity: 1;
@@ -210,27 +292,32 @@
 
 /* 响应式设计 */
 @media (max-width: 480px) {
-  .guide-tooltip-simple {
-    max-width: calc(100vw - 40px);
+  .driver-popover {
+    max-width: calc(100vw - 32px);
     min-width: auto;
-    margin: 0 20px;
+    margin: 0 16px;
   }
   
-  .guide-tooltip-simple-content {
-    padding: 12px;
+  .driver-popover-content {
+    padding: 16px;
   }
   
-  .guide-tooltip-actions {
+  .driver-popover-footer {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
   
-  .guide-tooltip-button {
+  .driver-popover-buttons {
     width: 100%;
+    justify-content: stretch;
+  }
+  
+  .driver-popover-btn {
+    flex: 1;
     min-width: auto;
   }
   
-  .guide-tooltip-close {
+  .driver-popover-close-btn {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -238,13 +325,34 @@
 }
 
 /* 无障碍支持 */
-.guide-tooltip-simple:focus {
-  outline: 2px solid #007bff;
+.driver-popover:focus {
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-.guide-tooltip-button:focus,
-.guide-tooltip-close:focus {
-  outline: 2px solid #007bff;
+.driver-popover-btn:focus,
+.driver-popover-close-btn:focus {
+  outline: 2px solid #3b82f6;
   outline-offset: 1px;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .driver-popover {
+    border-width: 2px;
+    border-color: #000;
+  }
+  
+  .driver-popover-arrow {
+    border-width: 2px;
+    border-color: #000;
+  }
+  
+  .driver-popover-title {
+    color: #000;
+  }
+  
+  .driver-popover-description {
+    color: #333;
+  }
 }

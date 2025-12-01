@@ -1,4 +1,4 @@
-/* 引导遮罩组件样式 */
+/* 基于DriverJS设计理念的现代化引导遮罩组件样式 */
 
 .guide-overlay {
   position: fixed;
@@ -6,71 +6,97 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   animation: guide-fade-in 0.3s ease-out;
+  backdrop-filter: blur(2px);
 }
 
-/* 高亮目标元素 */
+/* 基于DriverJS的现代化高亮效果 */
 .guide-highlight {
   position: absolute;
-  border: 2px solid #007bff;
+  border: 3px solid #6366f1;
   border-radius: 8px;
-  box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.1),
-              0 0 20px rgba(0, 123, 255, 0.3);
+  box-shadow: 
+    0 0 0 9999px rgba(0, 0, 0, 0.7),
+    0 0 20px rgba(99, 102, 241, 0.5),
+    inset 0 0 20px rgba(99, 102, 241, 0.3);
   pointer-events: none;
   z-index: 1;
-  animation: guide-pulse 2s infinite;
+  animation: 
+    guide-pulse 2s infinite ease-in-out,
+    guide-highlight-glow 3s infinite alternate;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 引导提示框 */
+/* 现代化提示框设计 */
 .guide-tooltip {
   position: absolute;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  max-width: 380px;
   min-width: 300px;
   z-index: 2;
-  animation: guide-slide-in 0.3s ease-out;
+  animation: guide-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
-/* 提示框位置变体 */
-.guide-tooltip--top {
-  transform: translateY(-20px);
-}
-
-.guide-tooltip--bottom {
-  transform: translateY(20px);
-}
-
-.guide-tooltip--left {
-  transform: translateX(-20px);
-}
-
-.guide-tooltip--right {
-  transform: translateX(20px);
-}
-
-/* 提示框内容 */
-.guide-tooltip-content {
-  padding: 24px 24px 16px;
+/* 标题区域 */
+.guide-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
 }
 
 .guide-title {
-  margin: 0 0 12px 0;
+  margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #1e293b;
   line-height: 1.4;
+  flex: 1;
+}
+
+.guide-close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-left: 12px;
+}
+
+.guide-close-button:hover {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.guide-tooltip-content {
+  padding: 0;
 }
 
 .guide-content {
+  padding: 20px;
   font-size: 14px;
-  line-height: 1.5;
-  color: #666;
+  line-height: 1.6;
+  color: #475569;
+  background: white;
 }
 
 .guide-content p {
@@ -79,104 +105,208 @@
 
 /* 控制面板 */
 .guide-controls {
-  padding: 0 24px 24px;
-  border-top: 1px solid #f0f0f0;
+  padding: 0 20px 20px;
+  border-top: 1px solid #f1f5f9;
+  background: white;
 }
 
-/* 进度指示器 */
+/* 进度指示器 - 现代化设计 */
 .guide-progress {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 16px;
-}
-
-.guide-progress-text {
-  font-size: 12px;
-  color: #999;
-  min-width: 40px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #64748b;
 }
 
 .guide-progress-bar {
   flex: 1;
-  height: 4px;
-  background-color: #f0f0f0;
-  border-radius: 2px;
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 3px;
   overflow: hidden;
+  position: relative;
 }
 
 .guide-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #007bff, #0056b3);
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-/* 按钮组 */
+.guide-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: guide-shimmer 2s infinite;
+}
+
+.guide-progress-text {
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* 按钮区域 */
 .guide-buttons {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-standard-buttons {
+  display: flex;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
 .guide-button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.guide-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.guide-button:hover::before {
+  left: 100%;
 }
 
 .guide-button--primary {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: white;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
 }
 
 .guide-button--primary:hover {
-  background-color: #0056b3;
   transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
 }
 
 .guide-button--secondary {
-  background-color: #f8f9fa;
-  color: #495057;
-  border: 1px solid #dee2e6;
+  background: white;
+  color: #475569;
+  border: 1px solid #d1d5db;
 }
 
 .guide-button--secondary:hover {
-  background-color: #e9ecef;
-  border-color: #adb5bd;
+  background: #f8fafc;
+  border-color: #9ca3af;
 }
 
 .guide-button--text {
   background: transparent;
-  color: #6c757d;
+  color: #6366f1;
   border: none;
+  padding: 10px 16px;
 }
 
 .guide-button--text:hover {
-  color: #495057;
-  background-color: #f8f9fa;
+  background: rgba(99, 102, 241, 0.1);
 }
 
-/* 动画效果 */
+/* 位置样式 - 更智能的定位 */
+.guide-tooltip--top {
+  bottom: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.guide-tooltip--bottom {
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.guide-tooltip--left {
+  right: calc(100% + 16px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.guide-tooltip--right {
+  left: calc(100% + 16px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 箭头指示器 */
+.guide-tooltip::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+}
+
+.guide-tooltip--top::before {
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: white;
+}
+
+.guide-tooltip--bottom::before {
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: white;
+}
+
+.guide-tooltip--left::before {
+  right: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: white;
+}
+
+.guide-tooltip--right::before {
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: white;
+}
+
+/* 现代化动画效果 */
 @keyframes guide-fade-in {
-  from {
-    opacity: 0;
+  from { 
+    opacity: 0; 
+    backdrop-filter: blur(0px);
   }
-  to {
-    opacity: 1;
+  to { 
+    opacity: 1; 
+    backdrop-filter: blur(2px);
   }
 }
 
 @keyframes guide-slide-in {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(30px) scale(0.95);
   }
   to {
     opacity: 1;
@@ -185,54 +315,124 @@
 }
 
 @keyframes guide-pulse {
-  0% {
-    box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.1),
-                0 0 20px rgba(0, 123, 255, 0.3);
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
   }
   50% {
-    box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.15),
-                0 0 30px rgba(0, 123, 255, 0.4);
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+}
+
+@keyframes guide-highlight-glow {
+  0% {
+    box-shadow: 
+      0 0 0 9999px rgba(0, 0, 0, 0.7),
+      0 0 20px rgba(99, 102, 241, 0.5),
+      inset 0 0 20px rgba(99, 102, 241, 0.3);
   }
   100% {
-    box-shadow: 0 0 0 9999px rgba(0, 123, 255, 0.1),
-                0 0 20px rgba(0, 123, 255, 0.3);
+    box-shadow: 
+      0 0 0 9999px rgba(0, 0, 0, 0.7),
+      0 0 30px rgba(99, 102, 241, 0.7),
+      inset 0 0 30px rgba(99, 102, 241, 0.5);
   }
+}
+
+@keyframes guide-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .guide-tooltip {
-    max-width: calc(100vw - 40px);
+    max-width: calc(100vw - 32px);
     min-width: auto;
-    margin: 20px;
+    margin: 16px;
+    border-radius: 16px;
   }
   
-  .guide-tooltip-content {
-    padding: 20px 20px 12px;
+  .guide-tooltip--top,
+  .guide-tooltip--bottom {
+    left: 16px;
+    right: 16px;
+    transform: none;
   }
   
-  .guide-controls {
-    padding: 0 20px 20px;
+  .guide-tooltip::before {
+    display: none;
   }
   
-  .guide-buttons {
+  .guide-standard-buttons {
     flex-direction: column;
-    gap: 12px;
   }
   
   .guide-button {
     width: 100%;
-    min-width: auto;
+  }
+  
+  .guide-header {
+    padding: 16px;
+  }
+  
+  .guide-content {
+    padding: 16px;
+  }
+  
+  .guide-controls {
+    padding: 0 16px 16px;
   }
 }
 
 /* 无障碍支持 */
 .guide-overlay:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
 }
 
 .guide-button:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .guide-tooltip {
+    background: #1e293b;
+    color: #f1f5f9;
+  }
+  
+  .guide-header {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    border-bottom-color: #334155;
+  }
+  
+  .guide-title {
+    color: #f1f5f9;
+  }
+  
+  .guide-content {
+    background: #1e293b;
+    color: #cbd5e1;
+  }
+  
+  .guide-controls {
+    background: #1e293b;
+  }
+  
+  .guide-progress-bar {
+    background-color: #334155;
+  }
+  
+  .guide-button--secondary {
+    background: #334155;
+    color: #e2e8f0;
+    border-color: #475569;
+  }
+  
+  .guide-button--secondary:hover {
+    background: #475569;
+  }
 }
