@@ -1,0 +1,132 @@
+{
+  "title": "完整产品导览",
+  "description": "从首页到详情页的完整使用流程",
+  "steps": [
+    {
+      "step": 1,
+      "route": "/",
+      "targetRoute": "/",
+      "element": ".banner-carousel",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "轮播图区域",
+        "description": "这里展示最新的活动推广和重要公告，支持自动轮播和手动切换",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 2,
+      "route": "/",
+      "targetRoute": "/",
+      "element": ".activity-categories",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动分类",
+        "description": "按不同类型浏览活动，包括促销、线下、节日和专属活动",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 3,
+      "route": "/",
+      "targetRoute": "/",
+      "element": ".first-category-card",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "分类卡片",
+        "description": "点击分类卡片可以查看该类型的所有活动，支持快速筛选",
+        "position": "right"
+      }
+    },
+    {
+      "step": 4,
+      "route": "/",
+      "targetRoute": "/",
+      "element": ".notice-section",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "公告信息",
+        "description": "查看最新的系统公告和重要通知，及时了解活动动态",
+        "position": "top"
+      }
+    },
+    {
+      "step": 5,
+      "route": "/",
+      "targetRoute": "/",
+      "element": ".highlight-activities-section",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "重点活动",
+        "description": "展示当前正在进行的热门活动和推荐内容",
+        "position": "top"
+      }
+    },
+    {
+      "step": 6,
+      "route": "/",
+      "targetRoute": "/",
+      "element": ".first-highlight-activity",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "重点活动卡片",
+        "description": "这是当前最热门的活动，点击下一步查看详情",
+        "position": "right"
+      }
+    },
+    {
+      "step": 7,
+      "route": "/detail/:id",
+      "targetRoute": "/detail/1",
+      "element": ".activity-basic-info",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动基本信息",
+        "description": "这里显示活动的核心信息，包括时间、状态等",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 8,
+      "route": "/detail/:id",
+      "targetRoute": "/detail/1",
+      "element": ".activity-banner",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动Banner图片",
+        "description": "这是活动的宣传图片，展示活动亮点",
+        "position": "top"
+      }
+    }
+  ],
+  "config": {
+    "animate": true,
+    "allowClose": true,
+    "overlayClickBehavior": "close",
+    "showProgress": true,
+    "showButtons": ["next", "previous", "close"],
+    "doneBtnText": "完成引导",
+    "nextBtnText": "下一步",
+    "prevBtnText": "上一步",
+    "autoStart": false,
+    "multiPage": true,
+    "startRoute": "/",
+    "defaultActivityId": "1"
+  }
+}

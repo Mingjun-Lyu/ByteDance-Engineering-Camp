@@ -7,6 +7,7 @@ const GuidePanel = ({
   showOnStart = true,
   onGuideStart,
   onGuideComplete,
+  onStepChange,
   guideConfig = {
     title: '新手引导',
     description: '欢迎使用本系统，让我们开始引导吧！',
@@ -33,6 +34,39 @@ const GuidePanel = ({
     const guideDriver = driver({
       ...guideConfig.config,
       steps: guideConfig.steps,
+      onNextClick: (element, step, context) => {
+        // 获取当前步骤索引
+        const currentIndex = context.state.activeIndex || 0;
+        const nextIndex = currentIndex + 1;
+        
+        // 步骤变化回调
+        if (onStepChange) {
+          onStepChange(nextIndex);
+        }
+        
+        // 继续下一步
+        const steps = guideConfig.steps || [];
+        if (nextIndex < steps.length) {
+          guideDriver.drive(nextIndex);
+        } else {
+          guideDriver.destroy();
+        }
+      },
+      onPrevClick: (element, step, context) => {
+        // 获取当前步骤索引
+        const currentIndex = context.state.activeIndex || 0;
+        const prevIndex = currentIndex - 1;
+        
+        // 步骤变化回调
+        if (onStepChange) {
+          onStepChange(prevIndex);
+        }
+        
+        // 返回上一步
+        if (prevIndex >= 0) {
+          guideDriver.drive(prevIndex);
+        }
+      },
       onDestroyed: () => {
         // 引导完成
         setHasCompleted(true);

@@ -40,7 +40,11 @@ const HighlightActivities = ({ activities }) => {
           <Row className="g-3">
             {activities.map((activity, index) => (
               <Col xs={12} sm={6} md={4} lg={3} key={activity.id}>
-                <ActivityCard activity={activity} className={index === 0 ? 'first-activity-card' : ''} />
+                <ActivityCard 
+                  activity={activity} 
+                  className={index === 0 ? 'first-activity-card first-highlight-activity' : ''}
+                  data-activity-id={activity.id}
+                />
               </Col>
             ))}
           </Row>

@@ -41,7 +41,7 @@ const ActivityDetailContent = ({
   };
 
   const renderBasicInfo = () => (
-    <Card className="mb-4 basic-info-card">
+    <Card className="mb-4 basic-info-card activity-basic-info">
       <Card.Header className="basic-info-header">
         <h5 className="mb-0">基本信息</h5>
       </Card.Header>
@@ -203,7 +203,7 @@ const ActivityDetailContent = ({
             <Col md={12}>
               <div className="mb-3">
                 <small className="text-muted">Banner图片</small>
-                <div>
+                <div className="activity-banner">
                   {activity.banner ? (
                     <img 
                       src={activity.banner} 

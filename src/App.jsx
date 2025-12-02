@@ -54,11 +54,11 @@ const AppContent = () => {
         </Container>
       </Navbar>
       
-      {/* 新手引导组件 */}
-      <GuideManager />
-      
       {/* 路由内容 */}
       <main className="main-content app-main">
+        {/* 新手引导组件 - 放在路由内部确保正确的路由上下文 */}
+        <GuideManager />
+        
         <Routes location={location}>
           <Route path="/" element={<AnimatedRoute><ActivityHome /></AnimatedRoute>} />
           <Route path="/list" element={<AnimatedRoute><ActivityList /></AnimatedRoute>} />
