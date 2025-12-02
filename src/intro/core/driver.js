@@ -4,7 +4,7 @@ import { destroyEvents, initEvents, requireRefresh } from "./events";
 import { configure, getConfig, getCurrentDriver, setCurrentDriver } from "../utils/config";
 import { destroyHighlight, highlight } from "./highlight";
 import { destroyEmitter, listen } from "../utils/emitter";
-import { getState, resetState, setState, recordCurrentStep, getRecordedStep } from "../utils/state";
+import { getState, resetState, setState } from "../utils/state";
 import "../styles/driver.css";
 
 export function driver(options = {}) {
@@ -163,23 +163,10 @@ export function driver(options = {}) {
       return;
     }
 
-    // 智能恢复逻辑：首次启动时检查记录的步骤
-    if (stepIndex === 0 && !getState("isInitialized")) {
-      const recordedStep = getRecordedStep();
-      // 如果记录有效且在范围内，从记录步骤开始
-      if (recordedStep > 0 && recordedStep < steps.length) {
-        stepIndex = recordedStep;
-      }
-      // 如果记录超出范围，自动从头开始（stepIndex保持0）
-    }
-
     if (!steps[stepIndex]) {
       destroy();
       return;
     }
-
-    // 关键修改：在每次步骤切换时记录当前步骤
-    recordCurrentStep(stepIndex);
 
     setState("__activeOnDestroyed", document.activeElement);
     setState("activeIndex", stepIndex);
@@ -305,16 +292,6 @@ export function driver(options = {}) {
     isActive: () => getState("isInitialized") || false,
     refresh: requireRefresh,
     drive: (stepIndex = 0) => {
-      // 修复智能恢复逻辑：先检查记录步骤，再初始化
-      const steps = getConfig("steps");
-      if (steps && stepIndex === 0 && !getState("isInitialized")) {
-        const recordedStep = getRecordedStep();
-        // 如果记录有效且在范围内，从记录步骤开始
-        if (recordedStep > 0 && recordedStep < steps.length) {
-          stepIndex = recordedStep;
-        }
-      }
-      
       init();
       drive(stepIndex);
     },

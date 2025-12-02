@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { driver } from '../core/driver';
-import { clearStepRecord, savePanelVisible, getPanelVisible, clearPanelVisible } from '../utils/state';
 import '../styles/guide-panel.css';
+
+// 本地存储键名
+const PANEL_VISIBLE_KEY = 'intro_panel_visible';
+const STEP_RECORD_KEY = 'intro_step_record';
 
 const GuidePanel = ({ 
   position = 'top-center',
@@ -25,9 +28,13 @@ const GuidePanel = ({
   
   // 从本地存储恢复面板显示状态，如果没有则使用 showOnStart
   const [isVisible, setIsVisible] = useState(() => {
-    const savedVisible = getPanelVisible();
-    return savedVisible ? savedVisible.isVisible : showOnStart;
-  }); // 空依赖数组，只在挂载时执行一次
+    try {
+      const record = localStorage.getItem(PANEL_VISIBLE_KEY);
+      return record ? JSON.parse(record).isVisible : showOnStart;
+    } catch {
+      return showOnStart;
+    }
+  });
 
   const handleStepChange = (newStepIndex, guideDriver) => {
     if (onStepChange) {
@@ -69,26 +76,49 @@ const GuidePanel = ({
       }
     });
 
+    // 使用恢复的步骤索引开始引导，实现断点再引导功能
     setTimeout(() => {
-      guideDriver.drive(0);
+      guideDriver.drive(currentStepIndex);
     }, 100);
   };
 
   const showPanel = () => {
     setIsVisible(true);
-    savePanelVisible(true);
+    try {
+      localStorage.setItem(PANEL_VISIBLE_KEY, JSON.stringify({
+        isVisible: true,
+        timestamp: Date.now()
+      }));
+    } catch (error) {
+      console.warn('Failed to save panel visible state:', error);
+    }
   };
 
   const hidePanel = () => {
     setIsVisible(false);
-    savePanelVisible(false);
+    try {
+      localStorage.setItem(PANEL_VISIBLE_KEY, JSON.stringify({
+        isVisible: false,
+        timestamp: Date.now()
+      }));
+    } catch (error) {
+      console.warn('Failed to save panel visible state:', error);
+    }
   };
 
   const resetGuide = () => {
     setIsVisible(true);
-    savePanelVisible(true);
-    clearStepRecord();
-    clearPanelVisible(); // 清除面板显示状态记录
+    try {
+      localStorage.setItem(PANEL_VISIBLE_KEY, JSON.stringify({
+        isVisible: true,
+        timestamp: Date.now()
+      }));
+      // 清除步骤记录
+      localStorage.removeItem(STEP_RECORD_KEY);
+      localStorage.removeItem('intro_guide_state');
+    } catch (error) {
+      console.warn('Failed to reset guide state:', error);
+    }
   };
 
   if (!isVisible) {
