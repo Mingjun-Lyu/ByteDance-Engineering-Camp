@@ -17,11 +17,26 @@ const GuidePanel = ({
   }
 }) => {
   const [isVisible, setIsVisible] = useState(showOnStart);
-  const [hasCompleted, setHasCompleted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
     setIsVisible(showOnStart);
   }, [showOnStart]);
+
+  const handleStepChange = (newStepIndex, guideDriver) => {
+    setCurrentStep(newStepIndex);
+    
+    if (onStepChange) {
+      onStepChange(newStepIndex);
+    }
+    
+    const steps = guideConfig.steps || [];
+    if (newStepIndex >= 0 && newStepIndex < steps.length) {
+      guideDriver.drive(newStepIndex);
+    } else {
+      guideDriver.destroy();
+    }
+  };
 
   const startGuide = () => {
     setIsVisible(false);
@@ -30,53 +45,26 @@ const GuidePanel = ({
       onGuideStart();
     }
 
-    // 配置引导
     const guideDriver = driver({
       ...guideConfig.config,
       steps: guideConfig.steps,
       onNextClick: (element, step, context) => {
-        // 获取当前步骤索引
         const currentIndex = context.state.activeIndex || 0;
         const nextIndex = currentIndex + 1;
-        
-        // 步骤变化回调
-        if (onStepChange) {
-          onStepChange(nextIndex);
-        }
-        
-        // 继续下一步
-        const steps = guideConfig.steps || [];
-        if (nextIndex < steps.length) {
-          guideDriver.drive(nextIndex);
-        } else {
-          guideDriver.destroy();
-        }
+        handleStepChange(nextIndex, guideDriver);
       },
       onPrevClick: (element, step, context) => {
-        // 获取当前步骤索引
         const currentIndex = context.state.activeIndex || 0;
         const prevIndex = currentIndex - 1;
-        
-        // 步骤变化回调
-        if (onStepChange) {
-          onStepChange(prevIndex);
-        }
-        
-        // 返回上一步
-        if (prevIndex >= 0) {
-          guideDriver.drive(prevIndex);
-        }
+        handleStepChange(prevIndex, guideDriver);
       },
       onDestroyed: () => {
-        // 引导完成
-        setHasCompleted(true);
         if (onGuideComplete) {
           onGuideComplete();
         }
       }
     });
 
-    // 开始引导
     setTimeout(() => {
       guideDriver.drive(0);
     }, 100);
@@ -91,14 +79,12 @@ const GuidePanel = ({
   };
 
   const resetGuide = () => {
-    setHasCompleted(false);
+    setCurrentStep(0);
     setIsVisible(true);
-    // 清除步骤记录，确保重新开始从头开始
     clearStepRecord();
   };
 
   if (!isVisible) {
-    // 始终显示小浮标用于重新打开引导面板
     return (
       <div className="guide-floating-trigger" onClick={showPanel}>
         <span>?</span>
@@ -119,16 +105,11 @@ const GuidePanel = ({
         <div className="guide-body">
           <p>{guideConfig.description}</p>
           
-          <div className="guide-steps-preview">
-            <h4>引导步骤预览：</h4>
-            <ul>
-              {guideConfig.steps.map((step, index) => (
-                <li key={index}>
-                  <span className="step-number">{index + 1}</span>
-                  {step.popover.title}
-                </li>
-              ))}
-            </ul>
+          <div className="guide-current-step">
+            <h4>当前进度：</h4>
+            <p className="step-info">
+              第 {currentStep + 1} 步（共 {guideConfig.steps.length} 步）
+            </p>
           </div>
         </div>
         
@@ -140,21 +121,15 @@ const GuidePanel = ({
             开始引导
           </button>
           
-          {hasCompleted && (
-            <button 
-              className="guide-reset-btn" 
-              onClick={resetGuide}
-            >
-              重新开始
-            </button>
-          )}
-          
+ 
           <button 
             className="guide-skip-btn" 
-            onClick={hidePanel}
+            onClick={resetGuide}
           >
-            跳过引导
+            重置
           </button>
+
+          
         </div>
       </div>
     </div>

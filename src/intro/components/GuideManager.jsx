@@ -1,11 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import GuidePanel from './GuidePanel';
-import { 
-  useGuideRouting,
-  useGuideConfig,
-  useGuideState,
-  useGuideFlow 
-} from '../hooks';
+
+import homeGuideConfig from '../jsons/guide-config.json';
 
 const GuideManager = ({ 
   children, 
@@ -13,46 +10,147 @@ const GuideManager = ({
   onGuideStart,
   onGuideComplete
 }) => {
-  // 使用自定义hooks
-  const routing = useGuideRouting();
-  const config = useGuideConfig();
-  const state = useGuideState(config.guideConfig);
-  const flow = useGuideFlow(state.isGuideActive, config.guideConfig, routing.currentPath, routing);
+  const [isGuideActive, setIsGuideActive] = useState(false);
+  const [guideConfig, setGuideConfig] = useState(null);
+  const [configError, setConfigError] = useState(null);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // 恢复引导状态
-  useEffect(() => {
-    if (config.guideConfig) {
-      state.restoreGuideState(routing);
+  const isRouteMatch = (routePattern, currentPath) => {
+    if (routePattern === currentPath) return true;
+    
+    const patternParts = routePattern.split('/');
+    const pathParts = currentPath.split('/');
+    
+    if (patternParts.length !== pathParts.length) return false;
+    
+    return patternParts.every((part, i) => 
+      part.startsWith(':') || part === pathParts[i]
+    );
+  };
+
+  const extractRouteParams = (routePattern, currentPath) => {
+    const params = {};
+    const patternParts = routePattern.split('/');
+    const pathParts = currentPath.split('/');
+    
+    for (let i = 0; i < patternParts.length; i++) {
+      if (patternParts[i].startsWith(':')) {
+        const paramName = patternParts[i].slice(1);
+        params[paramName] = pathParts[i];
+      }
     }
-  }, [config.guideConfig, routing]);
+    
+    return params;
+  };
 
-  // 处理引导开始
+  const buildTargetRoute = (targetRoute, elementRouteInfo, currentParams = {}) => {
+    let route = targetRoute;
+    
+    if (elementRouteInfo?.hasRoute) {
+      route = elementRouteInfo.route;
+      
+      if (elementRouteInfo.paramSource && elementRouteInfo.paramValue) {
+        const element = elementRouteInfo.element?.trim() 
+          ? document.querySelector(elementRouteInfo.element) 
+          : null;
+        const paramValue = element?.getAttribute(elementRouteInfo.paramSource) || elementRouteInfo.paramValue;
+        route = route.replace(':id', paramValue);
+      }
+    }
+    
+    Object.keys(currentParams).forEach(key => {
+      route = route.replace(`:${key}`, currentParams[key]);
+    });
+    
+    return route;
+  };
+
+  const handleStepNavigation = (stepIndex) => {
+    if (!guideConfig || !guideConfig.steps || stepIndex >= guideConfig.steps.length) {
+      return;
+    }
+
+    const step = guideConfig.steps[stepIndex];
+    if (!step) {
+      console.warn(`[GuideManager] 步骤${stepIndex}不存在`);
+      return;
+    }
+
+
+    const currentParams = extractRouteParams(step.route || '/', location.pathname);
+    const targetRoute = buildTargetRoute(step.targetRoute || '/', step.elementRouteInfo, currentParams);
+    
+    
+    if (!isRouteMatch(targetRoute, location.pathname)) {
+      
+      const fullUrl = window.location.origin + targetRoute;
+      
+      window.location.href = fullUrl;
+    }
+  };
+
+  useEffect(() => {
+    const loadConfig = () => {
+      try {
+        const config = homeGuideConfig;
+        if (!config || !config.title || !config.steps) {
+          throw new Error('引导配置文件格式错误或缺失必要字段');
+        }
+        
+        setGuideConfig(config);
+        setConfigError(null);
+      } catch (error) {
+        console.warn('Failed to load guide config:', error);
+        setConfigError(error.message);
+        setGuideConfig(null);
+      }
+    };
+
+    loadConfig();
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (isGuideActive && guideConfig && guideConfig.config?.startRoute) {
+      if (!isRouteMatch(guideConfig.config.startRoute, location.pathname)) {
+        navigate(guideConfig.config.startRoute);
+      }
+    }
+  }, [isGuideActive, guideConfig, location.pathname, navigate]);
+
   const handleGuideStart = () => {
-    const validation = flow.validateGuideStart(config, state);
-    if (!validation.isValid) {
-      alert(`${validation.message}\n\n错误信息：${validation.error}`);
+    if (configError || !guideConfig || guideConfig.steps.length === 0) {
+      alert('引导配置文件缺失或格式错误，无法开始引导！\\n\\n错误信息：' + (configError || '配置文件为空或缺少步骤配置'));
       return;
     }
     
-    state.startGuide(onGuideStart, (stepIndex) => {
-      flow.handleStepNavigation(stepIndex, config, routing);
-    });
+    setCurrentStepIndex(0);
+    setIsGuideActive(true);
+    
+    handleStepNavigation(0);
+    
+    if (onGuideStart) {
+      onGuideStart();
+    }
   };
 
-  // 处理引导完成
   const handleGuideComplete = () => {
-    state.completeGuide(onGuideComplete);
+    setIsGuideActive(false);
+    setCurrentStepIndex(0);
+    if (onGuideComplete) {
+      onGuideComplete();
+    }
   };
 
-  // 处理步骤变化
   const handleStepChange = (newStepIndex) => {
-    state.handleStepChange(newStepIndex, (stepIndex) => {
-      flow.handleStepNavigation(stepIndex, config, routing);
-    });
+    setCurrentStepIndex(newStepIndex);
+    handleStepNavigation(newStepIndex);
   };
 
-  // 如果配置加载失败，不显示引导面板
-  if (!flow.shouldShowPanel(config)) {
+
+
+  if (!guideConfig) {
     return children;
   }
 
@@ -60,25 +158,22 @@ const GuideManager = ({
     <>
       {children}
       
-      {/* 引导面板 - 始终显示，不自动隐藏 */}
       <GuidePanel
         position={position}
-        showOnStart={true} // 始终显示
+        showOnStart={false}
         onGuideStart={handleGuideStart}
         onGuideComplete={handleGuideComplete}
         onStepChange={handleStepChange}
-        guideConfig={config.guideConfig}
+        guideConfig={guideConfig}
       />
       
-      {/* 引导遮罩层（如果引导正在进行） */}
-      {flow.shouldShowOverlay(state.isGuideActive) && (
+      {isGuideActive && (
         <div className="guide-overlay" />
       )}
     </>
   );
 };
 
-// 添加全局样式
 const guideOverlayStyle = `
   .guide-overlay {
     position: fixed;
@@ -92,7 +187,6 @@ const guideOverlayStyle = `
   }
 `;
 
-// 注入样式到文档头部
 if (typeof document !== 'undefined') {
   const styleElement = document.createElement('style');
   styleElement.textContent = guideOverlayStyle;

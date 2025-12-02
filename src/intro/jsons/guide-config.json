@@ -3,7 +3,7 @@
   "description": "从首页到详情页的完整使用流程",
   "steps": [
     {
-      "step": 1,
+      "step": 0,
       "route": "/",
       "targetRoute": "/",
       "element": ".banner-carousel",
@@ -17,7 +17,7 @@
       }
     },
     {
-      "step": 2,
+      "step": 1,
       "route": "/",
       "targetRoute": "/",
       "element": ".activity-categories",
@@ -31,7 +31,7 @@
       }
     },
     {
-      "step": 3,
+      "step": 2,
       "route": "/",
       "targetRoute": "/",
       "element": ".first-category-card",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "step": 4,
+      "step": 3,
       "route": "/",
       "targetRoute": "/",
       "element": ".notice-section",
@@ -59,7 +59,7 @@
       }
     },
     {
-      "step": 5,
+      "step": 4,
       "route": "/",
       "targetRoute": "/",
       "element": ".highlight-activities-section",
@@ -73,7 +73,7 @@
       }
     },
     {
-      "step": 6,
+      "step": 5,
       "route": "/",
       "targetRoute": "/",
       "element": ".first-highlight-activity",
@@ -87,7 +87,7 @@
       }
     },
     {
-      "step": 7,
+      "step": 6,
       "route": "/detail/:id",
       "targetRoute": "/detail/1",
       "element": ".activity-basic-info",
@@ -101,7 +101,7 @@
       }
     },
     {
-      "step": 8,
+      "step": 7,
       "route": "/detail/:id",
       "targetRoute": "/detail/1",
       "element": ".activity-banner",
