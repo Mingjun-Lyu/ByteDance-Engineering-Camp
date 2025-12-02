@@ -62,6 +62,15 @@ const GuidePanel = ({
       onNextClick: (element, step, context) => {
         const currentIndex = context.state.activeIndex || 0;
         const nextIndex = currentIndex + 1;
+        const steps = guideConfig.steps || [];
+        
+        // 检查是否已经是最后一步
+        if (nextIndex >= steps.length) {
+          console.log('[GuidePanel] 引导已完成，销毁引导');
+          guideDriver.destroy();
+          return;
+        }
+        
         handleStepChange(nextIndex, guideDriver);
       },
       onPrevClick: (element, step, context) => {

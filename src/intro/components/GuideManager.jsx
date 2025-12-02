@@ -17,7 +17,12 @@ const GuideManager = ({
   const [isGuideActive, setIsGuideActive] = useState(() => {
     try {
       const saved = localStorage.getItem(GUIDE_STATE_KEY);
-      return saved ? JSON.parse(saved).isGuideActive || false : false;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // 如果存在保存的引导状态，优先使用保存的状态
+        return parsed.isGuideActive !== undefined ? parsed.isGuideActive : false;
+      }
+      return false;
     } catch {
       return false;
     }
@@ -29,7 +34,12 @@ const GuideManager = ({
   const [currentStepIndex, setCurrentStepIndex] = useState(() => {
     try {
       const saved = localStorage.getItem(GUIDE_STATE_KEY);
-      return saved ? JSON.parse(saved).currentStepIndex || 0 : 0;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // 如果存在保存的步骤索引，优先使用保存的状态
+        return parsed.currentStepIndex !== undefined ? parsed.currentStepIndex : 0;
+      }
+      return 0;
     } catch {
       return 0;
     }
@@ -69,7 +79,12 @@ const GuideManager = ({
   const getCurrentStepIndex = React.useCallback(() => {
     try {
       const saved = localStorage.getItem(GUIDE_STATE_KEY);
-      return saved ? JSON.parse(saved).currentStepIndex || 0 : 0;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // 如果存在保存的步骤索引，优先使用保存的状态
+        return parsed.currentStepIndex !== undefined ? parsed.currentStepIndex : 0;
+      }
+      return 0;
     } catch {
       return 0;
     }
@@ -81,15 +96,14 @@ const GuideManager = ({
       return true;
     }
 
-    // 拆分路径部分 - 修复：保留空字符串以正确处理根路径
-    const patternParts = routePattern.split('/');
-    const pathParts = currentPath.split('/');
-    
-    // 移除首尾的空字符串（处理路径开头和结尾的斜杠）
-    if (patternParts[0] === '') patternParts.shift();
-    if (patternParts[patternParts.length - 1] === '') patternParts.pop();
-    if (pathParts[0] === '') pathParts.shift();
-    if (pathParts[pathParts.length - 1] === '') pathParts.pop();
+    // 特殊处理：根路径匹配所有路径
+    if (routePattern === '/') {
+      return true; // 根路径匹配所有路径
+    }
+
+    // 拆分路径部分
+    const patternParts = routePattern.split('/').filter(part => part !== '');
+    const pathParts = currentPath.split('/').filter(part => part !== '');
 
     // 检查路径段数量是否匹配
     if (patternParts.length !== pathParts.length) {
@@ -243,8 +257,18 @@ const GuideManager = ({
 
   useEffect(() => {
     if (isGuideActive && guideConfig && guideConfig.config?.startRoute) {
+      console.log('[GuideManager] 检查起始路由匹配:', {
+        isGuideActive,
+        startRoute: guideConfig.config.startRoute,
+        currentPath: location.pathname,
+        isMatch: isRouteMatch(guideConfig.config.startRoute, location.pathname)
+      });
+      
       if (!isRouteMatch(guideConfig.config.startRoute, location.pathname)) {
+        console.log('[GuideManager] 路由不匹配，跳转到起始路由:', guideConfig.config.startRoute);
         navigate(guideConfig.config.startRoute);
+      } else {
+        console.log('[GuideManager] 路由匹配，无需跳转');
       }
     }
   }, [isGuideActive, guideConfig, location.pathname, navigate]);
@@ -261,12 +285,38 @@ const GuideManager = ({
       ? savedStepIndex 
       : 0;
     
-    setCurrentStepIndex(validStepIndex);
-    setIsGuideActive(true);
-    saveCurrentState();
+    // 获取恢复步骤对应的路由
+    const restoredStep = guideConfig.steps[validStepIndex];
+    const restoredRoute = restoredStep ? restoredStep.route || '/' : '/';
     
-    // 导航到对应的步骤
-    handleStepNavigation(validStepIndex);
+    // 检查当前路由是否与恢复步骤的路由匹配
+    const isCurrentRouteMatch = isRouteMatch(restoredRoute, location.pathname);
+    
+    console.log('[GuideManager] 恢复断点检查:', {
+      savedStepIndex,
+      validStepIndex,
+      restoredRoute,
+      currentPath: location.pathname,
+      isCurrentRouteMatch
+    });
+    
+    // 如果不匹配，先导航到恢复步骤的路由
+    if (!isCurrentRouteMatch) {
+      console.log('[GuideManager] 路由不匹配，先导航到恢复步骤的路由:', restoredRoute);
+      navigate(restoredRoute);
+      
+      // 延迟设置状态，确保路由跳转完成
+      setTimeout(() => {
+        setCurrentStepIndex(validStepIndex);
+        setIsGuideActive(true);
+        saveCurrentState();
+      }, 100);
+    } else {
+      // 路由匹配，直接设置状态
+      setCurrentStepIndex(validStepIndex);
+      setIsGuideActive(true);
+      saveCurrentState();
+    }
     
     if (onGuideStart) {
       onGuideStart();
@@ -284,6 +334,12 @@ const GuideManager = ({
   };
 
   const handleStepChange = (newStepIndex) => {
+    // 检查步骤索引是否有效
+    if (newStepIndex < 0 || newStepIndex >= guideConfig.steps.length) {
+      console.log('[GuideManager] 步骤索引无效，可能引导已完成:', newStepIndex);
+      return;
+    }
+    
     setCurrentStepIndex(newStepIndex);
     // 使用setTimeout确保状态更新完成后再调用导航
     setTimeout(() => {
