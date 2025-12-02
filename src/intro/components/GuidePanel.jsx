@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { driver } from '../core/driver';
+import { getState, resetState, setState, clearStepRecord } from '../utils/state';
 import '../styles/guide-panel.css';
 
 const GuidePanel = ({ 
@@ -76,7 +77,7 @@ const GuidePanel = ({
       }
     });
 
-    // 开始引导
+    // 开始引导 - 注意：drive(0)会自动检查记录的步骤并智能恢复
     setTimeout(() => {
       guideDriver.drive(0);
     }, 100);
@@ -93,6 +94,8 @@ const GuidePanel = ({
   const resetGuide = () => {
     setHasCompleted(false);
     setIsVisible(true);
+    // 清除步骤记录，确保重新开始从头开始
+    clearStepRecord();
   };
 
   if (!isVisible) {

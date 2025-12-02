@@ -6,9 +6,6 @@ import { Card, Row, Col, Button, Carousel, ButtonGroup } from 'react-bootstrap';
 const HighlightActivities = ({ activities }) => {
   const [layout, setLayout] = useState('grid'); // 默认使用宫格布局
   
-  // 调试信息
-  console.log('HighlightActivities activities:', activities);
-  console.log('HighlightActivities activities length:', activities?.length);
   
   if (!activities || activities.length === 0) {
     return <div className="text-center p-5 text-muted">没有活动数据</div>;
