@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import GuidePanel from './GuidePanel';
+import { getGuideState, recordCurrentStep, setGuideStatus, clearGuideState } from '../utils/state';
 
 // 直接导入JSON配置文件
 import homeGuideConfig from '../jsons/guide-config.json';
@@ -17,6 +18,60 @@ const GuideManager = ({
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+
+
+
+  // 恢复现场逻辑：组件挂载时自动恢复引导状态
+  useEffect(() => {
+    const restoreGuideState = () => {
+      const guideState = getGuideState();
+      const { step, isGuiding } = guideState;
+      
+      // 恢复逻辑
+      if (step === 0) {
+        // 情况1：从未开始或已重置
+        setCurrentStepIndex(0);
+        setIsGuideActive(false);
+        return { action: 'initialized' };
+      } 
+      else if (step >= 1) {
+        // 情况2：有步骤记录
+        setCurrentStepIndex(step);
+        
+        if (isGuiding) {
+          // 2a：处于引导状态，自动恢复引导
+          setIsGuideActive(true);
+          
+          // 延迟执行路由跳转，确保组件已渲染
+          setTimeout(() => {
+            if (guideConfig && guideConfig.steps && step < guideConfig.steps.length) {
+              const stepData = guideConfig.steps[step];
+              if (stepData) {
+                const currentParams = extractRouteParams(stepData.route || '/', location.pathname);
+                const targetRoute = buildTargetRoute(stepData.targetRoute || '/', stepData.elementRouteInfo, currentParams);
+                
+                if (!isRouteMatch(targetRoute, location.pathname)) {
+                  const fullUrl = window.location.origin + targetRoute;
+                  window.location.href = fullUrl;
+                }
+              }
+            }
+          }, 100);
+          
+          return { action: 'resumed', step };
+        } else {
+          // 2b：非引导状态，仅更新面板状态
+          setIsGuideActive(false);
+          return { action: 'panel_restored', step };
+        }
+      }
+      
+      return { action: 'default' };
+    };
+
+    // 组件挂载时执行恢复
+    restoreGuideState();
+  }, [guideConfig, location.pathname]); // 依赖guideConfig和location.pathname
 
   // 检查路由匹配
   const isRouteMatch = (routePattern, currentPath) => {
@@ -85,7 +140,7 @@ const GuideManager = ({
   };
 
   // 处理步骤跳转
-  const handleStepNavigation = (stepIndex) => {
+  const handleStepNavigation = useCallback((stepIndex) => {
     if (!guideConfig || !guideConfig.steps || stepIndex >= guideConfig.steps.length) {
       return;
     }
@@ -97,10 +152,8 @@ const GuideManager = ({
       return;
     }
 
-
     const currentParams = extractRouteParams(step.route || '/', location.pathname);
     const targetRoute = buildTargetRoute(step.targetRoute || '/', step.elementRouteInfo, currentParams);
-    
     
     // 检查是否需要跳转：只有当目标路由与当前路由不匹配时才跳转
     if (!isRouteMatch(targetRoute, location.pathname)) {
@@ -111,7 +164,7 @@ const GuideManager = ({
       // 使用window.location.href进行完整的页面跳转，确保路由切换
       window.location.href = fullUrl;
     }
-  };
+  }, [guideConfig, location.pathname]);
 
   // 加载引导配置
   useEffect(() => {
@@ -160,9 +213,10 @@ const GuideManager = ({
       return;
     }
     
-    // 重置到第一步
+    // 重置到第一步，并设置引导状态
     setCurrentStepIndex(0);
     setIsGuideActive(true);
+    setGuideStatus(true); // 标记为引导状态
     
     // 处理第一步的路由跳转
     handleStepNavigation(0);
@@ -175,15 +229,28 @@ const GuideManager = ({
   const handleGuideComplete = () => {
     setIsGuideActive(false);
     setCurrentStepIndex(0);
+    setGuideStatus(false); // 清除引导状态
+    clearGuideState(); // 清除步骤记录
+    
     if (onGuideComplete) {
       onGuideComplete();
     }
   };
 
-  // 处理步骤变化
+  // 处理步骤变化：先记录，再跳转
   const handleStepChange = (newStepIndex) => {
+    console.log('步骤变更:', { from: currentStepIndex, to: newStepIndex });
+    
+    // 先记录当前步骤和引导状态
+    recordCurrentStep(newStepIndex, isGuideActive);
+    
+    // 再更新状态
     setCurrentStepIndex(newStepIndex);
-    handleStepNavigation(newStepIndex);
+    
+    // 如果是引导状态，才进行路由跳转
+    if (isGuideActive) {
+      handleStepNavigation(newStepIndex);
+    }
   };
 
 

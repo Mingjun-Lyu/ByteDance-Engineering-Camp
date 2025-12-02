@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { driver } from '../core/driver';
-import { getState, resetState, setState, clearStepRecord } from '../utils/state';
+import { clearStepRecord } from '../utils/state';
 import '../styles/guide-panel.css';
 
 const GuidePanel = ({ 
@@ -19,7 +19,6 @@ const GuidePanel = ({
   const [isVisible, setIsVisible] = useState(showOnStart);
   const [hasCompleted, setHasCompleted] = useState(false);
 
-  // 移除localStorage检查，使面板始终可见
   useEffect(() => {
     setIsVisible(showOnStart);
   }, [showOnStart]);

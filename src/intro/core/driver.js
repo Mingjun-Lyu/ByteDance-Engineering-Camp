@@ -4,7 +4,7 @@ import { destroyEvents, initEvents, requireRefresh } from "./events";
 import { configure, getConfig, getCurrentDriver, setCurrentDriver } from "../utils/config";
 import { destroyHighlight, highlight } from "./highlight";
 import { destroyEmitter, listen } from "../utils/emitter";
-import { getState, resetState, setState, recordCurrentStep, getRecordedStep } from "../utils/state";
+import { getState, resetState, setState, recordCurrentStep, getRecordedStep, clearGuideState } from "../utils/state";
 import "../styles/driver.css";
 
 export function driver(options = {}) {
@@ -178,8 +178,8 @@ export function driver(options = {}) {
       return;
     }
 
-    // 关键修改：在每次步骤切换时记录当前步骤
-    recordCurrentStep(stepIndex);
+    // 关键修改：在每次步骤切换时记录当前步骤和引导状态
+    recordCurrentStep(stepIndex, true); // 标记为引导中
 
     setState("__activeOnDestroyed", document.activeElement);
     setState("activeIndex", stepIndex);
@@ -276,6 +276,7 @@ export function driver(options = {}) {
     destroyEmitter();
 
     resetState();
+    clearGuideState();
 
     if (activeElement && activeStep) {
       const isActiveDummyElement = activeElement.id === "driver-dummy-element";
