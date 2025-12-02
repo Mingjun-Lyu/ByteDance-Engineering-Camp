@@ -116,6 +116,10 @@ const GuidePanel = ({
       // 清除步骤记录
       localStorage.removeItem(STEP_RECORD_KEY);
       localStorage.removeItem('intro_guide_state');
+      
+      // 重置完成后刷新页面
+      console.log('[GuidePanel] 重置完成，刷新页面');
+      window.location.reload();
     } catch (error) {
       console.warn('Failed to reset guide state:', error);
     }

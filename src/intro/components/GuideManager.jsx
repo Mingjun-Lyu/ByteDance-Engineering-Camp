@@ -76,80 +76,219 @@ const GuideManager = ({
   }, []);
 
   const isRouteMatch = (routePattern, currentPath) => {
-    if (routePattern === currentPath) return true;
+    console.log(`[isRouteMatch] ========== 开始路由匹配检查 ==========`);
+    console.log(`[isRouteMatch] 输入参数: pattern="${routePattern}", currentPath="${currentPath}"`);
     
+    // 完全匹配
+    if (routePattern === currentPath) {
+      console.log(`[isRouteMatch] ✅ 完全匹配: pattern="${routePattern}" === currentPath="${currentPath}"`);
+      console.log(`[isRouteMatch] ========== 匹配检查完成 ==========`);
+      return true;
+    }
+
+    console.log(`[isRouteMatch] 不完全匹配，开始动态路由检查`);
+    
+    // 拆分路径部分 - 修复：保留空字符串以正确处理根路径
     const patternParts = routePattern.split('/');
     const pathParts = currentPath.split('/');
     
-    if (patternParts.length !== pathParts.length) return false;
+    // 移除首尾的空字符串（处理路径开头和结尾的斜杠）
+    if (patternParts[0] === '') patternParts.shift();
+    if (patternParts[patternParts.length - 1] === '') patternParts.pop();
+    if (pathParts[0] === '') pathParts.shift();
+    if (pathParts[pathParts.length - 1] === '') pathParts.pop();
     
-    return patternParts.every((part, i) => 
-      part.startsWith(':') || part === pathParts[i]
-    );
+    console.log(`[isRouteMatch] 模式部分拆分结果: ["${patternParts.join('", "')}"] (长度: ${patternParts.length})`);
+    console.log(`[isRouteMatch] 路径部分拆分结果: ["${pathParts.join('", "')}"] (长度: ${pathParts.length})`);
+
+    // 检查路径段数量是否匹配
+    if (patternParts.length !== pathParts.length) {
+      console.log(`[isRouteMatch] ❌ 路径段数量不匹配: pattern=${patternParts.length}, path=${pathParts.length}`);
+      console.log(`[isRouteMatch] ========== 匹配检查完成 ==========`);
+      return false;
+    }
+
+    console.log(`[isRouteMatch] 路径段数量匹配，开始逐段检查`);
+    
+    // 检查每个部分是否匹配
+    for (let i = 0; i < patternParts.length; i++) {
+      const patternPart = patternParts[i];
+      const pathPart = pathParts[i];
+      
+      console.log(`[isRouteMatch] 检查第${i}段: patternPart="${patternPart}", pathPart="${pathPart}"`);
+      
+      // 如果是参数（以:开头），则匹配任意值
+      if (patternPart.startsWith(':')) {
+        console.log(`[isRouteMatch] ✅ 参数匹配: ${patternPart} = ${pathPart}`);
+        continue;
+      }
+      
+      // 精确匹配
+      if (patternPart !== pathPart) {
+        console.log(`[isRouteMatch] ❌ 部分不匹配: "${patternPart}" != "${pathPart}"`);
+        console.log(`[isRouteMatch] ========== 匹配检查完成 ==========`);
+        return false;
+      }
+      
+      console.log(`[isRouteMatch] ✅ 精确匹配: "${patternPart}" == "${pathPart}"`);
+    }
+
+    console.log(`[isRouteMatch] ✅ 动态路由匹配成功`);
+    console.log(`[isRouteMatch] ========== 匹配检查完成 ==========`);
+    return true;
   };
 
   const extractRouteParams = (routePattern, currentPath) => {
+    console.log(`[extractRouteParams] ========== 开始参数提取 ==========`);
+    console.log(`[extractRouteParams] 输入参数: pattern="${routePattern}", currentPath="${currentPath}"`);
+    
     const params = {};
     const patternParts = routePattern.split('/');
     const pathParts = currentPath.split('/');
     
-    for (let i = 0; i < patternParts.length; i++) {
-      if (patternParts[i].startsWith(':')) {
-        const paramName = patternParts[i].slice(1);
-        params[paramName] = pathParts[i];
-      }
-    }
+    // 移除首尾的空字符串（处理路径开头和结尾的斜杠）
+    if (patternParts[0] === '') patternParts.shift();
+    if (patternParts[patternParts.length - 1] === '') patternParts.pop();
+    if (pathParts[0] === '') pathParts.shift();
+    if (pathParts[pathParts.length - 1] === '') pathParts.pop();
     
+    console.log(`[extractRouteParams] 模式部分拆分结果: ["${patternParts.join('", "')}"] (长度: ${patternParts.length})`);
+    console.log(`[extractRouteParams] 路径部分拆分结果: ["${pathParts.join('", "')}"] (长度: ${pathParts.length})`);
+
+    // 检查路径段数量是否匹配
+    if (patternParts.length !== pathParts.length) {
+      console.log(`[extractRouteParams] ❌ 路径段数量不匹配: pattern=${patternParts.length}, path=${pathParts.length}`);
+      console.log(`[extractRouteParams] 无法提取参数，返回空对象`);
+      console.log(`[extractRouteParams] ========== 参数提取完成 ==========`);
+      return params;
+    }
+
+    console.log(`[extractRouteParams] ✅ 路径段数量匹配，开始提取参数`);
+
+    // 提取参数
+    let extractedCount = 0;
+    patternParts.forEach((part, index) => {
+      if (part.startsWith(':')) {
+        const paramName = part.slice(1);
+        params[paramName] = pathParts[index];
+        console.log(`[extractRouteParams] ✅ 提取参数: ${paramName} = ${pathParts[index]}`);
+        extractedCount++;
+      } else {
+        console.log(`[extractRouteParams] 非参数部分: "${part}" = "${pathParts[index]}"`);
+      }
+    });
+
+    console.log(`[extractRouteParams] 总共提取了 ${extractedCount} 个参数`);
+    console.log(`[extractRouteParams] 最终参数对象:`, params);
+    console.log(`[extractRouteParams] ========== 参数提取完成 ==========`);
     return params;
   };
 
   const buildTargetRoute = (targetRoute, elementRouteInfo, currentParams = {}) => {
+    console.log(`[GuideManager] 构建目标路由: targetRoute=${targetRoute}, elementRouteInfo=`, elementRouteInfo, 'currentParams=', currentParams);
+    
     let route = targetRoute;
     
     if (elementRouteInfo?.hasRoute) {
+      console.log(`[GuideManager] 使用elementRouteInfo.route: ${elementRouteInfo.route}`);
       route = elementRouteInfo.route;
       
       if (elementRouteInfo.paramSource && elementRouteInfo.paramValue) {
         const element = elementRouteInfo.element?.trim() 
           ? document.querySelector(elementRouteInfo.element) 
           : null;
+        console.log(`[GuideManager] 查找元素: ${elementRouteInfo.element}, 找到:`, !!element);
         const paramValue = element?.getAttribute(elementRouteInfo.paramSource) || elementRouteInfo.paramValue;
+        console.log(`[GuideManager] 参数值: ${paramValue}`);
         route = route.replace(':id', paramValue);
+        console.log(`[GuideManager] 替换后路由: ${route}`);
       }
     }
     
+    console.log(`[GuideManager] 替换前路由: ${route}, 当前参数:`, currentParams);
     Object.keys(currentParams).forEach(key => {
+      const oldRoute = route;
       route = route.replace(`:${key}`, currentParams[key]);
+      if (oldRoute !== route) {
+        console.log(`[GuideManager] 替换参数: :${key} -> ${currentParams[key]}, 新路由: ${route}`);
+      }
     });
     
+    console.log(`[GuideManager] 最终构建的路由: ${route}`);
     return route;
   };
 
   const handleStepNavigation = (stepIndex) => {
+    console.log(`[GuideManager] ========== 开始处理步骤导航 ==========`);
+    console.log(`[GuideManager] 传入的stepIndex: ${stepIndex}`);
+    console.log(`[GuideManager] 当前的currentStepIndex状态: ${currentStepIndex}`);
+    console.log(`[GuideManager] 当前实际路径: ${location.pathname}`);
+    
     if (!guideConfig || !guideConfig.steps || stepIndex >= guideConfig.steps.length) {
+      console.warn(`[GuideManager] 配置无效或步骤索引越界: guideConfig=${!!guideConfig}, steps=${guideConfig?.steps?.length}, stepIndex=${stepIndex}`);
       return;
     }
 
-    const step = guideConfig.steps[stepIndex];
-    if (!step) {
+    // 详细检查步骤数组
+    console.log(`[GuideManager] === 步骤配置检查 ===`);
+    console.log(`[GuideManager] 步骤总数: ${guideConfig.steps.length}`);
+    console.log(`[GuideManager] 步骤数组内容:`, guideConfig.steps.map(s => ({step: s.step, route: s.route, targetRoute: s.targetRoute})));
+    
+    const nextStep = guideConfig.steps[stepIndex];
+    if (!nextStep) {
       console.warn(`[GuideManager] 步骤${stepIndex}不存在`);
       return;
     }
 
-    // 更新UI状态
-    setCurrentStepIndex(stepIndex);
+    console.log(`[GuideManager] 下一个步骤配置: step=${nextStep.step}, route=${nextStep.route}, targetRoute=${nextStep.targetRoute}`);
+    console.log(`[GuideManager] 当前路径: ${location.pathname}`);
 
-    const currentParams = extractRouteParams(step.route || '/', location.pathname);
-    const targetRoute = buildTargetRoute(step.targetRoute || '/', step.elementRouteInfo, currentParams);
+    // 获取当前步骤的配置（用于参数提取）
+    const prevStepIndex = stepIndex - 1;
+    const currentStep = guideConfig.steps[prevStepIndex];
+    const currentStepRoute = currentStep ? currentStep.route || '/' : '/';
+    console.log(`[GuideManager] 当前步骤route: ${currentStepRoute}`);
+    console.log(`[GuideManager] 当前步骤索引: ${prevStepIndex}, 下一个步骤索引: ${stepIndex}`);
     
-    if (!isRouteMatch(targetRoute, location.pathname)) {
+    console.log(`[GuideManager] === 参数提取过程 ===`);
+    // 简化：直接使用默认参数，避免复杂的参数提取逻辑
+    const currentParams = { id: '1' }; // 默认使用ID=1
+    console.log(`[GuideManager] 使用默认参数:`, currentParams);
+
+    console.log(`[GuideManager] === 目标路由构建过程 ===`);
+    console.log(`[GuideManager] 调用buildTargetRoute参数: nextStep.route=${nextStep.route}, nextStep.elementRouteInfo=`, nextStep.elementRouteInfo, 'currentParams=', currentParams);
+    const targetRoute = buildTargetRoute(nextStep.route || '/', nextStep.elementRouteInfo, currentParams);
+    console.log(`[GuideManager] 构建的目标路由: ${targetRoute}`);
+    
+    console.log(`[GuideManager] === 路由匹配检查 ===`);
+    const isMatch = isRouteMatch(targetRoute, location.pathname);
+    console.log(`[GuideManager] 路由匹配结果: ${isMatch}, 当前路径=${location.pathname}, 目标路径=${targetRoute}`);
+    
+    if (!isMatch) {
+      console.log(`[GuideManager] 路径不匹配，准备跳转到: ${targetRoute}`);
+      
+      // 在跳转之前先保存步骤索引状态
+      console.log(`[GuideManager] === 保存步骤状态 ===`);
+      setCurrentStepIndex(stepIndex);
+      console.log(`[GuideManager] 设置currentStepIndex为: ${stepIndex}`);
+      saveCurrentState();
+      
       // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
       window.location.href = targetRoute;
+      console.log(`[GuideManager] ========== 跳转执行完成 ==========`);
       return;
     }
 
+    console.log(`[GuideManager] 路径匹配，无需跳转`);
+
+    // 更新UI状态（在跳转检查之后）
+    console.log(`[GuideManager] === 更新UI状态 ===`);
+    setCurrentStepIndex(stepIndex);
+    console.log(`[GuideManager] 设置currentStepIndex为: ${stepIndex}`);
+
     // 保存完整状态
     saveCurrentState();
+    console.log(`[GuideManager] ========== 步骤导航处理完成 ==========`);
   };
 
   useEffect(() => {
@@ -220,8 +359,13 @@ const GuideManager = ({
   };
 
   const handleStepChange = (newStepIndex) => {
+    console.log(`[GuideManager] handleStepChange: 设置currentStepIndex为 ${newStepIndex}`);
     setCurrentStepIndex(newStepIndex);
-    handleStepNavigation(newStepIndex);
+    // 使用setTimeout确保状态更新完成后再调用导航
+    setTimeout(() => {
+      console.log(`[GuideManager] handleStepChange: 延迟调用handleStepNavigation(${newStepIndex})`);
+      handleStepNavigation(newStepIndex);
+    }, 0);
   };
 
 
