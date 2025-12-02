@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import GuidePanel from './GuidePanel';
-
 import homeGuideConfig from '../jsons/guide-config.json';
+import { 
+  saveGuideState, 
+  loadGuideState, 
+  saveCurrentStepIndex, 
+  getCurrentStepIndex, 
+  saveGuideActiveStatus,
+  savePanelVisible
+} from '../utils/state';
 
 const GuideManager = ({ 
   children, 
@@ -10,12 +17,49 @@ const GuideManager = ({
   onGuideStart,
   onGuideComplete
 }) => {
+  // 初始状态设为默认值，通过restoreGuideState()恢复持久化状态
   const [isGuideActive, setIsGuideActive] = useState(false);
   const [guideConfig, setGuideConfig] = useState(null);
   const [configError, setConfigError] = useState(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // 恢复引导状态
+  const restoreGuideState = () => {
+    try {
+      const savedState = loadGuideState();
+      if (savedState.currentStepIndex !== undefined) {
+        setCurrentStepIndex(savedState.currentStepIndex);
+      }
+      if (savedState.isGuideActive !== undefined) {
+        setIsGuideActive(savedState.isGuideActive);
+      }
+      if (savedState.guideConfig) {
+        setGuideConfig(savedState.guideConfig);
+      }
+      if (savedState.configError) {
+        setConfigError(savedState.configError);
+      }
+    } catch (error) {
+      console.warn('Failed to restore guide state:', error);
+    }
+  };
+
+  // 保存引导状态
+  const saveCurrentState = React.useCallback(() => {
+    try {
+      saveGuideState({
+        currentStepIndex,
+        isGuideActive,
+        guideConfig,
+        configError,
+        lastSaved: new Date().toISOString()
+      });
+    } catch (error) {
+      console.warn('Failed to save guide state:', error);
+    }
+  }, [currentStepIndex, isGuideActive, guideConfig, configError]);
 
   const isRouteMatch = (routePattern, currentPath) => {
     if (routePattern === currentPath) return true;
@@ -78,20 +122,27 @@ const GuideManager = ({
       return;
     }
 
+    // 先更新UI状态并保存步骤索引
+    setCurrentStepIndex(stepIndex);
+    saveCurrentStepIndex(stepIndex);
 
     const currentParams = extractRouteParams(step.route || '/', location.pathname);
     const targetRoute = buildTargetRoute(step.targetRoute || '/', step.elementRouteInfo, currentParams);
     
-    
     if (!isRouteMatch(targetRoute, location.pathname)) {
-      
-      const fullUrl = window.location.origin + targetRoute;
-      
-      window.location.href = fullUrl;
+      // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
+      window.location.href = targetRoute;
+      return;
     }
+
+    // 如果不需要路由跳转，保存完整状态
+    saveCurrentState();
   };
 
   useEffect(() => {
+    // 只在组件挂载时恢复状态，不依赖location.pathname
+    restoreGuideState();
+    
     const loadConfig = () => {
       try {
         const config = homeGuideConfig;
@@ -109,7 +160,12 @@ const GuideManager = ({
     };
 
     loadConfig();
-  }, [location.pathname]);
+  }, []); // 空依赖数组，只在组件挂载时执行
+
+  // 状态变化时自动保存
+  useEffect(() => {
+    saveCurrentState();
+  }, [saveCurrentState]);
 
   useEffect(() => {
     if (isGuideActive && guideConfig && guideConfig.config?.startRoute) {
@@ -125,10 +181,19 @@ const GuideManager = ({
       return;
     }
     
-    setCurrentStepIndex(0);
-    setIsGuideActive(true);
+    // 恢复之前保存的步骤索引，如果没有则从0开始
+    const savedStepIndex = getCurrentStepIndex();
+    const validStepIndex = savedStepIndex >= 0 && savedStepIndex < guideConfig.steps.length 
+      ? savedStepIndex 
+      : 0;
     
-    handleStepNavigation(0);
+    setCurrentStepIndex(validStepIndex);
+    setIsGuideActive(true);
+    saveGuideActiveStatus(true);
+    saveCurrentState();
+    
+    // 导航到对应的步骤
+    handleStepNavigation(validStepIndex);
     
     if (onGuideStart) {
       onGuideStart();
@@ -137,7 +202,10 @@ const GuideManager = ({
 
   const handleGuideComplete = () => {
     setIsGuideActive(false);
-    setCurrentStepIndex(0);
+    // 注意：不重置当前步骤索引，保持持久化状态
+    saveGuideActiveStatus(false);
+    savePanelVisible(false); // 保存面板隐藏状态
+    saveCurrentState();
     if (onGuideComplete) {
       onGuideComplete();
     }
@@ -165,6 +233,7 @@ const GuideManager = ({
         onGuideComplete={handleGuideComplete}
         onStepChange={handleStepChange}
         guideConfig={guideConfig}
+        currentStepIndex={currentStepIndex}
       />
       
       {isGuideActive && (

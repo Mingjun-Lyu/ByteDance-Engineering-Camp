@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { driver } from '../core/driver';
-import { clearStepRecord } from '../utils/state';
+import { clearStepRecord, savePanelVisible, getPanelVisible, clearPanelVisible } from '../utils/state';
 import '../styles/guide-panel.css';
 
 const GuidePanel = ({ 
@@ -9,6 +10,7 @@ const GuidePanel = ({
   onGuideStart,
   onGuideComplete,
   onStepChange,
+  currentStepIndex,
   guideConfig = {
     title: '新手引导',
     description: '欢迎使用本系统，让我们开始引导吧！',
@@ -16,16 +18,18 @@ const GuidePanel = ({
     config: {}
   }
 }) => {
-  const [isVisible, setIsVisible] = useState(showOnStart);
-  const [currentStep, setCurrentStep] = useState(0);
-
-  useEffect(() => {
-    setIsVisible(showOnStart);
-  }, [showOnStart]);
+  // 确保 currentStepIndex 被正确传入
+  if (currentStepIndex === undefined) {
+    console.warn('GuidePanel: currentStepIndex is required but not provided');
+  }
+  
+  // 从本地存储恢复面板显示状态，如果没有则使用 showOnStart
+  const [isVisible, setIsVisible] = useState(() => {
+    const savedVisible = getPanelVisible();
+    return savedVisible ? savedVisible.isVisible : showOnStart;
+  }); // 空依赖数组，只在挂载时执行一次
 
   const handleStepChange = (newStepIndex, guideDriver) => {
-    setCurrentStep(newStepIndex);
-    
     if (onStepChange) {
       onStepChange(newStepIndex);
     }
@@ -72,16 +76,19 @@ const GuidePanel = ({
 
   const showPanel = () => {
     setIsVisible(true);
+    savePanelVisible(true);
   };
 
   const hidePanel = () => {
     setIsVisible(false);
+    savePanelVisible(false);
   };
 
   const resetGuide = () => {
-    setCurrentStep(0);
     setIsVisible(true);
+    savePanelVisible(true);
     clearStepRecord();
+    clearPanelVisible(); // 清除面板显示状态记录
   };
 
   if (!isVisible) {
@@ -108,7 +115,7 @@ const GuidePanel = ({
           <div className="guide-current-step">
             <h4>当前进度：</h4>
             <p className="step-info">
-              第 {currentStep + 1} 步（共 {guideConfig.steps.length} 步）
+              第 {currentStepIndex + 1} 步（共 {guideConfig.steps.length} 步）
             </p>
           </div>
         </div>
@@ -134,6 +141,30 @@ const GuidePanel = ({
       </div>
     </div>
   );
+};
+
+GuidePanel.propTypes = {
+  position: PropTypes.oneOf([
+    'top-center',
+    'top-left',
+    'top-right',
+    'bottom-center',
+    'bottom-left',
+    'bottom-right',
+    'left-center',
+    'right-center'
+  ]),
+  showOnStart: PropTypes.bool,
+  onGuideStart: PropTypes.func,
+  onGuideComplete: PropTypes.func,
+  onStepChange: PropTypes.func,
+  currentStepIndex: PropTypes.number.isRequired,
+  guideConfig: PropTypes.shape({
+    title: PropTypes.string,
+    description: PropTypes.string,
+    steps: PropTypes.array,
+    config: PropTypes.object
+  })
 };
 
 export default GuidePanel;
