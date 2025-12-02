@@ -119,7 +119,13 @@ const GuideManager = ({
     // 检查是否需要跳转：只有当目标路由与当前路由不匹配时才跳转
     if (!isRouteMatch(targetRoute, location.pathname)) {
       console.log(`[GuideManager] 执行路由跳转：从 ${location.pathname} 到 ${targetRoute}`);
-      navigate(targetRoute);
+      
+      // 使用完整的URL构建方式解决React Router隔离问题
+      const fullUrl = window.location.origin + targetRoute;
+      console.log(`[GuideManager] 构建完整URL：${fullUrl}`);
+      
+      // 使用window.location.href进行完整的页面跳转，确保路由切换
+      window.location.href = fullUrl;
     } else {
       console.log(`[GuideManager] 不需要跳转：当前路径 ${location.pathname} 已匹配目标路由 ${targetRoute}`);
     }
