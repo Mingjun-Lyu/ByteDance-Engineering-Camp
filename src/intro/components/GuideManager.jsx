@@ -129,32 +129,32 @@ const GuideManager = ({
     return true;
   };
 
-  const extractRouteParams = (routePattern, currentPath) => {
-    const params = {};
-    const patternParts = routePattern.split('/');
-    const pathParts = currentPath.split('/');
+  // const extractRouteParams = (routePattern, currentPath) => {
+  //   const params = {};
+  //   const patternParts = routePattern.split('/');
+  //   const pathParts = currentPath.split('/');
     
-    // 移除首尾的空字符串（处理路径开头和结尾的斜杠）
-    if (patternParts[0] === '') patternParts.shift();
-    if (patternParts[patternParts.length - 1] === '') patternParts.pop();
-    if (pathParts[0] === '') pathParts.shift();
-    if (pathParts[pathParts.length - 1] === '') pathParts.pop();
+  //   // 移除首尾的空字符串（处理路径开头和结尾的斜杠）
+  //   if (patternParts[0] === '') patternParts.shift();
+  //   if (patternParts[patternParts.length - 1] === '') patternParts.pop();
+  //   if (pathParts[0] === '') pathParts.shift();
+  //   if (pathParts[pathParts.length - 1] === '') pathParts.pop();
 
-    // 检查路径段数量是否匹配
-    if (patternParts.length !== pathParts.length) {
-      return params;
-    }
+  //   // 检查路径段数量是否匹配
+  //   if (patternParts.length !== pathParts.length) {
+  //     return params;
+  //   }
 
-    // 提取参数
-    patternParts.forEach((part, index) => {
-      if (part.startsWith(':')) {
-        const paramName = part.slice(1);
-        params[paramName] = pathParts[index];
-      }
-    });
+  //   // 提取参数
+  //   patternParts.forEach((part, index) => {
+  //     if (part.startsWith(':')) {
+  //       const paramName = part.slice(1);
+  //       params[paramName] = pathParts[index];
+  //     }
+  //   });
 
-    return params;
-  };
+  //   return params;
+  // };
 
   const buildTargetRoute = (targetRoute, elementRouteInfo, currentParams = {}) => {
     let route = targetRoute;
@@ -191,9 +191,9 @@ const GuideManager = ({
     }
 
     // 获取当前步骤的配置（用于参数提取）
-    const prevStepIndex = stepIndex - 1;
-    const currentStep = guideConfig.steps[prevStepIndex];
-    const currentStepRoute = currentStep ? currentStep.route || '/' : '/';
+    // const prevStepIndex = stepIndex - 1;
+    // const currentStep = guideConfig.steps[prevStepIndex];
+    // const currentStepRoute = currentStep ? currentStep.route || '/' : '/';
     
     // 简化：直接使用默认参数，避免复杂的参数提取逻辑
     const currentParams = { id: '1' }; // 默认使用ID=1
