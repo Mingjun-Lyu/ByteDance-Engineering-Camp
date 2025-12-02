@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
 import GuidePanel from './GuidePanel';
-import { getGuideState, recordCurrentStep, setGuideStatus, clearGuideState } from '../utils/state';
-
-// 直接导入JSON配置文件
-import homeGuideConfig from '../jsons/guide-config.json';
+import { 
+  useGuideRouting,
+  useGuideConfig,
+  useGuideState,
+  useGuideFlow 
+} from '../hooks';
 
 const GuideManager = ({ 
   children, 
@@ -12,251 +13,46 @@ const GuideManager = ({
   onGuideStart,
   onGuideComplete
 }) => {
-  const [isGuideActive, setIsGuideActive] = useState(false);
-  const [guideConfig, setGuideConfig] = useState(null);
-  const [configError, setConfigError] = useState(null);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const location = useLocation();
-  const navigate = useNavigate();
+  // 使用自定义hooks
+  const routing = useGuideRouting();
+  const config = useGuideConfig();
+  const state = useGuideState(config.guideConfig);
+  const flow = useGuideFlow(state.isGuideActive, config.guideConfig, routing.currentPath, routing);
 
-
-
-  // 恢复现场逻辑：组件挂载时自动恢复引导状态
+  // 恢复引导状态
   useEffect(() => {
-    const restoreGuideState = () => {
-      const guideState = getGuideState();
-      const { step, isGuiding } = guideState;
-      
-      // 恢复逻辑
-      if (step === 0) {
-        // 情况1：从未开始或已重置
-        setCurrentStepIndex(0);
-        setIsGuideActive(false);
-        return { action: 'initialized' };
-      } 
-      else if (step >= 1) {
-        // 情况2：有步骤记录
-        setCurrentStepIndex(step);
-        
-        if (isGuiding) {
-          // 2a：处于引导状态，自动恢复引导
-          setIsGuideActive(true);
-          
-          // 延迟执行路由跳转，确保组件已渲染
-          setTimeout(() => {
-            if (guideConfig && guideConfig.steps && step < guideConfig.steps.length) {
-              const stepData = guideConfig.steps[step];
-              if (stepData) {
-                const currentParams = extractRouteParams(stepData.route || '/', location.pathname);
-                const targetRoute = buildTargetRoute(stepData.targetRoute || '/', stepData.elementRouteInfo, currentParams);
-                
-                if (!isRouteMatch(targetRoute, location.pathname)) {
-                  const fullUrl = window.location.origin + targetRoute;
-                  window.location.href = fullUrl;
-                }
-              }
-            }
-          }, 100);
-          
-          return { action: 'resumed', step };
-        } else {
-          // 2b：非引导状态，仅更新面板状态
-          setIsGuideActive(false);
-          return { action: 'panel_restored', step };
-        }
-      }
-      
-      return { action: 'default' };
-    };
-
-    // 组件挂载时执行恢复
-    restoreGuideState();
-  }, [guideConfig, location.pathname]); // 依赖guideConfig和location.pathname
-
-  // 检查路由匹配
-  const isRouteMatch = (routePattern, currentPath) => {
-    if (routePattern === currentPath) return true;
-    
-    // 处理动态路由参数
-    const patternParts = routePattern.split('/');
-    const pathParts = currentPath.split('/');
-    
-    if (patternParts.length !== pathParts.length) return false;
-    
-    for (let i = 0; i < patternParts.length; i++) {
-      if (patternParts[i].startsWith(':')) continue; // 动态参数匹配
-      if (patternParts[i] !== pathParts[i]) return false;
+    if (config.guideConfig) {
+      state.restoreGuideState(routing);
     }
-    
-    return true;
-  };
+  }, [config.guideConfig, routing]);
 
-  // 提取路由参数
-  const extractRouteParams = (routePattern, currentPath) => {
-    const params = {};
-    const patternParts = routePattern.split('/');
-    const pathParts = currentPath.split('/');
-    
-    for (let i = 0; i < patternParts.length; i++) {
-      if (patternParts[i].startsWith(':')) {
-        const paramName = patternParts[i].slice(1);
-        params[paramName] = pathParts[i];
-      }
-    }
-    
-    return params;
-  };
-
-  // 构建目标路由
-  const buildTargetRoute = (targetRoute, elementRouteInfo, currentParams = {}) => {
-    let route = targetRoute;
-    
-    // 如果有元素路由信息，使用元素的路由
-    if (elementRouteInfo && elementRouteInfo.hasRoute) {
-      route = elementRouteInfo.route;
-      
-      // 处理参数替换
-      if (elementRouteInfo.paramSource && elementRouteInfo.paramValue) {
-        // 从元素属性中提取参数（确保选择器有效）
-        if (elementRouteInfo.element && elementRouteInfo.element.trim()) {
-          const element = document.querySelector(elementRouteInfo.element);
-          if (element) {
-            const paramValue = element.getAttribute(elementRouteInfo.paramSource) || elementRouteInfo.paramValue;
-            route = route.replace(':id', paramValue);
-          }
-        } else {
-          // 如果没有有效的选择器，使用默认参数值
-          route = route.replace(':id', elementRouteInfo.paramValue);
-        }
-      }
-    }
-    
-    // 替换当前参数
-    Object.keys(currentParams).forEach(key => {
-      route = route.replace(`:${key}`, currentParams[key]);
-    });
-    
-    return route;
-  };
-
-  // 处理步骤跳转
-  const handleStepNavigation = useCallback((stepIndex) => {
-    if (!guideConfig || !guideConfig.steps || stepIndex >= guideConfig.steps.length) {
-      return;
-    }
-
-    const step = guideConfig.steps[stepIndex];
-    // 确保step存在且包含必要的字段
-    if (!step) {
-      console.warn(`[GuideManager] 步骤${stepIndex}不存在`);
-      return;
-    }
-
-    const currentParams = extractRouteParams(step.route || '/', location.pathname);
-    const targetRoute = buildTargetRoute(step.targetRoute || '/', step.elementRouteInfo, currentParams);
-    
-    // 检查是否需要跳转：只有当目标路由与当前路由不匹配时才跳转
-    if (!isRouteMatch(targetRoute, location.pathname)) {
-      
-      // 使用完整的URL构建方式解决React Router隔离问题
-      const fullUrl = window.location.origin + targetRoute;
-      
-      // 使用window.location.href进行完整的页面跳转，确保路由切换
-      window.location.href = fullUrl;
-    }
-  }, [guideConfig, location.pathname]);
-
-  // 加载引导配置
-  useEffect(() => {
-    const loadConfig = () => {
-      try {
-        const config = homeGuideConfig;
-        // 检查配置是否有效
-        if (!config || !config.title || !config.steps) {
-          throw new Error('引导配置文件格式错误或缺失必要字段');
-        }
-        
-        // 为每个步骤添加step字段（如果不存在）
-        const enhancedSteps = config.steps.map((step, index) => ({
-          step: index + 1,
-          ...step
-        }));
-        
-        setGuideConfig({
-          ...config,
-          steps: enhancedSteps
-        });
-        setConfigError(null);
-      } catch (error) {
-        console.warn('Failed to load guide config:', error);
-        setConfigError(error.message);
-        setGuideConfig(null);
-      }
-    };
-
-    loadConfig();
-  }, [location.pathname]);
-
-  // 处理引导开始时的路由跳转
-  useEffect(() => {
-    if (isGuideActive && guideConfig && guideConfig.config?.startRoute) {
-      if (!isRouteMatch(guideConfig.config.startRoute, location.pathname)) {
-        navigate(guideConfig.config.startRoute);
-      }
-    }
-  }, [isGuideActive, guideConfig, location.pathname, navigate]);
-
+  // 处理引导开始
   const handleGuideStart = () => {
-    // 检查配置是否有效
-    if (configError || !guideConfig || guideConfig.steps.length === 0) {
-      alert('引导配置文件缺失或格式错误，无法开始引导！\\n\\n错误信息：' + (configError || '配置文件为空或缺少步骤配置'));
+    const validation = flow.validateGuideStart(config, state);
+    if (!validation.isValid) {
+      alert(`${validation.message}\n\n错误信息：${validation.error}`);
       return;
     }
     
-    // 重置到第一步，并设置引导状态
-    setCurrentStepIndex(0);
-    setIsGuideActive(true);
-    setGuideStatus(true); // 标记为引导状态
-    
-    // 处理第一步的路由跳转
-    handleStepNavigation(0);
-    
-    if (onGuideStart) {
-      onGuideStart();
-    }
+    state.startGuide(onGuideStart, (stepIndex) => {
+      flow.handleStepNavigation(stepIndex, config, routing);
+    });
   };
 
+  // 处理引导完成
   const handleGuideComplete = () => {
-    setIsGuideActive(false);
-    setCurrentStepIndex(0);
-    setGuideStatus(false); // 清除引导状态
-    clearGuideState(); // 清除步骤记录
-    
-    if (onGuideComplete) {
-      onGuideComplete();
-    }
+    state.completeGuide(onGuideComplete);
   };
 
-  // 处理步骤变化：先记录，再跳转
+  // 处理步骤变化
   const handleStepChange = (newStepIndex) => {
-    console.log('步骤变更:', { from: currentStepIndex, to: newStepIndex });
-    
-    // 先记录当前步骤和引导状态
-    recordCurrentStep(newStepIndex, isGuideActive);
-    
-    // 再更新状态
-    setCurrentStepIndex(newStepIndex);
-    
-    // 如果是引导状态，才进行路由跳转
-    if (isGuideActive) {
-      handleStepNavigation(newStepIndex);
-    }
+    state.handleStepChange(newStepIndex, (stepIndex) => {
+      flow.handleStepNavigation(stepIndex, config, routing);
+    });
   };
-
-
 
   // 如果配置加载失败，不显示引导面板
-  if (!guideConfig) {
+  if (!flow.shouldShowPanel(config)) {
     return children;
   }
 
@@ -271,11 +67,11 @@ const GuideManager = ({
         onGuideStart={handleGuideStart}
         onGuideComplete={handleGuideComplete}
         onStepChange={handleStepChange}
-        guideConfig={guideConfig}
+        guideConfig={config.guideConfig}
       />
       
       {/* 引导遮罩层（如果引导正在进行） */}
-      {isGuideActive && (
+      {flow.shouldShowOverlay(state.isGuideActive) && (
         <div className="guide-overlay" />
       )}
     </>

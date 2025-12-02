@@ -76,7 +76,7 @@ const GuidePanel = ({
       }
     });
 
-    // 开始引导 - 注意：drive(0)会自动检查记录的步骤并智能恢复
+    // 开始引导
     setTimeout(() => {
       guideDriver.drive(0);
     }, 100);
