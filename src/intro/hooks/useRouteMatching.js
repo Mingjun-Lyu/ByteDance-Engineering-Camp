@@ -17,11 +17,6 @@ export const useRouteMatching = () => {
       return true;
     }
 
-    // 特殊处理：根路径匹配所有路径
-    if (routePattern === '/') {
-      return true; // 根路径匹配所有路径
-    }
-
     // 拆分路径部分
     const patternParts = routePattern.split('/').filter(part => part !== '');
     const pathParts = currentPath.split('/').filter(part => part !== '');

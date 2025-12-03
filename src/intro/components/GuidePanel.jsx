@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useLocation } from 'react-router-dom';
 import { driver } from '../core/driver';
+import { useRouteMatching } from '../hooks/useRouteMatching';
 import '../styles/guide-panel.css';
 
 // 本地存储键名
@@ -49,7 +51,22 @@ const GuidePanel = ({
     }
   };
 
+  const location = useLocation();
+  const { isRouteMatch } = useRouteMatching();
+
   const startGuide = () => {
+    // 检查当前路由是否在当前步骤的路由
+    const currentStep = guideConfig.steps[currentStepIndex];
+    if (currentStep && currentStep.route) {
+      const isMatch = isRouteMatch(currentStep.route, location.pathname);
+      if (!isMatch) {
+        console.log('[GuidePanel] 路由不匹配，跳转到当前步骤的路由:', currentStep.route);
+        // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
+        window.location.href = currentStep.route;
+        return;
+      }
+    }
+    
     setIsVisible(false);
     
     if (onGuideStart) {
