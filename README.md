@@ -75,9 +75,9 @@ graph TB
     GuideConfig --> JSONConfig[JSON配置]
     
     %% 引导系统与业务解耦
-    GuideConfig -.->|配置驱动| Banner
-    GuideConfig -.->|配置驱动| Filter
-    GuideConfig -.->|配置驱动| Header
+    GuideConfig -.->|JSON配置驱动| Banner
+    GuideConfig -.->|JSON配置驱动| Filter
+    GuideConfig -.->|JSON配置驱动| Header
     
     %% 状态管理连接
     UIStore --> GuideManager
@@ -146,20 +146,16 @@ graph TB
 ### 👥 用户体验
 - **响应式设计**：完美适配多种设备尺寸，移动端友好
 - **平滑动画**：CSS3过渡动画效果，提升交互体验
-- **智能筛选**：多维度活动筛选功能，快速定位目标
 - **分页加载**：无限滚动分页体验，浏览更流畅
 
 ### 🔧 开发体验
-- **TypeScript支持**：完整的类型定义，减少运行时错误
 - **ESLint配置**：代码质量保证，统一编码规范
-- **Jest测试**：单元测试覆盖，确保功能稳定性
 - **Mock数据**：开发环境数据模拟，前后端并行开发
 
 ### 🎯 功能特性
 - **活动浏览**：首页推荐和分类展示，内容丰富
 - **智能搜索**：关键词和分类筛选，精准查找
 - **详情查看**：完整的活动信息展示，信息全面
-- **相关推荐**：智能推荐相关活动，提升参与度
 
 ## 🎯 核心功能模块
 
@@ -183,7 +179,7 @@ graph TB
 
 ## 🧭 新手引导系统架构
 
-### 引导系统整体架构
+### 统一架构图
 
 ```mermaid
 graph TB
@@ -195,28 +191,63 @@ graph TB
     
     %% 核心引擎层
     subgraph "🚀 引导核心引擎"
-        GuideManager --> Driver[⚙️ 引导驱动]
-        Driver --> Overlay[🖼️ 遮罩层]
-        Driver --> Highlight[✨ 高亮元素]
-        Driver --> Popover[💬 引导弹窗]
-        Driver --> Events[📡 事件系统]
+        GuideManager --> EngineCore[� 核心引擎]
+        
+        subgraph "⚙️ 引导驱动模块"
+            EngineCore --> StepController[🎯 步骤控制器]
+            StepController --> FlowManager[🔄 流程管理器]
+            FlowManager --> Validation[✅ 步骤验证]
+        end
+        
+        subgraph "🎨 视觉渲染模块"
+            EngineCore --> VisualRenderer[🎨 视觉渲染器]
+            VisualRenderer --> OverlayManager[🖼️ 遮罩管理器]
+            VisualRenderer --> HighlightEngine[✨ 高亮引擎]
+            VisualRenderer --> PopoverRenderer[💬 弹窗渲染器]
+            VisualRenderer --> AnimationEngine[🎬 动画引擎]
+        end
+        
+        subgraph "� 事件处理模块"
+            EngineCore --> EventSystem[📡 事件系统]
+            EventSystem --> UserEvents[👤 用户事件]
+            EventSystem --> SystemEvents[⚙️ 系统事件]
+            EventSystem --> RouterEvents[🧭 路由事件]
+        end
+        
+        subgraph "🔧 工具模块"
+            EngineCore --> Utils[🔧 工具集]
+            Utils --> DOMHelper[🌐 DOM助手]
+            Utils --> Logger[📝 日志系统]
+        end
     end
     
     %% 路由控制层
     subgraph "🧭 路由导航控制"
-        RouteMatch[📍 路由匹配] --> RouteNav[🔄 路由导航]
+        RouteMatch[� 路由匹配] --> RouteNav[� 路由导航]
         RouteNav --> StatePersist[💾 状态持久化]
     end
     
     %% 配置系统层
     subgraph "⚙️ 配置系统"
-        Config[📄 配置管理] --> JSONConfig[JSON配置]
-        Config --> StateMgmt[🔧 状态管理]
+        Config[� 配置管理] --> JSONConfig[JSON配置]
+        Config --> StateMgmt[� 状态管理]
     end
     
     %% 数据流连接
-    Driver --> RouteMatch
-    Driver --> Config
+    StepController --> VisualRenderer
+    StepController --> EventSystem
+    
+    Validation --> StepController
+    
+    UserEvents --> StepController
+    SystemEvents --> FlowManager
+    RouterEvents --> FlowManager
+    
+    DOMHelper --> VisualRenderer
+    Logger --> VisualRenderer
+    
+    EngineCore --> RouteMatch
+    EngineCore --> Config
     
     %% 持久化存储
     StatePersist --> LocalStorage[💿 LocalStorage]
@@ -227,6 +258,10 @@ graph TB
     classDef trigger fill:#ffcdd2
     classDef manager fill:#bbdefb
     classDef core fill:#c8e6c9
+    classDef driver fill:#e1f5fe
+    classDef visual fill:#f0f4c3
+    classDef event fill:#d1c4e9
+    classDef utils fill:#f8bbd9
     classDef route fill:#e1f5fe
     classDef config fill:#ffecb3
     classDef storage fill:#d1c4e9
@@ -234,118 +269,14 @@ graph TB
     class User user
     class Trigger trigger
     class GuideManager manager
-    class Driver,Overlay,Highlight,Popover,Events core
+    class EngineCore core
+    class StepController,FlowManager,Validation driver
+    class VisualRenderer,OverlayManager,HighlightEngine,PopoverRenderer,AnimationEngine visual
+    class EventSystem,UserEvents,SystemEvents,RouterEvents event
+    class Utils,DOMHelper,Logger utils
     class RouteMatch,RouteNav,StatePersist route
     class Config,JSONConfig,StateMgmt config
     class LocalStorage storage
-```
-
-### 核心引擎详细架构
-
-```mermaid
-graph TB
-    %% 引导管理器入口
-    GuideManager[📋 引导管理器] --> EngineCore[🚀 核心引擎]
-    
-    %% 核心引擎内部结构
-    subgraph "⚙️ 引导驱动模块"
-        EngineCore --> StepController[🎯 步骤控制器]
-        StepController --> FlowManager[🔄 流程管理器]
-        FlowManager --> Validation[✅ 步骤验证]
-    end
-    
-    subgraph "🎨 视觉渲染模块"
-        EngineCore --> VisualRenderer[🎨 视觉渲染器]
-        
-        subgraph "🖼️ 遮罩子系统"
-            VisualRenderer --> OverlayManager[遮罩管理器]
-            OverlayManager --> OverlayGenerator[遮罩生成器]
-            OverlayGenerator --> MaskCalculator[遮罩计算器]
-            OverlayGenerator --> StyleManager[样式管理器]
-        end
-        
-        subgraph "✨ 高亮子系统"
-            VisualRenderer --> HighlightEngine[高亮引擎]
-            HighlightEngine --> ElementLocator[元素定位器]
-            ElementLocator --> PositionCalculator[位置计算器]
-            HighlightEngine --> HighlightRenderer[高亮渲染器]
-            HighlightRenderer --> BorderEffect[边框效果]
-            HighlightRenderer --> ShadowEffect[阴影效果]
-        end
-        
-        subgraph "💬 弹窗子系统"
-            VisualRenderer --> PopoverRenderer[弹窗渲染器]
-            PopoverRenderer --> ContentGenerator[内容生成器]
-            ContentGenerator --> TextProcessor[文本处理器]
-            ContentGenerator --> IconManager[图标管理器]
-            PopoverRenderer --> PositionManager[位置管理器]
-            PositionManager --> AlignmentEngine[对齐引擎]
-            PositionManager --> CollisionDetector[碰撞检测器]
-        end
-        
-        subgraph "🎬 动画子系统"
-            VisualRenderer --> AnimationEngine[动画引擎]
-            AnimationEngine --> TransitionManager[过渡管理器]
-            TransitionManager --> EasingCalculator[缓动计算器]
-            AnimationEngine --> TimelineController[时间轴控制器]
-        end
-    end
-    
-    subgraph "📡 事件处理模块"
-        EngineCore --> EventSystem[📡 事件系统]
-        EventSystem --> UserEvents[👤 用户事件]
-        EventSystem --> SystemEvents[⚙️ 系统事件]
-        EventSystem --> RouterEvents[🧭 路由事件]
-    end
-    
-    subgraph "🔧 工具模块"
-        EngineCore --> Utils[🔧 工具集]
-        Utils --> DOMHelper[🌐 DOM助手]
-        Utils --> Animation[🎬 动画引擎]
-        Utils --> Logger[📝 日志系统]
-    end
-    
-    %% 内部数据流
-    StepController --> VisualRenderer
-    StepController --> EventSystem
-    
-    Validation --> StepController
-    
-    %% 视觉渲染模块内部连接
-    OverlayManager --> HighlightEngine
-    HighlightEngine --> PopoverRenderer
-    
-    %% 工具模块与视觉渲染的连接
-    DOMHelper --> ElementLocator
-    DOMHelper --> PositionCalculator
-    Animation --> AnimationEngine
-    Logger --> VisualRenderer
-    
-    UserEvents --> StepController
-    SystemEvents --> FlowManager
-    RouterEvents --> FlowManager
-    
-    %% 外部连接
-    EngineCore --> ConfigManager[⚙️ 配置管理器]
-    EngineCore --> StateManager[💾 状态管理器]
-    EngineCore --> RouterManager[🧭 路由管理器]
-    
-    %% 样式定义
-    classDef manager fill:#bbdefb
-    classDef core fill:#c8e6c9
-    classDef driver fill:#e1f5fe
-    classDef visual fill:#ffecb3
-    classDef event fill:#d1c4e9
-    classDef utils fill:#f8bbd9
-    classDef external fill:#ffcdd2
-    
-    class GuideManager manager
-    class EngineCore core
-    class StepController,FlowManager,Validation driver
-    class VisualRenderer,OverlayManager,HighlightEngine,PopoverRenderer visual
-    class EventSystem,UserEvents,SystemEvents,RouterEvents event
-    class Utils,DOMHelper,Animation,Logger utils
-    class ConfigManager,StateManager,RouterManager external
 ```
 
 ### 核心引擎模块说明
@@ -356,35 +287,11 @@ graph TB
 - **步骤验证**：验证步骤配置的有效性和执行条件
 
 #### 2. **视觉渲染模块** 🎨
-
-##### 🖼️ 遮罩子系统
-- **遮罩管理器**：控制遮罩层的显示和隐藏状态
-- **遮罩生成器**：动态生成遮罩层DOM结构
-- **遮罩计算器**：计算遮罩区域和透明区域
-- **样式管理器**：管理遮罩层的样式和主题
-
-##### ✨ 高亮子系统
-- **高亮引擎**：统一管理高亮效果
-- **元素定位器**：精确查找目标元素位置
-- **位置计算器**：计算高亮区域的位置和尺寸
-- **高亮渲染器**：渲染高亮效果
-- **边框效果**：实现多种边框高亮样式
-- **阴影效果**：添加阴影和发光效果
-
-##### 💬 弹窗子系统
+- **视觉渲染器**：统一管理所有视觉元素的渲染
+- **遮罩管理器**：控制遮罩层的显示和隐藏
+- **高亮引擎**：实现目标元素的高亮效果
 - **弹窗渲染器**：渲染引导提示信息和操作按钮
-- **内容生成器**：动态生成弹窗内容
-- **文本处理器**：处理多语言和格式化文本
-- **图标管理器**：管理弹窗中的图标资源
-- **位置管理器**：控制弹窗的显示位置
-- **对齐引擎**：实现智能对齐算法
-- **碰撞检测器**：避免弹窗与边界碰撞
-
-##### 🎬 动画子系统
-- **动画引擎**：统一管理所有动画效果
-- **过渡管理器**：控制动画过渡效果
-- **缓动计算器**：实现平滑的缓动函数
-- **时间轴控制器**：管理动画时间轴和时序
+- **动画引擎**：实现平滑的过渡动画效果
 
 #### 3. **事件处理模块** 📡
 - **事件系统**：统一的事件分发和处理机制
@@ -394,13 +301,7 @@ graph TB
 
 #### 4. **工具模块** 🔧
 - **DOM助手**：提供安全的DOM操作和元素查找功能
-- **动画引擎**：实现平滑的过渡动画效果
-- **日志系统**：记录引导系统的运行状态和错误信息
-
-#### 5. **外部管理器** 🔗
-- **配置管理器**：读取和管理引导配置
-- **状态管理器**：维护引导状态和进度
-- **路由管理器**：处理跨页面引导的导航逻辑
+- **日志系统**：记录引导执行过程和错误信息
 
 ### 架构分层说明
 
@@ -533,43 +434,6 @@ stateDiagram-v2
     Complete --> [*]: 结束
     Paused --> [*]: 用户取消
 ```
-
-## 🛠️ 快速开始
-
-### 环境要求
-- **Node.js** >= 16.0.0
-- **npm** >= 8.0.0
-
-### 安装步骤
-
-```bash
-# 1. 克隆项目
-git clone <项目地址>
-cd ByteDance-Engineering-Camp
-
-# 2. 安装依赖
-npm install
-
-# 3. 启动开发服务器
-npm run dev
-
-# 4. 构建生产版本
-npm run build
-
-# 5. 运行测试
-npm test
-```
-
-### 开发命令
-
-| 命令 | 功能 | 说明 |
-|------|------|------|
-| `npm run dev` | 启动开发服务器 | 支持热重载，默认端口5173 |
-| `npm run build` | 构建生产版本 | 优化后的静态文件 |
-| `npm run preview` | 预览构建结果 | 本地预览生产版本 |
-| `npm test` | 运行测试 | Jest单元测试 |
-| `npm run lint` | 代码检查 | ESLint代码质量检查 |
-
 ### 项目结构说明
 
 ```
