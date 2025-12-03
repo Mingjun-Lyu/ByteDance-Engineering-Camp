@@ -79,33 +79,7 @@ export const useRouteNavigation = () => {
     }
   }, [location.pathname]);
 
-  /**
-   * 检查起始路由是否需要跳转
-   * @param {boolean} isGuideActive - 引导是否激活
-   * @param {Object} guideConfig - 引导配置
-   * @param {Function} isRouteMatch - 路由匹配函数
-   */
-  const checkStartRouteNavigation = useCallback(({
-    isGuideActive,
-    guideConfig,
-    isRouteMatch
-  }) => {
-    if (isGuideActive && guideConfig && guideConfig.config?.startRoute) {
-      console.log('[useRouteNavigation] 检查起始路由匹配:', {
-        isGuideActive,
-        startRoute: guideConfig.config.startRoute,
-        currentPath: location.pathname,
-        isMatch: isRouteMatch(guideConfig.config.startRoute, location.pathname)
-      });
-      
-      if (!isRouteMatch(guideConfig.config.startRoute, location.pathname)) {
-        console.log('[useRouteNavigation] 路由不匹配，跳转到起始路由:', guideConfig.config.startRoute);
-        navigate(guideConfig.config.startRoute);
-      } else {
-        console.log('[useRouteNavigation] 路由匹配，无需跳转');
-      }
-    }
-  }, [navigate, location.pathname]);
+
 
   /**
    * 处理恢复断点导航
@@ -178,10 +152,45 @@ export const useRouteNavigation = () => {
     }
   }, [navigate, location.pathname]);
 
+  /**
+   * 检查当前步骤路由是否需要跳转
+   * @param {boolean} isGuideActive - 引导是否激活
+   * @param {Object} guideConfig - 引导配置
+   * @param {Function} isRouteMatch - 路由匹配函数
+   * @param {number} currentStepIndex - 当前步骤索引
+   */
+  const checkCurrentStepRouteNavigation = useCallback(({
+    isGuideActive,
+    guideConfig,
+    isRouteMatch,
+    currentStepIndex
+  }) => {
+    if (isGuideActive && guideConfig && guideConfig.steps && guideConfig.steps.length > 0) {
+      // 获取当前步骤对应的路由
+      const currentStep = guideConfig.steps[currentStepIndex];
+      const currentStepRoute = currentStep?.route || '/';
+      
+      console.log('[useRouteNavigation] 检查当前步骤路由匹配:', {
+        isGuideActive,
+        currentStepIndex,
+        currentStepRoute,
+        currentPath: location.pathname,
+        isMatch: isRouteMatch(currentStepRoute, location.pathname)
+      });
+      
+      if (!isRouteMatch(currentStepRoute, location.pathname)) {
+        console.log('[useRouteNavigation] 路由不匹配，跳转到当前步骤路由:', currentStepRoute);
+        navigate(currentStepRoute);
+      } else {
+        console.log('[useRouteNavigation] 路由匹配，无需跳转');
+      }
+    }
+  }, [navigate, location.pathname]);
+
   return {
     handleStepNavigation,
-    checkStartRouteNavigation,
     handleRestorePointNavigation,
+    checkCurrentStepRouteNavigation,
     navigate
   };
 };

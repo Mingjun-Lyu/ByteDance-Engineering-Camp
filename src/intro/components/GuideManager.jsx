@@ -123,23 +123,28 @@ const GuideManager = ({
   }, [saveCurrentState]);
 
   useEffect(() => {
-    if (isGuideActive && guideConfig && guideConfig.config?.startRoute) {
-      console.log('[GuideManager] 检查起始路由匹配:', {
+    if (isGuideActive && guideConfig && guideConfig.steps && guideConfig.steps.length > 0) {
+      // 获取当前步骤对应的路由
+      const currentStep = guideConfig.steps[currentStepIndex];
+      const currentStepRoute = currentStep?.route || '/';
+      
+      console.log('[GuideManager] 检查当前步骤路由匹配:', {
         isGuideActive,
-        startRoute: guideConfig.config.startRoute,
+        currentStepIndex,
+        currentStepRoute,
         currentPath: location.pathname,
-        isMatch: isRouteMatch(guideConfig.config.startRoute, location.pathname)
+        isMatch: isRouteMatch(currentStepRoute, location.pathname)
       });
       
-      if (!isRouteMatch(guideConfig.config.startRoute, location.pathname)) {
-        console.log('[GuideManager] 路由不匹配，跳转到起始路由:', guideConfig.config.startRoute);
+      if (!isRouteMatch(currentStepRoute, location.pathname)) {
+        console.log('[GuideManager] 路由不匹配，跳转到当前步骤路由:', currentStepRoute);
         // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
-        window.location.href = guideConfig.config.startRoute;
+        window.location.href = currentStepRoute;
       } else {
         console.log('[GuideManager] 路由匹配，无需跳转');
       }
     }
-  }, [isGuideActive, guideConfig, location.pathname, isRouteMatch]);
+  }, [isGuideActive, guideConfig, currentStepIndex, location.pathname, isRouteMatch]);
 
   const handleGuideStart = () => {
     if (configError || !guideConfig || guideConfig.steps.length === 0) {
