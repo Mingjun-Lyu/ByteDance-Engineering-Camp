@@ -53,7 +53,7 @@ const generateActivities = () => {
         endTime: formatDate(endTime),
         price: Mock.mock('@natural(0, 2000)'),
         maxParticipants: Mock.mock('@natural(20, 200)'),
-        registeredParticipants: Mock.mock('@natural(0, 100)'),
+        registeredParticipants: Mock.mock('@natural(0, 10000)'),
         status: Mock.mock('@pick(["ongoing", "upcoming", "ended"])'),
         createdAt: formatDate(new Date(year, month - 1, Math.max(1, day - 10), hours, minutes, seconds)),
         updatedAt: formatDate(new Date(year, month - 1, Math.max(1, day - 5), hours, minutes, seconds))

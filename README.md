@@ -1,4 +1,4 @@
-# 字节跳动工程训练营 - 活动管理平台
+# 字节跳动工程训练营 - 2025 - TikTok
 
 ## 项目概述
 
@@ -31,7 +31,7 @@
 - **ESLint 9.39.1** - 代码质量检查
 - **MockJS 1.1.0** - 模拟数据生成
 
-## 📁 项目架构
+## 📁 项目一架构 - 活动管理平台
 
 ```mermaid
 graph TD
@@ -64,30 +64,63 @@ graph TD
         GuideConfig[配置系统]
     end
     
+    %% 数据流交互关系
     HomeComps --> ActivityStore
     ListComps --> ActivityStore
     DetailComps --> ActivityStore
     
+    HomeComps --> Hooks
+    ListComps --> Hooks
+    DetailComps --> Hooks
+    
     Hooks --> API
     API --> Mock
     
+    Hooks --> ActivityStore
+    ActivityStore --> HomeComps
+    ActivityStore --> ListComps
+    ActivityStore --> DetailComps
+    
+    %% 引导系统与组件交互
+    GuideManager --> HomeComps
+    GuideManager --> ListComps
+    GuideManager --> DetailComps
+    
     GuideManager --> GuideCore
     GuideCore --> GuideConfig
+    
+    GuideConfig --> UIStore
+    UIStore --> GuideManager
+    
+    %% 用户操作数据流
+    User[用户操作] --> HomeComps
+    User --> ListComps
+    User --> DetailComps
+    
+    HomeComps --> API
+    ListComps --> API
+    DetailComps --> API
+    
+    API --> Hooks
+    Hooks --> ActivityStore
+    ActivityStore --> UIStore
     
     classDef page fill:#bbdefb
     classDef component fill:#c8e6c9
     classDef store fill:#d1c4e9
     classDef data fill:#ffecb3
     classDef guide fill:#ffcdd2
+    classDef user fill:#f8bbd9
     
     class Home,List,Detail page
     class HomeComps,ListComps,DetailComps component
     class ActivityStore,UIStore store
     class Hooks,API,Mock data
     class GuideManager,GuideCore,GuideConfig guide
+    class User user
 ```
 
-## ✨ 项目亮点
+## ✨ 项目一亮点
 
 ### 1. 现代化架构设计
 - **组件化开发**：高度可复用的组件设计
@@ -138,33 +171,7 @@ graph TD
 - 参与状态管理
 - 分享功能
 
-## 🛠️ 快速开始
-
-### 环境要求
-- Node.js >= 16.0.0
-- npm >= 8.0.0
-
-### 安装依赖
-```bash
-npm install
-```
-
-### 开发模式
-```bash
-npm run dev
-```
-
-### 构建项目
-```bash
-npm run build
-```
-
-### 代码检查
-```bash
-npm run lint
-```
-
-## 🧭 新手引导系统架构
+## 🧭 项目二架构 - 新手引导系统
 
 ```mermaid
 graph TB
@@ -206,6 +213,49 @@ graph TB
     class Config,JSONConfig,StateMgmt config
     class LocalStorage storage
 ```
+
+## ✨ 项目二亮点 - 独立可插拔的引导系统
+
+### 🎯 核心优势：业务逻辑完全解耦
+
+#### 1. **挂载即用设计**
+- **零配置集成**：无需修改现有业务代码，引入即可使用
+- **自动发现**：系统自动识别页面元素和路由结构
+- **热插拔支持**：可在运行时动态加载和卸载引导模块
+
+#### 2. **完全独立架构**
+- **独立状态管理**：拥有专属的状态管理机制，不与业务状态耦合
+- **独立配置系统**：基于JSON的配置体系，支持动态更新
+- **独立事件系统**：完整的事件驱动架构，避免与业务事件冲突
+
+#### 3. **跨项目复用性**
+```javascript
+// 在任何React项目中，只需简单引入
+import { GuideSystem } from './intro';
+
+// 挂载引导系统（无需任何业务逻辑修改）
+GuideSystem.mount({
+  target: '#app',
+  config: 'path/to/guide-config.json'
+});
+```
+
+### 🚀 技术亮点
+
+#### 1. **智能路由感知**
+- **自动路由跟踪**：实时监控React Router变化
+- **跨页面引导**：支持多页面连续引导流程
+- **状态持久化**：LocalStorage保存引导进度，支持断点续传
+
+#### 2. **配置驱动架构**
+- **JSON配置**：所有引导步骤通过配置文件定义
+- **动态更新**：支持运行时配置热更新
+- **多环境适配**：开发/测试/生产环境差异化配置
+
+#### 3. **无侵入式集成**
+- **DOM操作隔离**：引导系统与业务DOM操作完全隔离
+- **样式冲突避免**：使用Shadow DOM或CSS命名空间
+- **性能优化**：懒加载引导资源，按需初始化
 
 ### 跨页面路由引导解决方案
 
@@ -257,51 +307,29 @@ stateDiagram-v2
     Paused --> [*]: 用户取消
 ```
 
- ## 🎯 技术亮点
 
- ### 架构优势
- - **模块化设计** - 清晰的职责分离和组件复用
- - **状态管理** - Zustand轻量级状态解决方案
- - **数据缓存** - React Query智能数据管理
+## 🛠️ 快速开始
 
- ### 性能优化
- - **虚拟列表** - 大数据量下的流畅体验
- - **懒加载** - 按需加载提升首屏速度
- - **骨架屏** - 优雅的加载状态展示
+### 环境要求
+- Node.js >= 16.0.0
+- npm >= 8.0.0
 
- ### 引导系统创新
- - **跨页面引导** - 支持多页面无缝引导体验
- - **状态持久化** - LocalStorage确保引导不中断
- - **配置驱动** - JSON配置支持快速定制
+### 安装依赖
+```bash
+npm install
+```
 
- ## 🚀 快速开始
+### 构建项目
+```bash
+npm run build
+```
 
- ### 环境要求
- - Node.js >= 16.0.0
- - npm >= 8.0.0
+### 代码检查
+```bash
+npm run lint
+```
 
- ### 开发命令
- ```bash
- # 安装依赖
- npm install
-
- # 启动开发服务器
- npm run dev
-
- # 构建项目
- npm run build
-
- # 运行测试
- npm test
- ```
-
- ## 📊 项目总结
-
- 本项目成功实现了：
-
- 1. **完整的活动管理功能** - 浏览、筛选、详情查看
- 2. **现代化技术栈** - React + Vite + 最新工具链
- 3. **智能引导系统** - 创新的跨页面路由引导方案
- 4. **优秀的用户体验** - 响应式设计和性能优化
-
- 新手引导系统的跨页面路由解决方案是项目的核心技术亮点，为单页应用的用户引导提供了新的技术范式。
+### 开发模式
+```bash
+npm run dev
+```
