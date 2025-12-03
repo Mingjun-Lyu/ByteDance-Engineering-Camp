@@ -13,7 +13,8 @@ const ActivityCard = ({ activity, className = '' }) => {
     const statusMap = {
       ongoing: { text: '进行中', variant: 'success' },
       pending: { text: '待开始', variant: 'primary' },
-      ended: { text: '已结束', variant: 'secondary' }
+      ended: { text: '已结束', variant: 'secondary' },
+      upcoming: { text: '即将开始', variant: 'info' }
     };
     return statusMap[status] || { text: status, variant: 'secondary' };
   };

@@ -13,9 +13,9 @@ const generateActivities = () => {
   const activities = [];
   let id = 1;
   
-  // 为每个分类生成50个活动
+  // 为每个分类生成1000个活动
   categories.forEach(category => {
-    for (let i = 1; i <= 50; i++) {
+    for (let i = 1; i <= 1000; i++) {
       // 生成2025年的随机日期和时间
       const year = 2025;
       const month = Math.floor(Math.random() * 12) + 1;
@@ -101,10 +101,10 @@ const generateBanners = (activities = mockActivities) => {
 // 生成分类数据
 const generateCategories = () => {
   return [
-    { value: 'promotion', label: '促销', count: 50 },
-    { value: 'offline', label: '线下', count: 50 },
-    { value: 'festival', label: '节日', count: 50 },
-    { value: 'exclusive', label: '专属', count: 50 }
+    { value: 'promotion', label: '促销', count: 1000 },
+    { value: 'offline', label: '线下', count: 1000 },
+    { value: 'festival', label: '节日', count: 1000 },
+    { value: 'exclusive', label: '专属', count: 1000 }
   ];
 };
 

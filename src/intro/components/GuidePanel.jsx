@@ -61,7 +61,6 @@ const GuidePanel = ({
     if (currentStep && currentStep.route) {
       const isMatch = isRouteMatch(currentStep.route, location.pathname);
       if (!isMatch) {
-        console.log('[GuidePanel] 路由不匹配，跳转到当前步骤的路由:', currentStep.route);
         // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
         window.location.href = currentStep.route;
         return;
@@ -84,7 +83,6 @@ const GuidePanel = ({
         
         // 检查是否已经是最后一步
         if (nextIndex >= steps.length) {
-          console.log('[GuidePanel] 引导已完成，销毁引导');
           guideDriver.destroy();
           return;
         }
@@ -109,25 +107,22 @@ const GuidePanel = ({
       
       if (isCrossPage && !targetElement) {
         // 如果是跨页面且目标元素不存在，等待更长时间
-        console.log('[GuidePanel] 跨页面引导：目标元素未找到，等待DOM渲染...');
         setTimeout(startGuideWithDelay, 200);
         return;
       }
       
       if (targetElement) {
-        console.log('[GuidePanel] 目标元素已找到，开始引导');
         guideDriver.drive(currentStepIndex);
       } else {
-        console.warn('[GuidePanel] 目标元素未找到，但仍尝试开始引导');
+        // [GuidePanel] 目标元素未找到，但仍尝试开始引导
         guideDriver.drive(currentStepIndex);
       }
     };
 
     // 跨页面引导使用更长延迟，普通引导使用较短延迟
     const delay = isCrossPage ? 500 : 100;
-    console.log(`[GuidePanel] ${isCrossPage ? '跨页面' : '普通'}引导，延迟${delay}ms开始`);
     setTimeout(startGuideWithDelay, delay);
-  }, [guideConfig, currentStepIndex, isRouteMatch, location.pathname, setIsVisible, onGuideStart, onGuideComplete, onStepChange, handleStepChange]);
+  }, [guideConfig, currentStepIndex, isRouteMatch, location.pathname, setIsVisible, onGuideStart, onGuideComplete, handleStepChange]);
 
   // 检查是否需要自动恢复跨页面引导
   React.useEffect(() => {
@@ -167,20 +162,9 @@ const GuidePanel = ({
         // 只要有一个路由不同就满足条件
         const routeDifferent = routeDifferentPrev || routeDifferentNext;
         
-        console.log('[GuidePanel] 跨页面引导恢复检查:', {
-          isGuideActive,
-          isVisible,
-          currentStep,
-          stepGreaterThanZero,
-          routeDifferentPrev,
-          routeDifferentNext,
-          routeDifferent,
-          allConditionsMet: isGuideActive && isVisible && stepGreaterThanZero && routeDifferent
-        });
         
         // 四个条件同时满足时，自动开始引导
         if (isGuideActive && isVisible && stepGreaterThanZero && routeDifferent) {
-          console.log('[GuidePanel] 检测到跨页面引导恢复条件，自动开始引导');
           startGuide(true); // 传递true表示是跨页面引导
         }
       }
@@ -225,7 +209,6 @@ const GuidePanel = ({
       localStorage.removeItem('intro_guide_state');
       
       // 重置完成后刷新页面
-      console.log('[GuidePanel] 重置完成，刷新页面');
       window.location.reload();
     } catch (error) {
       console.warn('Failed to reset guide state:', error);

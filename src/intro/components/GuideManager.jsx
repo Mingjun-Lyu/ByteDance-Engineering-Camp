@@ -128,20 +128,10 @@ const GuideManager = ({
       const currentStep = guideConfig.steps[currentStepIndex];
       const currentStepRoute = currentStep?.route || '/';
       
-      console.log('[GuideManager] 检查当前步骤路由匹配:', {
-        isGuideActive,
-        currentStepIndex,
-        currentStepRoute,
-        currentPath: location.pathname,
-        isMatch: isRouteMatch(currentStepRoute, location.pathname)
-      });
       
       if (!isRouteMatch(currentStepRoute, location.pathname)) {
-        console.log('[GuideManager] 路由不匹配，跳转到当前步骤路由:', currentStepRoute);
         // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
         window.location.href = currentStepRoute;
-      } else {
-        console.log('[GuideManager] 路由匹配，无需跳转');
       }
     }
   }, [isGuideActive, guideConfig, currentStepIndex, location.pathname, isRouteMatch]);
@@ -165,17 +155,8 @@ const GuideManager = ({
     // 检查当前路由是否与恢复步骤的路由匹配
     const isCurrentRouteMatch = isRouteMatch(restoredRoute, location.pathname);
     
-    console.log('[GuideManager] 恢复断点检查:', {
-      savedStepIndex,
-      validStepIndex,
-      restoredRoute,
-      currentPath: location.pathname,
-      isCurrentRouteMatch
-    });
-    
     // 如果不匹配，先导航到恢复步骤的路由
     if (!isCurrentRouteMatch) {
-      console.log('[GuideManager] 路由不匹配，先导航到恢复步骤的路由:', restoredRoute);
       // 使用window.location.href进行完整页面跳转（解决路由隔离问题）
       window.location.href = restoredRoute;
       
@@ -210,7 +191,6 @@ const GuideManager = ({
   const handleStepChange = (newStepIndex) => {
     // 检查步骤索引是否有效
     if (newStepIndex < 0 || newStepIndex >= guideConfig.steps.length) {
-      console.log('[GuideManager] 步骤索引无效，可能引导已完成:', newStepIndex);
       return;
     }
     
