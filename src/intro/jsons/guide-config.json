@@ -1,6 +1,6 @@
 {
   "title": "完整产品导览",
-  "description": "从首页到详情页的完整使用流程",
+  "description": "从首页到详情页到列表页的完整使用流程",
   "steps": [
     {
       "step": 0,
@@ -76,7 +76,7 @@
       },
       "popover": {
         "title": "重点活动第一个卡片",
-        "description": "这是当前最热门的活动，点击下一步查看详情",
+        "description": "这是当前最热门的活动",
         "position": "right"
       }
     },
@@ -102,7 +102,7 @@
       },
       "popover": {
         "title": "活动标题卡片",
-        "description": "这里显示活动的标题和基本信息，是活动的核心展示区域",
+        "description": "这里显示活动的标题",
         "position": "bottom"
       }
     },
@@ -141,7 +141,7 @@
       },
       "popover": {
         "title": "活动列表筛选栏",
-        "description": "在这里可以按分类、时间、状态等条件筛选活动列表",
+        "description": "在这里可以按分类、时间、状态等条件筛选活动列表，并支持无分页查看",
         "position": "bottom"
       }
     },

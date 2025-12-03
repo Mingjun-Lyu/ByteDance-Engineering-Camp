@@ -8,6 +8,7 @@ import '../styles/guide-panel.css';
 // 本地存储键名
 const PANEL_VISIBLE_KEY = 'intro_panel_visible';
 const STEP_RECORD_KEY = 'intro_step_record';
+const GUIDE_STATE_KEY = 'intro_guide_state';
 
 const GuidePanel = ({ 
   position = 'top-center',
@@ -38,7 +39,7 @@ const GuidePanel = ({
     }
   });
 
-  const handleStepChange = (newStepIndex, guideDriver) => {
+  const handleStepChange = React.useCallback((newStepIndex, guideDriver) => {
     if (onStepChange) {
       onStepChange(newStepIndex);
     }
@@ -49,12 +50,12 @@ const GuidePanel = ({
     } else {
       guideDriver.destroy();
     }
-  };
+  }, [guideConfig.steps, onStepChange]);
 
   const location = useLocation();
   const { isRouteMatch } = useRouteMatching();
 
-  const startGuide = () => {
+  const startGuide = React.useCallback((isCrossPage = false) => {
     // 检查当前路由是否在当前步骤的路由
     const currentStep = guideConfig.steps[currentStepIndex];
     if (currentStep && currentStep.route) {
@@ -102,11 +103,91 @@ const GuidePanel = ({
       }
     });
 
-    // 使用恢复的步骤索引开始引导，实现断点再引导功能
-    setTimeout(() => {
-      guideDriver.drive(currentStepIndex);
-    }, 100);
-  };
+    // 跨页面引导恢复时，增加延迟确保DOM完全渲染
+    const startGuideWithDelay = () => {
+      const targetElement = document.querySelector(currentStep?.element || '');
+      
+      if (isCrossPage && !targetElement) {
+        // 如果是跨页面且目标元素不存在，等待更长时间
+        console.log('[GuidePanel] 跨页面引导：目标元素未找到，等待DOM渲染...');
+        setTimeout(startGuideWithDelay, 200);
+        return;
+      }
+      
+      if (targetElement) {
+        console.log('[GuidePanel] 目标元素已找到，开始引导');
+        guideDriver.drive(currentStepIndex);
+      } else {
+        console.warn('[GuidePanel] 目标元素未找到，但仍尝试开始引导');
+        guideDriver.drive(currentStepIndex);
+      }
+    };
+
+    // 跨页面引导使用更长延迟，普通引导使用较短延迟
+    const delay = isCrossPage ? 500 : 100;
+    console.log(`[GuidePanel] ${isCrossPage ? '跨页面' : '普通'}引导，延迟${delay}ms开始`);
+    setTimeout(startGuideWithDelay, delay);
+  }, [guideConfig, currentStepIndex, isRouteMatch, location.pathname, setIsVisible, onGuideStart, onGuideComplete, onStepChange, handleStepChange]);
+
+  // 检查是否需要自动恢复跨页面引导
+  React.useEffect(() => {
+    try {
+      // 获取引导状态
+      const guideState = localStorage.getItem(GUIDE_STATE_KEY);
+      const panelVisible = localStorage.getItem(PANEL_VISIBLE_KEY);
+      
+      if (guideState && panelVisible) {
+        const guideStateParsed = JSON.parse(guideState);
+        const panelVisibleParsed = JSON.parse(panelVisible);
+        
+        // 检查四个条件是否同时满足
+        const isGuideActive = guideStateParsed.isGuideActive === true;
+        const isVisible = panelVisibleParsed.isVisible === true;
+        const currentStep = guideStateParsed.currentStepIndex || 0;
+        
+        // 检查当前步骤是否大于0
+        const stepGreaterThanZero = currentStep > 0;
+        
+        // 检查当前步骤与上一步骤的route是否不同（用于下一步换页）
+        let routeDifferentPrev = false;
+        if (stepGreaterThanZero && guideConfig.steps && guideConfig.steps.length > currentStep) {
+          const currentStepRoute = guideConfig.steps[currentStep]?.route || '';
+          const previousStepRoute = guideConfig.steps[currentStep - 1]?.route || '';
+          routeDifferentPrev = currentStepRoute !== previousStepRoute;
+        }
+        
+        // 检查当前步骤与下一步骤的route是否不同（用于上一步换页）
+        let routeDifferentNext = false;
+        if (guideConfig.steps && guideConfig.steps.length > currentStep + 1) {
+          const currentStepRoute = guideConfig.steps[currentStep]?.route || '';
+          const nextStepRoute = guideConfig.steps[currentStep + 1]?.route || '';
+          routeDifferentNext = currentStepRoute !== nextStepRoute;
+        }
+        
+        // 只要有一个路由不同就满足条件
+        const routeDifferent = routeDifferentPrev || routeDifferentNext;
+        
+        console.log('[GuidePanel] 跨页面引导恢复检查:', {
+          isGuideActive,
+          isVisible,
+          currentStep,
+          stepGreaterThanZero,
+          routeDifferentPrev,
+          routeDifferentNext,
+          routeDifferent,
+          allConditionsMet: isGuideActive && isVisible && stepGreaterThanZero && routeDifferent
+        });
+        
+        // 四个条件同时满足时，自动开始引导
+        if (isGuideActive && isVisible && stepGreaterThanZero && routeDifferent) {
+          console.log('[GuidePanel] 检测到跨页面引导恢复条件，自动开始引导');
+          startGuide(true); // 传递true表示是跨页面引导
+        }
+      }
+    } catch (error) {
+      console.warn('[GuidePanel] 跨页面引导恢复检查失败:', error);
+    }
+  }, [guideConfig.steps, startGuide]); // 依赖steps数组和startGuide函数
 
   const showPanel = () => {
     setIsVisible(true);

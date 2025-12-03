@@ -104,6 +104,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-direction: row-reverse; /* 将按钮放在右侧，进度信息放在左侧 */
 }
 
 .driver-popover-progress-text {
@@ -117,18 +118,21 @@
   all: unset;
   display: inline-block;
   box-sizing: border-box;
-  padding: 3px 7px;
+  padding: 8px 16px;
   text-decoration: none;
   text-shadow: 1px 1px 0 #fff;
   background-color: #ffffff;
   color: #2d2d2d;
-  font: 12px / normal sans-serif;
+  font: 14px / normal sans-serif;
   cursor: pointer;
   outline: 0;
   zoom: 1;
   line-height: 1.3;
   border: 1px solid #ccc;
-  border-radius: 3px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  text-align: center;
 }
 
 .driver-popover-footer .driver-popover-btn-disabled {
@@ -148,6 +152,37 @@
 .driver-popover-footer button:hover,
 .driver-popover-footer button:focus {
   background-color: #f7f7f7;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 为下一步按钮添加特殊样式 */
+.driver-popover-next-btn {
+  background-color: #3498db !important;
+  color: white !important;
+  border-color: #2980b9 !important;
+}
+
+.driver-popover-next-btn:hover {
+  background-color: #2980b9 !important;
+}
+
+/* 进度文本样式 */
+.driver-popover-progress {
+  font-size: 13px;
+  color: #727272;
+  font-weight: 400;
+}
+
+.driver-popover-footer-buttons {
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-end;
+  gap: 8px; /* 添加按钮间距 */
+}
+
+.driver-popover-footer-buttons button + button {
+  margin-left: 0; /* 移除默认的margin-left，使用gap替代 */
 }
 
 .driver-popover-navigation-btns {

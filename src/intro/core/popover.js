@@ -599,8 +599,8 @@ function createPopover() {
   footerButtons.appendChild(previousButton);
   footerButtons.appendChild(nextButton);
 
-  footer.appendChild(progress);
   footer.appendChild(footerButtons);
+  footer.appendChild(progress);
 
   wrapper.appendChild(arrow);
   wrapper.appendChild(title);
