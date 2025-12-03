@@ -66,9 +66,6 @@ graph TB
     Store --> ActivityStore[活动状态]
     Store --> UIStore[UI状态]
     
-    %% 状态管理连接
-    UIStore --> GuideManager
-    
     classDef user fill:#f8bbd9
     classDef app fill:#bbdefb
     classDef page fill:#c8e6c9
@@ -83,7 +80,6 @@ graph TB
     class Banner,Highlight,Categories,Filter,VirtualList,Search,Header,Content,Sidebar component
     class Hooks,API,Mock data
     class Store,ActivityStore,UIStore store
-    class Guide,GuideManager,GuideCore,GuideConfig,JSONConfig guide
 ```
 
 ### 架构分层说明
