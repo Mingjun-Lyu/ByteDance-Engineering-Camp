@@ -4,6 +4,7 @@ import { onDriverClick } from "./events";
 import { getState, setState } from "../utils/state";
 import { bringInView, getFocusableElements } from "../utils/utils";
 
+// 隐藏弹出框
 export function hidePopover() {
   const popover = getState("popover");
   if (!popover) {
@@ -13,15 +14,18 @@ export function hidePopover() {
   popover.wrapper.style.display = "none";
 }
 
+// 渲染弹出框
 export function renderPopover(element, step) {
   let popover = getState("popover");
   if (popover) {
     document.body.removeChild(popover.wrapper);
   }
 
+  // 创建新的弹出框
   popover = createPopover();
   document.body.appendChild(popover.wrapper);
 
+  // 从步骤配置中获取弹出框参数
   const {
     title,
     description,
@@ -29,15 +33,17 @@ export function renderPopover(element, step) {
     disableButtons,
     showProgress,
 
-    nextBtnText = getConfig("nextBtnText") || "Next &rarr;",
-    prevBtnText = getConfig("prevBtnText") || "&larr; Previous",
-    progressText = getConfig("progressText") || "{current} of {total}",
+    nextBtnText = getConfig("nextBtnText") || "下一步 &rarr;",
+    prevBtnText = getConfig("prevBtnText") || "&larr; 上一步",
+    progressText = getConfig("progressText") || "第{current}步，共{total}步",
   } = step.popover || {};
 
+  // 设置按钮文本
   popover.nextButton.innerHTML = nextBtnText;
   popover.previousButton.innerHTML = prevBtnText;
   popover.progress.innerHTML = progressText;
 
+  // 设置标题
   if (title) {
     popover.title.innerHTML = title;
     popover.title.style.display = "block";
@@ -45,6 +51,7 @@ export function renderPopover(element, step) {
     popover.title.style.display = "none";
   }
 
+  // 设置描述
   if (description) {
     popover.description.innerHTML = description;
     popover.description.style.display = "block";
@@ -52,13 +59,16 @@ export function renderPopover(element, step) {
     popover.description.style.display = "none";
   }
 
+  // 配置按钮和进度显示
   const showButtonsConfig = showButtons || getConfig("showButtons");
   const showProgressConfig = showProgress || getConfig("showProgress") || false;
   const showFooter =
     showButtonsConfig?.includes("next") || showButtonsConfig?.includes("previous") || showProgressConfig;
 
+  // 设置关闭按钮显示
   popover.closeButton.style.display = showButtonsConfig.includes("close") ? "block" : "none";
 
+  // 设置底部区域显示
   if (showFooter) {
     popover.footer.style.display = "flex";
 
@@ -69,6 +79,7 @@ export function renderPopover(element, step) {
     popover.footer.style.display = "none";
   }
 
+  // 设置禁用按钮
   const disabledButtonsConfig = disableButtons || getConfig("disableButtons") || [];
   if (disabledButtonsConfig?.includes("next")) {
     popover.nextButton.disabled = true;
@@ -85,7 +96,7 @@ export function renderPopover(element, step) {
     popover.closeButton.classList.add("driver-popover-btn-disabled");
   }
 
-  // Reset the popover position
+  // 重置弹出框位置
   const popoverWrapper = popover.wrapper;
   popoverWrapper.style.display = "block";
   popoverWrapper.style.left = "";
@@ -93,20 +104,21 @@ export function renderPopover(element, step) {
   popoverWrapper.style.bottom = "";
   popoverWrapper.style.right = "";
 
+  // 设置无障碍属性
   popoverWrapper.id = "driver-popover-content";
   popoverWrapper.setAttribute("role", "dialog");
   popoverWrapper.setAttribute("aria-labelledby", "driver-popover-title");
   popoverWrapper.setAttribute("aria-describedby", "driver-popover-description");
 
-  // Reset the classes responsible for the arrow position
+  // 重置箭头位置类
   const popoverArrow = popover.arrow;
   popoverArrow.className = "driver-popover-arrow";
 
-  // Reset any custom classes on the popover
+  // 设置自定义弹出框类名
   const customPopoverClass = step.popover?.popoverClass || getConfig("popoverClass") || "";
   popoverWrapper.className = `driver-popover ${customPopoverClass}`.trim();
 
-  // Handles the popover button clicks
+  // 处理弹出框按钮点击事件
   onDriverClick(
     popover.wrapper,
     e => {
@@ -116,9 +128,9 @@ export function renderPopover(element, step) {
       const onPrevClick = step.popover?.onPrevClick || getConfig("onPrevClick");
       const onCloseClick = step.popover?.onCloseClick || getConfig("onCloseClick");
 
+      // 处理下一步按钮点击
       if (target.closest(".driver-popover-next-btn")) {
-        // If the user has provided a custom callback, call it
-        // otherwise, emit the event.
+        // 如果有自定义回调函数，调用它，否则触发事件
         if (onNextClick) {
           return onNextClick(element, step, {
             config: getConfig(),
@@ -130,6 +142,7 @@ export function renderPopover(element, step) {
         }
       }
 
+      // 处理上一步按钮点击
       if (target.closest(".driver-popover-prev-btn")) {
         if (onPrevClick) {
           return onPrevClick(element, step, {
@@ -142,6 +155,7 @@ export function renderPopover(element, step) {
         }
       }
 
+      // 处理关闭按钮点击
       if (target.closest(".driver-popover-close-btn")) {
         if (onCloseClick) {
           return onCloseClick(element, step, {
@@ -157,8 +171,8 @@ export function renderPopover(element, step) {
       return undefined;
     },
     target => {
-      // Only prevent the default action if we're clicking on a driver button
-      // This allows us to have links inside the popover title and description
+      // 只有当点击driver按钮时才阻止默认行为
+      // 这允许我们在弹出框标题和描述中包含链接
       return (
         !popover?.description.contains(target) &&
         !popover?.title.contains(target) &&
@@ -170,6 +184,7 @@ export function renderPopover(element, step) {
 
   setState("popover", popover);
 
+  // 调用弹出框渲染回调
   const onPopoverRender = step.popover?.onPopoverRender || getConfig("onPopoverRender");
   if (onPopoverRender) {
     onPopoverRender(popover, {
@@ -179,10 +194,11 @@ export function renderPopover(element, step) {
     });
   }
 
+  // 重新定位弹出框并确保其在视图中
   repositionPopover(element, step);
   bringInView(popoverWrapper);
 
-  // Focus on the first focusable element in active element or popover
+  // 聚焦到第一个可聚焦元素
   const isToDummyElement = element.classList.contains("driver-dummy-element");
   const focusableElement = getFocusableElements([popoverWrapper, ...(isToDummyElement ? [] : [element])]);
   if (focusableElement.length > 0) {
@@ -190,7 +206,8 @@ export function renderPopover(element, step) {
   }
 }
 
-function getPopoverDimensions() {
+// 获取弹出框尺寸
+export function getPopoverDimensions() {
   const popover = getState("popover");
   if (!popover?.wrapper) {
     return;
@@ -210,10 +227,8 @@ function getPopoverDimensions() {
   };
 }
 
-function calculateTopForLeftRight(
-  alignment,
-  config
-) {
+// 计算左右侧弹出框的垂直位置
+export function calculateTopForLeftRight(alignment, config) {
   const { elementDimensions, popoverDimensions, popoverPadding, popoverArrowDimensions } = config;
 
   if (alignment === "start") {
@@ -249,11 +264,8 @@ function calculateTopForLeftRight(
   return 0;
 }
 
-// Calculate the left placement for top and bottom sides
-function calculateLeftForTopBottom(
-  alignment,
-  config
-) {
+// 计算上下侧弹出框的水平位置
+export function calculateLeftForTopBottom(alignment, config) {
   const { elementDimensions, popoverDimensions, popoverPadding, popoverArrowDimensions } = config;
 
   if (alignment === "start") {
@@ -289,6 +301,7 @@ function calculateLeftForTopBottom(
   return 0;
 }
 
+// 重新定位弹出框
 export function repositionPopover(element, step) {
   const popover = getState("popover");
   if (!popover) {
@@ -297,7 +310,7 @@ export function repositionPopover(element, step) {
 
   const { align = "start", side = "left" } = step?.popover || {};
 
-  // Configure the popover positioning
+  // 配置弹出框定位参数
   const requiredAlignment = align;
   const requiredSide = element.id === "driver-dummy-element" ? "over" : side;
   const popoverPadding = getConfig("stagePadding") || 0;
@@ -306,6 +319,7 @@ export function repositionPopover(element, step) {
   const popoverArrowDimensions = popover.arrow.getBoundingClientRect();
   const elementDimensions = element.getBoundingClientRect();
 
+  // 计算各方向的空间是否足够
   const topValue = elementDimensions.top - popoverDimensions.height;
   let isTopOptimal = topValue >= 0;
 
@@ -318,9 +332,11 @@ export function repositionPopover(element, step) {
   const rightValue = window.innerWidth - (elementDimensions.right + popoverDimensions.width);
   let isRightOptimal = rightValue >= 0;
 
+  // 检查是否有任何方向有足够空间
   const noneOptimal = !isTopOptimal && !isBottomOptimal && !isLeftOptimal && !isRightOptimal;
   let popoverRenderedSide = requiredSide;
 
+  // 根据首选方向调整其他方向的状态
   if (requiredSide === "top" && isTopOptimal) {
     isRightOptimal = isLeftOptimal = isBottomOptimal = false;
   } else if (requiredSide === "bottom" && isBottomOptimal) {
@@ -331,6 +347,7 @@ export function repositionPopover(element, step) {
     isLeftOptimal = isTopOptimal = isBottomOptimal = false;
   }
 
+  // 处理居中显示（用于虚拟元素）
   if (requiredSide === "over") {
     const leftToSet = window.innerWidth / 2 - popoverDimensions.realWidth / 2;
     const topToSet = window.innerHeight / 2 - popoverDimensions.realHeight / 2;
@@ -340,6 +357,7 @@ export function repositionPopover(element, step) {
     popover.wrapper.style.top = `${topToSet}px`;
     popover.wrapper.style.bottom = `auto`;
   } else if (noneOptimal) {
+    // 没有足够空间时，显示在窗口底部中间
     const leftValue = window.innerWidth / 2 - popoverDimensions.realWidth / 2;
     const bottomValue = 10;
 
@@ -348,6 +366,7 @@ export function repositionPopover(element, step) {
     popover.wrapper.style.bottom = `${bottomValue}px`;
     popover.wrapper.style.top = `auto`;
   } else if (isLeftOptimal) {
+    // 左侧显示
     const leftToSet = Math.min(
       leftValue,
       window.innerWidth - popoverDimensions.realWidth - popoverArrowDimensions.width
@@ -367,6 +386,7 @@ export function repositionPopover(element, step) {
 
     popoverRenderedSide = "left";
   } else if (isRightOptimal) {
+    // 右侧显示
     const rightToSet = Math.min(
       rightValue,
       window.innerWidth - popoverDimensions.realWidth - popoverArrowDimensions.width
@@ -385,6 +405,7 @@ export function repositionPopover(element, step) {
 
     popoverRenderedSide = "right";
   } else if (isTopOptimal) {
+    // 上方显示
     const topToSet = Math.min(
       topValue,
       window.innerHeight - popoverDimensions.realHeight - popoverArrowDimensions.width
@@ -403,6 +424,7 @@ export function repositionPopover(element, step) {
 
     popoverRenderedSide = "top";
   } else if (isBottomOptimal) {
+    // 下方显示
     const bottomToSet = Math.min(
       bottomValue,
       window.innerHeight - popoverDimensions.realHeight - popoverArrowDimensions.width
@@ -423,11 +445,8 @@ export function repositionPopover(element, step) {
     popoverRenderedSide = "bottom";
   }
 
-  // Popover stays on the screen if the element scrolls out of the visible area.
-  // Render the arrow again to make sure it's in the correct position
-  // e.g. if element scrolled out of the screen to the top, the arrow should be rendered
-  // pointing to the top. If the element scrolled out of the screen to the bottom,
-  // the arrow should be rendered pointing to the bottom.
+  // 如果元素滚动出可见区域，弹出框仍保持在屏幕上
+  // 重新渲染箭头以确保其位置正确
   if (!noneOptimal) {
     renderPopoverArrow(requiredAlignment, popoverRenderedSide, element);
   } else {
@@ -435,7 +454,8 @@ export function repositionPopover(element, step) {
   }
 }
 
-function renderPopoverArrow(alignment, side, element) {
+// 渲染弹出框箭头
+export function renderPopoverArrow(alignment, side, element) {
   const popover = getState("popover");
   if (!popover) {
     return;
@@ -455,12 +475,13 @@ function renderPopoverArrow(alignment, side, element) {
   const elementTop = elementDimensions.top;
   const elementHeight = elementDimensions.height;
 
-  // Remove all arrow classes
+  // 移除所有箭头类
   popoverArrow.className = "driver-popover-arrow";
 
   let arrowSide = side;
   let arrowAlignment = alignment;
 
+  // 根据元素位置调整箭头方向和位置
   if (side === "top") {
     if (elementLeft + elementWidth <= 0) {
       arrowSide = "right";
@@ -535,12 +556,14 @@ function renderPopoverArrow(alignment, side, element) {
     const arrowRect = popoverArrow.getBoundingClientRect();
     const stagePadding = getConfig("stagePadding") || 0;
 
+    // 检查元素是否部分在视口中
     const isElementPartiallyInViewPort =
       elementRect.left - stagePadding < window.innerWidth &&
       elementRect.right + stagePadding > 0 &&
       elementRect.top - stagePadding < window.innerHeight &&
       elementRect.bottom + stagePadding > 0;
 
+    // 处理底部弹出框的特殊情况
     if (side === "bottom" && isElementPartiallyInViewPort) {
       const isArrowWithinElementBounds =
         arrowRect.x > elementRect.x && arrowRect.x + arrowRect.width < elementRect.x + elementRect.width;
@@ -548,7 +571,7 @@ function renderPopoverArrow(alignment, side, element) {
       if (!isArrowWithinElementBounds) {
         popoverArrow.classList.remove(`driver-popover-arrow-align-${arrowAlignment}`);
         popoverArrow.classList.add(`driver-popover-arrow-none`);
-        // reduce the top position by the padding
+        // 减少顶部位置的内边距
         popover.wrapper.style.transform = `translateY(-${stagePadding / 2}px)`;
       } else {
         popover.wrapper.style.transform = "";
@@ -559,7 +582,8 @@ function renderPopoverArrow(alignment, side, element) {
   }
 }
 
-function createPopover() {
+// 创建弹出框DOM结构
+export function createPopover() {
   const wrapper = document.createElement("div");
   wrapper.className = "driver-popover";
 

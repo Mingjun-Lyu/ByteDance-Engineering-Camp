@@ -19,9 +19,7 @@
 | **代码检查** | ESLint 9.39.1 | 代码质量检查 |
 | **数据模拟** | MockJS 1.1.0 | 模拟数据生成 |
 
-## 📁 项目架构概览
-
-### 整体架构图
+## 作业一整体架构图 - 活动管理页面
 
 ```mermaid
 graph TB
@@ -67,17 +65,6 @@ graph TB
     Hooks --> Store[💾 状态管理]
     Store --> ActivityStore[活动状态]
     Store --> UIStore[UI状态]
-    
-    %% 引导系统层
-    Guide[🎯 引导系统] --> GuideManager[引导管理器]
-    GuideManager --> GuideCore[核心引擎]
-    GuideCore --> GuideConfig[配置系统]
-    GuideConfig --> JSONConfig[JSON配置]
-    
-    %% 引导系统与业务解耦
-    GuideConfig -.->|JSON配置驱动| Banner
-    GuideConfig -.->|JSON配置驱动| Filter
-    GuideConfig -.->|JSON配置驱动| Header
     
     %% 状态管理连接
     UIStore --> GuideManager
@@ -130,56 +117,54 @@ graph TB
 - 独立可插拔的新手引导系统
 - 配置驱动，与业务逻辑完全解耦
 
-## ✨ 核心亮点
+### ✨ 核心亮点
 
-### 🏗️ 现代化架构设计
+#### 🏗️ 现代化架构设计
 - **组件化开发**：高度可复用的组件设计，提升开发效率
 - **Hook模式**：自定义Hooks实现业务逻辑复用，代码更简洁
 - **状态管理**：Zustand轻量级状态管理方案，性能优异
 
-### ⚡ 性能优化
+#### ⚡ 性能优化
 - **虚拟列表**：大数据量下的流畅滚动体验，支持无限滚动
 - **数据缓存**：React Query智能数据缓存策略，减少重复请求
 - **懒加载**：图片和组件按需加载，提升首屏加载速度
 - **骨架屏**：加载状态优化用户体验，避免白屏等待
 
-### 👥 用户体验
+#### 👥 用户体验
 - **响应式设计**：完美适配多种设备尺寸，移动端友好
 - **平滑动画**：CSS3过渡动画效果，提升交互体验
 - **分页加载**：无限滚动分页体验，浏览更流畅
 
-### 🔧 开发体验
+#### 🔧 开发体验
 - **ESLint配置**：代码质量保证，统一编码规范
 - **Mock数据**：开发环境数据模拟，前后端并行开发
 
-### 🎯 功能特性
+#### 🎯 功能特性
 - **活动浏览**：首页推荐和分类展示，内容丰富
 - **智能搜索**：关键词和分类筛选，精准查找
 - **详情查看**：完整的活动信息展示，信息全面
 
-## 🎯 核心功能模块
+### 🎯 核心功能模块
 
-### 🏠 首页模块 (ActivityHome)
+#### 🏠 首页模块 (ActivityHome)
 - **横幅展示**：视觉冲击力强的活动推广
 - **高亮活动推荐**：精选优质活动展示
 - **活动分类导航**：快速定位感兴趣的活动类型
 - **最新活动列表**：实时更新的活动信息
 
-### 📋 活动列表模块 (ActivityList)
+#### 📋 活动列表模块 (ActivityList)
 - **多维度筛选**：分类、时间、状态等多条件筛选
 - **虚拟列表展示**：大数据量下的高性能展示
 - **搜索功能**：关键词搜索，快速定位目标活动
 - **分页加载**：无限滚动，浏览体验更佳
 
-### 📖 活动详情模块 (ActivityDetail)
+#### 📖 活动详情模块 (ActivityDetail)
 - **完整活动信息**：活动详情、时间、地点等完整信息
 - **相关活动推荐**：智能推荐相似活动
 - **参与状态管理**：报名、取消等状态管理
 - **分享功能**：便捷的活动分享功能
 
-## 🧭 新手引导系统架构
-
-### 统一架构图
+## 作业二整体架构图 - 新手引导系统
 
 ```mermaid
 graph TB
@@ -190,47 +175,45 @@ graph TB
     Trigger --> GuideManager[📋 引导管理器]
     
     %% 核心引擎层
-    subgraph "🚀 引导核心引擎"
-        GuideManager --> EngineCore[� 核心引擎]
+    GuideManager --> EngineCore[🚀 核心引擎]
         
-        subgraph "⚙️ 引导驱动模块"
-            EngineCore --> StepController[🎯 步骤控制器]
-            StepController --> FlowManager[🔄 流程管理器]
-            FlowManager --> Validation[✅ 步骤验证]
-        end
+    subgraph A["⚙️ 引导驱动模块"]
+        EngineCore --> StepController[🎯 步骤控制器]
+        StepController --> FlowManager[🔄 流程管理器]
+        FlowManager --> Validation[✅ 步骤验证]
+    end
         
-        subgraph "🎨 视觉渲染模块"
-            EngineCore --> VisualRenderer[🎨 视觉渲染器]
-            VisualRenderer --> OverlayManager[🖼️ 遮罩管理器]
-            VisualRenderer --> HighlightEngine[✨ 高亮引擎]
-            VisualRenderer --> PopoverRenderer[💬 弹窗渲染器]
-            VisualRenderer --> AnimationEngine[🎬 动画引擎]
-        end
+    subgraph B["🎨 视觉渲染模块"]
+        EngineCore --> VisualRenderer[🎨 视觉渲染器]
+        VisualRenderer --> OverlayManager[🖼️ 遮罩管理器]
+        VisualRenderer --> HighlightEngine[✨ 高亮引擎]
+        VisualRenderer --> PopoverRenderer[💬 弹窗渲染器]
+        VisualRenderer --> AnimationEngine[🎬 动画引擎]
+    end
         
-        subgraph "� 事件处理模块"
-            EngineCore --> EventSystem[📡 事件系统]
-            EventSystem --> UserEvents[👤 用户事件]
-            EventSystem --> SystemEvents[⚙️ 系统事件]
-            EventSystem --> RouterEvents[🧭 路由事件]
-        end
+    subgraph C["📡 事件处理模块"]
+        EngineCore --> EventSystem[📡 事件系统]
+        EventSystem --> UserEvents[👤 用户事件]
+        EventSystem --> SystemEvents[⚙️ 系统事件]
+        EventSystem --> RouterEvents[🧭 路由事件]
+    end
         
-        subgraph "🔧 工具模块"
-            EngineCore --> Utils[🔧 工具集]
-            Utils --> DOMHelper[🌐 DOM助手]
-            Utils --> Logger[📝 日志系统]
-        end
+    subgraph D["🔧 工具模块"]
+        EngineCore --> Utils[🔧 工具集]
+        Utils --> DOMHelper[🌐 DOM助手]
+        Utils --> Logger[📝 日志系统]
     end
     
     %% 路由控制层
-    subgraph "🧭 路由导航控制"
-        RouteMatch[� 路由匹配] --> RouteNav[� 路由导航]
+    subgraph E["🧭 路由导航控制"]
+        RouteMatch[📍 路由匹配] --> RouteNav[🔄 路由导航]
         RouteNav --> StatePersist[💾 状态持久化]
     end
     
     %% 配置系统层
-    subgraph "⚙️ 配置系统"
-        Config[� 配置管理] --> JSONConfig[JSON配置]
-        Config --> StateMgmt[� 状态管理]
+    subgraph F["⚙️ 配置系统"]
+        Config[📄 配置管理] --> JSONConfig[JSON配置]
+        Config --> StateMgmt[🔧 状态管理]
     end
     
     %% 数据流连接
@@ -253,7 +236,11 @@ graph TB
     StatePersist --> LocalStorage[💿 LocalStorage]
     StateMgmt --> LocalStorage
     
-    %% 样式定义
+    %% 子图样式定义（无背景，虚线边框）
+    classDef subgraphStyle fill:none,stroke:#333,stroke-dasharray:5 5
+    class A,B,C,D,E,F,G subgraphStyle
+    
+    %% 节点样式定义
     classDef user fill:#f8bbd9
     classDef trigger fill:#ffcdd2
     classDef manager fill:#bbdefb
@@ -263,7 +250,7 @@ graph TB
     classDef event fill:#d1c4e9
     classDef utils fill:#f8bbd9
     classDef route fill:#e1f5fe
-    classDef config fill:#ffecb3
+    classDef config fill:#e1f5fe
     classDef storage fill:#d1c4e9
     
     class User user
@@ -334,21 +321,21 @@ graph TB
 - LocalStorage存储引导进度
 - 支持断点续传功能
 
-## ✨ 引导系统核心亮点
+### ✨ 引导系统核心亮点
 
-### 🎯 完全解耦的架构设计
+#### 🎯 完全解耦的架构设计
 
-#### 1. **挂载即用设计** 🚀
+##### 1. **挂载即用设计** 🚀
 - **零配置集成**：无需修改现有业务代码，引入即可使用
 - **自动发现**：系统自动识别页面元素和路由结构
 - **热插拔支持**：可在运行时动态加载和卸载引导模块
 
-#### 2. **独立架构体系** 🏗️
+##### 2. **独立架构体系** 🏗️
 - **独立状态管理**：拥有专属的状态管理机制，不与业务状态耦合
 - **独立配置系统**：基于JSON的配置体系，支持动态更新
 - **独立事件系统**：完整的事件驱动架构，避免与业务事件冲突
 
-#### 3. **跨项目复用性** 🔄
+##### 3. **跨项目复用性** 🔄
 ```javascript
 // 在任何React项目中，只需简单引入
 import { GuideManager } from './guide';
@@ -368,26 +355,26 @@ function App() {
 }
 ```
 
-### 🚀 技术先进性
+#### 🚀 技术要点
 
-#### 1. **智能路由感知** 🧭
+##### 1. **智能路由感知** 🧭
 - **自动路由跟踪**：实时监控React Router变化
 - **跨页面引导**：支持多页面连续引导流程
 - **状态持久化**：LocalStorage保存引导进度，支持断点续传
 
-#### 2. **配置驱动架构** ⚙️
+##### 2. **配置驱动架构** ⚙️
 - **JSON配置**：所有引导步骤通过配置文件定义
 - **动态更新**：支持运行时配置热更新
 - **多环境适配**：开发/测试/生产环境差异化配置
 
-#### 3. **无侵入式集成** 🛡️
+##### 3. **无侵入式集成** 🛡️
 - **DOM操作隔离**：引导系统与业务DOM操作完全隔离
 - **样式冲突避免**：使用Shadow DOM或CSS命名空间
 - **性能优化**：懒加载引导资源，按需初始化
 
-### 🔄 跨页面引导解决方案
+#### 🔄 跨页面引导解决方案
 
-#### 技术架构
+##### 技术架构
 ```mermaid
 sequenceDiagram
     participant U as 👤 用户
@@ -410,13 +397,13 @@ sequenceDiagram
     G->>S: 清除引导状态
 ```
 
-#### 核心机制
+##### 核心机制
 1. **状态持久化** - LocalStorage存储引导进度
 2. **路由监听** - 实时监控页面切换
 3. **自动恢复** - 智能检测并恢复中断引导
 4. **配置驱动** - JSON配置支持灵活定制
 
-### 📊 引导流程状态管理
+#### 📊 引导流程状态管理
 
 ```mermaid
 stateDiagram-v2

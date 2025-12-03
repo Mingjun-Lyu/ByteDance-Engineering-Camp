@@ -4,6 +4,7 @@ import { hidePopover, renderPopover, repositionPopover } from "./popover";
 import { bringInView } from "../utils/utils";
 import { getState, setState } from "../utils/state";
 
+// 挂载虚拟元素
 function mountDummyElement() {
   const existingDummy = document.getElementById("driver-dummy-element");
   if (existingDummy) {
@@ -26,15 +27,15 @@ function mountDummyElement() {
   return element;
 }
 
+
+// 高亮显示指定步骤的元素
 export function highlight(step) {
   const { element } = step;
+  // 支持函数、选择器字符串或DOM元素
   let elemObj =
     typeof element === "function" ? element() : typeof element === "string" ? document.querySelector(element) : element;
 
-  // If the element is not found, we mount a 1px div
-  // at the center of the screen to highlight and show
-  // the popover on top of that. This is to show a
-  // modal-like highlight.
+  // 如果元素不存在，挂载虚拟元素用于显示模态式高亮
   if (!elemObj) {
     elemObj = mountDummyElement();
   }
@@ -42,6 +43,8 @@ export function highlight(step) {
   transferHighlight(elemObj, step);
 }
 
+
+// 刷新当前高亮显示
 export function refreshActiveHighlight() {
   const activeHighlight = getState("__activeElement");
   const activeStep = getState("__activeStep");
@@ -50,21 +53,22 @@ export function refreshActiveHighlight() {
     return;
   }
 
+  // 重新跟踪激活元素并更新遮罩和弹出框位置
   trackActiveElement(activeHighlight);
   refreshOverlay();
   repositionPopover(activeHighlight, activeStep);
 }
 
+
+// 高亮转移函数
 function transferHighlight(toElement, toStep) {
-  const duration = 400;
+  const duration = 400; // 动画持续时间
   const start = Date.now();
 
   const fromStep = getState("__activeStep");
   const fromElement = getState("__activeElement") || toElement;
 
-  // If it's the first time we're highlighting an element, we show
-  // the popover immediately. Otherwise, we wait for the animation
-  // to finish before showing the popover.
+  // 判断是否是第一次高亮、是否为虚拟元素
   const isFirstHighlight = !fromElement || fromElement === toElement;
   const isToDummyElement = toElement.id === "driver-dummy-element";
   const isFromDummyElement = fromElement.id === "driver-dummy-element";
@@ -77,6 +81,7 @@ function transferHighlight(toElement, toStep) {
   const config = getConfig();
   const state = getState();
 
+  // 触发取消选择钩子
   if (!isFirstHighlight && deselectedHook) {
     deselectedHook(isFromDummyElement ? undefined : fromElement, fromStep, {
       config,
@@ -85,6 +90,7 @@ function transferHighlight(toElement, toStep) {
     });
   }
 
+  // 触发高亮开始钩子
   if (highlightStartedHook) {
     highlightStartedHook(isToDummyElement ? undefined : toElement, toStep, {
       config,
@@ -93,22 +99,23 @@ function transferHighlight(toElement, toStep) {
     });
   }
 
+  // 判断是否延迟显示弹出框
   const hasDelayedPopover = !isFirstHighlight && isAnimatedTour;
   let isPopoverRendered = false;
 
   hidePopover();
 
+  // 更新状态
   setState("previousStep", fromStep);
   setState("previousElement", fromElement);
   setState("activeStep", toStep);
   setState("activeElement", toElement);
 
+  // 动画循环函数
   const animate = () => {
     const transitionCallback = getState("__transitionCallback");
 
-    // This makes sure that the repeated calls to transferHighlight
-    // don't interfere with each other. Only the last call will be
-    // executed.
+    // 确保多次调用transferHighlight不会互相干扰，只有最后一次调用会被执行
     if (transitionCallback !== animate) {
       return;
     }
@@ -117,16 +124,20 @@ function transferHighlight(toElement, toStep) {
     const timeRemaining = duration - elapsed;
     const isHalfwayThrough = timeRemaining <= duration / 2;
 
+    // 动画进行到一半时渲染弹出框
     if (toStep.popover && isHalfwayThrough && !isPopoverRendered && hasDelayedPopover) {
       renderPopover(toElement, toStep);
       isPopoverRendered = true;
     }
 
+    // 执行动画过渡
     if (getConfig("animate") && elapsed < duration) {
       transitionStage(elapsed, duration, fromElement, toElement);
     } else {
+      // 动画完成后的处理
       trackActiveElement(toElement);
 
+      // 触发高亮完成钩子
       if (highlightedHook) {
         highlightedHook(isToDummyElement ? undefined : toElement, toStep, {
           config: getConfig(),
@@ -135,6 +146,7 @@ function transferHighlight(toElement, toStep) {
         });
       }
 
+      // 清理过渡状态
       setState("__transitionCallback", undefined);
       setState("__previousStep", fromStep);
       setState("__previousElement", fromElement);
@@ -149,16 +161,21 @@ function transferHighlight(toElement, toStep) {
 
   window.requestAnimationFrame(animate);
 
+  // 确保目标元素在可视区域内
   bringInView(toElement);
+  
+  // 如果没有延迟显示，立即渲染弹出框
   if (!hasDelayedPopover && toStep.popover) {
     renderPopover(toElement, toStep);
   }
 
+  // 清理上一个元素的样式和属性
   fromElement.classList.remove("driver-active-element", "driver-no-interaction");
   fromElement.removeAttribute("aria-haspopup");
   fromElement.removeAttribute("aria-expanded");
   fromElement.removeAttribute("aria-controls");
 
+  // 为目标元素添加样式和属性
   const disableActiveInteraction = toStep.disableActiveInteraction ?? getConfig("disableActiveInteraction");
   if (disableActiveInteraction) {
     toElement.classList.add("driver-no-interaction");
@@ -170,8 +187,12 @@ function transferHighlight(toElement, toStep) {
   toElement.setAttribute("aria-controls", "driver-popover-content");
 }
 
+// 销毁高亮显示
 export function destroyHighlight() {
+  // 移除虚拟元素
   document.getElementById("driver-dummy-element")?.remove();
+  
+  // 清理所有高亮元素的样式和属性
   document.querySelectorAll(".driver-active-element").forEach(element => {
     element.classList.remove("driver-active-element", "driver-no-interaction");
     element.removeAttribute("aria-haspopup");
