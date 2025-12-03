@@ -256,9 +256,39 @@ graph TB
     
     subgraph "🎨 视觉渲染模块"
         EngineCore --> VisualRenderer[🎨 视觉渲染器]
-        VisualRenderer --> OverlayManager[🖼️ 遮罩管理器]
-        OverlayManager --> HighlightEngine[✨ 高亮引擎]
-        HighlightEngine --> PopoverRenderer[💬 弹窗渲染器]
+        
+        subgraph "🖼️ 遮罩子系统"
+            VisualRenderer --> OverlayManager[遮罩管理器]
+            OverlayManager --> OverlayGenerator[遮罩生成器]
+            OverlayGenerator --> MaskCalculator[遮罩计算器]
+            OverlayGenerator --> StyleManager[样式管理器]
+        end
+        
+        subgraph "✨ 高亮子系统"
+            VisualRenderer --> HighlightEngine[高亮引擎]
+            HighlightEngine --> ElementLocator[元素定位器]
+            ElementLocator --> PositionCalculator[位置计算器]
+            HighlightEngine --> HighlightRenderer[高亮渲染器]
+            HighlightRenderer --> BorderEffect[边框效果]
+            HighlightRenderer --> ShadowEffect[阴影效果]
+        end
+        
+        subgraph "💬 弹窗子系统"
+            VisualRenderer --> PopoverRenderer[弹窗渲染器]
+            PopoverRenderer --> ContentGenerator[内容生成器]
+            ContentGenerator --> TextProcessor[文本处理器]
+            ContentGenerator --> IconManager[图标管理器]
+            PopoverRenderer --> PositionManager[位置管理器]
+            PositionManager --> AlignmentEngine[对齐引擎]
+            PositionManager --> CollisionDetector[碰撞检测器]
+        end
+        
+        subgraph "🎬 动画子系统"
+            VisualRenderer --> AnimationEngine[动画引擎]
+            AnimationEngine --> TransitionManager[过渡管理器]
+            TransitionManager --> EasingCalculator[缓动计算器]
+            AnimationEngine --> TimelineController[时间轴控制器]
+        end
     end
     
     subgraph "📡 事件处理模块"
@@ -281,16 +311,19 @@ graph TB
     
     Validation --> StepController
     
+    %% 视觉渲染模块内部连接
     OverlayManager --> HighlightEngine
     HighlightEngine --> PopoverRenderer
+    
+    %% 工具模块与视觉渲染的连接
+    DOMHelper --> ElementLocator
+    DOMHelper --> PositionCalculator
+    Animation --> AnimationEngine
+    Logger --> VisualRenderer
     
     UserEvents --> StepController
     SystemEvents --> FlowManager
     RouterEvents --> FlowManager
-    
-    DOMHelper --> HighlightEngine
-    Animation --> PopoverRenderer
-    Logger --> EventSystem
     
     %% 外部连接
     EngineCore --> ConfigManager[⚙️ 配置管理器]
@@ -323,10 +356,35 @@ graph TB
 - **步骤验证**：验证步骤配置的有效性和执行条件
 
 #### 2. **视觉渲染模块** 🎨
-- **视觉渲染器**：统一管理所有视觉元素的渲染
-- **遮罩管理器**：控制遮罩层的显示和隐藏
-- **高亮引擎**：实现目标元素的高亮效果
+
+##### 🖼️ 遮罩子系统
+- **遮罩管理器**：控制遮罩层的显示和隐藏状态
+- **遮罩生成器**：动态生成遮罩层DOM结构
+- **遮罩计算器**：计算遮罩区域和透明区域
+- **样式管理器**：管理遮罩层的样式和主题
+
+##### ✨ 高亮子系统
+- **高亮引擎**：统一管理高亮效果
+- **元素定位器**：精确查找目标元素位置
+- **位置计算器**：计算高亮区域的位置和尺寸
+- **高亮渲染器**：渲染高亮效果
+- **边框效果**：实现多种边框高亮样式
+- **阴影效果**：添加阴影和发光效果
+
+##### 💬 弹窗子系统
 - **弹窗渲染器**：渲染引导提示信息和操作按钮
+- **内容生成器**：动态生成弹窗内容
+- **文本处理器**：处理多语言和格式化文本
+- **图标管理器**：管理弹窗中的图标资源
+- **位置管理器**：控制弹窗的显示位置
+- **对齐引擎**：实现智能对齐算法
+- **碰撞检测器**：避免弹窗与边界碰撞
+
+##### 🎬 动画子系统
+- **动画引擎**：统一管理所有动画效果
+- **过渡管理器**：控制动画过渡效果
+- **缓动计算器**：实现平滑的缓动函数
+- **时间轴控制器**：管理动画时间轴和时序
 
 #### 3. **事件处理模块** 📡
 - **事件系统**：统一的事件分发和处理机制
