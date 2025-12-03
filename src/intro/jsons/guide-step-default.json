@@ -1,0 +1,19 @@
+{
+  "title": "新手引导系统",
+  "description": "该引导为默认引导，因为未找到导入的引导json文件",
+  "steps": [
+    {
+      "step": 0,
+      "route": "/",
+      "element": "",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "默认引导",
+        "description": "请检查json文件路径",
+        "position": "bottom"
+      }
+    }
+  ]
+}

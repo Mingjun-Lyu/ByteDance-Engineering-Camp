@@ -1,0 +1,162 @@
+{
+  "title": "完整产品导览",
+  "description": "从首页到详情页到列表页的完整使用流程",
+  "steps": [
+    {
+      "step": 0,
+      "route": "/",
+      "element": ".banner-carousel",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "轮播图区域",
+        "description": "这里展示最新的活动推广和重要公告，支持自动轮播和手动切换",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 1,
+      "route": "/",
+      "element": ".activity-categories",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动分类区域",
+        "description": "按不同类型浏览活动，包括促销、线下、节日和专属活动",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 2,
+      "route": "/",
+      "element": ".category-card:first-child",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动分类第一个卡片",
+        "description": "点击分类卡片可以查看该类型的所有活动，支持快速筛选",
+        "position": "right"
+      }
+    },
+    {
+      "step": 3,
+      "route": "/",
+      "element": ".notice-section",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "公告信息区域",
+        "description": "查看最新的系统公告和重要通知，及时了解活动动态",
+        "position": "top"
+      }
+    },
+    {
+      "step": 4,
+      "route": "/",
+      "element": ".highlight-activities",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "重点活动区域",
+        "description": "展示当前正在进行的热门活动和推荐内容",
+        "position": "top"
+      }
+    },
+    {
+      "step": 5,
+      "route": "/",
+      "element": ".first-activity-card",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "重点活动第一个卡片",
+        "description": "这是当前最热门的活动",
+        "position": "right"
+      }
+    },
+    {
+      "step": 6,
+      "route": "/",
+      "element": ".btn-group",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "重点活动宫格/轮播切换按钮",
+        "description": "点击切换重点活动的展示方式，支持宫格和轮播两种视图",
+        "position": "top"
+      }
+    },
+    {
+      "step": 7,
+      "route": "/detail/1",
+      "element": ".activity-detail-header",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动标题卡片",
+        "description": "这里显示活动的标题",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 8,
+      "route": "/detail/1",
+      "element": ".activity-detail-content",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动详细信息",
+        "description": "这里显示活动的核心信息，包括时间、状态、参与人数等详细信息",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 9,
+      "route": "/detail/1",
+      "element": ".activity-banner",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动Banner图片",
+        "description": "这是活动的宣传图片，展示活动亮点和特色内容",
+        "position": "top"
+      }
+    },
+    {
+      "step": 10,
+      "route": "/list",
+      "element": ".filter-form-section",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动列表筛选栏",
+        "description": "在这里可以按分类、时间、状态等条件筛选活动列表，并支持无分页查看",
+        "position": "bottom"
+      }
+    },
+    {
+      "step": 11,
+      "route": "/list",
+      "element": "table",
+      "elementRouteInfo": {
+        "hasRoute": false
+      },
+      "popover": {
+        "title": "活动列表表格",
+        "description": "这里以表格形式展示所有符合条件的活动，支持排序和筛选",
+        "position": "top"
+      }
+    }
+  ]
+}

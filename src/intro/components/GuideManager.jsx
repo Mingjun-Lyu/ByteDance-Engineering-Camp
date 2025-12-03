@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import GuidePanel from './GuidePanel';
-import homeGuideConfig from '../jsons/guide-config.json';
+import GuideConfig from '../jsons/guide-config.json';
+import GuideStepsDefault from '../jsons/guide-step-default.json';
 import { useRouteMatching } from '../hooks/useRouteMatching';
 import { useRouteNavigation } from '../hooks/useRouteNavigation';
 
@@ -12,6 +13,7 @@ const PANEL_VISIBLE_KEY = 'intro_panel_visible';
 const GuideManager = ({ 
   children, 
   position = 'top-center',
+  customGuideSteps = null, // 允许传入自定义的步骤配置
   onGuideStart,
   onGuideComplete
 }) => {
@@ -100,12 +102,20 @@ const GuideManager = ({
   useEffect(() => {
     const loadConfig = () => {
       try {
-        const config = homeGuideConfig;
-        if (!config || !config.title || !config.steps) {
+        // 优先使用自定义配置，如果没有则使用默认配置
+        const stepsConfig = customGuideSteps || GuideStepsDefault;
+        
+        // 合并两个配置文件
+        const mergedConfig = {
+          ...stepsConfig,  // 步骤配置（title, description, steps）
+          config: GuideConfig.config  // 行为配置
+        };
+        
+        if (!mergedConfig || !mergedConfig.title || !mergedConfig.steps) {
           throw new Error('引导配置文件格式错误或缺失必要字段');
         }
         
-        setGuideConfig(config);
+        setGuideConfig(mergedConfig);
         setConfigError(null);
       } catch (error) {
         console.warn('Failed to load guide config:', error);
@@ -115,7 +125,7 @@ const GuideManager = ({
     };
 
     loadConfig();
-  }, []); // 空依赖数组，只在组件挂载时执行
+  }, [customGuideSteps]); // 依赖customGuideSteps，当自定义配置变化时重新加载
 
   // 状态变化时自动保存
   useEffect(() => {

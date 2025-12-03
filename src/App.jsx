@@ -10,6 +10,8 @@ import ActivityDetail from './pages/ActivityDetail';
 
 // 导入新手引导组件
 import { GuideManager } from './intro';
+// 导入自定义引导配置
+import customGuideSteps from './guide-step.json';
 
 // 为所有页面组件添加过渡效果
 const AnimatedRoute = ({ children }) => {
@@ -57,7 +59,9 @@ const AppContent = () => {
       {/* 路由内容 */}
       <main className="main-content app-main">
         {/* 新手引导组件 - 放在路由内部确保正确的路由上下文 */}
-        <GuideManager />
+        {/* 使用自定义配置：将下面的注释去掉即可启用自定义配置 */}
+        {/* <GuideManager /> */}
+        <GuideManager customGuideSteps={customGuideSteps} />
         
         <Routes location={location}>
           <Route path="/" element={<AnimatedRoute><ActivityHome /></AnimatedRoute>} />

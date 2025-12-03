@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-这是一个基于React的现代化活动管理平台，为字节跳动工程训练营作业设计。平台提供了完整的活动浏览、筛选、详情查看功能，并集成了智能的新手引导系统，为用户提供流畅的使用体验。
+这是一个基于React的现代化活动管理平台，为字节跳动工程训练营作业设计。平台提供了完整的活动浏览、筛选、详情查看功能，并集成了独立可插拔的新手引导系统，为用户和开发者提供良好的使用体验。
 
 ## 🚀 技术栈
 
@@ -62,6 +62,7 @@ graph TD
         GuideManager[引导管理器]
         GuideCore[核心引擎]
         GuideConfig[配置系统]
+        JSONConfig[JSON配置文件]
     end
     
     %% 数据流交互关系
@@ -81,14 +82,17 @@ graph TD
     ActivityStore --> ListComps
     ActivityStore --> DetailComps
     
-    %% 引导系统与组件交互
-    GuideManager --> HomeComps
-    GuideManager --> ListComps
-    GuideManager --> DetailComps
-    
+    %% 引导系统解耦架构 - 通过JSON配置与组件交互
     GuideManager --> GuideCore
     GuideCore --> GuideConfig
+    GuideConfig --> JSONConfig
     
+    %% 引导系统通过配置读取页面元素，而非直接与组件交互
+    JSONConfig -.-> HomeComps
+    JSONConfig -.-> ListComps
+    JSONConfig -.-> DetailComps
+    
+    %% 引导系统状态管理
     GuideConfig --> UIStore
     UIStore --> GuideManager
     
@@ -111,12 +115,14 @@ graph TD
     classDef data fill:#ffecb3
     classDef guide fill:#ffcdd2
     classDef user fill:#f8bbd9
+    classDef config fill:#a5d6a7
     
     class Home,List,Detail page
     class HomeComps,ListComps,DetailComps component
     class ActivityStore,UIStore store
     class Hooks,API,Mock data
     class GuideManager,GuideCore,GuideConfig guide
+    class JSONConfig config
     class User user
 ```
 
@@ -231,13 +237,21 @@ graph TB
 #### 3. **跨项目复用性**
 ```javascript
 // 在任何React项目中，只需简单引入
-import { GuideSystem } from './intro';
+import { GuideManager } from './intro';
+import customGuideSteps from './guide-step.json';
 
-// 挂载引导系统（无需任何业务逻辑修改）
-GuideSystem.mount({
-  target: '#app',
-  config: 'path/to/guide-config.json'
-});
+// 在React组件中直接使用（无需任何业务逻辑修改）
+function App() {
+  return (
+    <div className="app-container">
+      {/* 挂载引导管理器，传入自定义配置 */}
+      <GuideManager customGuideSteps={customGuideSteps} />
+      
+      {/* 其他业务组件 */}
+      <YourBusinessComponents />
+    </div>
+  );
+}
 ```
 
 ### 🚀 技术亮点
@@ -324,12 +338,7 @@ npm install
 npm run build
 ```
 
-### 代码检查
-```bash
-npm run lint
-```
-
-### 开发模式
+### 开发调试
 ```bash
 npm run dev
 ```
