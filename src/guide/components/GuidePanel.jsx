@@ -6,9 +6,9 @@ import { useRouteMatching } from '../hooks/useRouteMatching';
 import '../styles/guide-panel.css';
 
 // 本地存储键名
-const PANEL_VISIBLE_KEY = 'intro_panel_visible';
-const STEP_RECORD_KEY = 'intro_step_record';
-const GUIDE_STATE_KEY = 'intro_guide_state';
+const PANEL_VISIBLE_KEY = 'guide_panel_visible';
+const STEP_RECORD_KEY = 'guide_step_record';
+const GUIDE_STATE_KEY = 'guide_guide_state';
 
 const GuidePanel = ({ 
   position = 'top-center',
@@ -206,7 +206,7 @@ const GuidePanel = ({
       }));
       // 清除步骤记录
       localStorage.removeItem(STEP_RECORD_KEY);
-      localStorage.removeItem('intro_guide_state');
+      localStorage.removeItem(GUIDE_STATE_KEY);
       
       // 重置完成后刷新页面
       window.location.reload();

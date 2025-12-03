@@ -58,7 +58,7 @@ graph TD
         Mock[模拟数据]
     end
     
-    subgraph "引导系统 Intro"
+    subgraph "引导系统 Guide"
         GuideManager[引导管理器]
         GuideCore[核心引擎]
         GuideConfig[配置系统]
@@ -237,7 +237,7 @@ graph TB
 #### 3. **跨项目复用性**
 ```javascript
 // 在任何React项目中，只需简单引入
-import { GuideManager } from './intro';
+import { GuideManager } from './guide';
 import customGuideSteps from './guide-step.json';
 
 // 在React组件中直接使用（无需任何业务逻辑修改）

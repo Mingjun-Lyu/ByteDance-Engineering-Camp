@@ -9,7 +9,7 @@ import ActivityList from './pages/ActivityList';
 import ActivityDetail from './pages/ActivityDetail';
 
 // 导入新手引导组件
-import { GuideManager } from './intro';
+import { GuideManager } from './guide';
 // 导入自定义引导配置
 import customGuideSteps from './guide-step.json';
 

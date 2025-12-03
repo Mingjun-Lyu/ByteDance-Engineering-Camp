@@ -54,7 +54,7 @@ export const useRouteNavigation = () => {
       };
       
       try {
-        localStorage.setItem('intro_guide_state', JSON.stringify(newState));
+        localStorage.setItem('guide_guide_state', JSON.stringify(newState));
       } catch (error) {
         console.warn('Failed to save guide state before navigation:', error);
       }

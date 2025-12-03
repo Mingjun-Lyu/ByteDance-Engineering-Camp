@@ -7,8 +7,8 @@ import { useRouteMatching } from '../hooks/useRouteMatching';
 import { useRouteNavigation } from '../hooks/useRouteNavigation';
 
 // 本地存储键名
-const GUIDE_STATE_KEY = 'intro_guide_state';
-const PANEL_VISIBLE_KEY = 'intro_panel_visible';
+const GUIDE_STATE_KEY = 'guide_guide_state';
+const PANEL_VISIBLE_KEY = 'guide_panel_visible';
 
 const GuideManager = ({ 
   children, 
