@@ -181,22 +181,28 @@ const GuidePanel = ({
         </div>
         
         <div className="guide-footer">
-          <button 
-            className="guide-start-btn" 
-            onClick={startGuide}
-          >
-            开始引导
-          </button>
+          {currentStepIndex === 0 ? (
+            <button 
+              className="guide-start-btn" 
+              onClick={startGuide}
+            >
+              开始引导
+            </button>
+          ) : (
+            <button 
+              className="guide-continue-btn" 
+              onClick={startGuide}
+            >
+              继续引导
+            </button>
+          )}
           
- 
           <button 
             className="guide-skip-btn" 
             onClick={resetGuide}
           >
             重置
           </button>
-
-          
         </div>
       </div>
     </div>
