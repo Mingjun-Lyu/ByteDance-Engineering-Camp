@@ -14,6 +14,16 @@ const ActivityDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [saveLoading, setSaveLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastVariant, setToastVariant] = useState('success');
+  
+  // 显示Toast消息
+  const showToastMessage = (message, variant = 'success') => {
+    setToastMessage(message);
+    setToastVariant(variant);
+    setShowToast(true);
+  };
   
   // 使用自定义Hook管理活动详情数据
   const {
@@ -34,8 +44,7 @@ const ActivityDetail = () => {
   // 处理保存
   const handleSave = async () => {
     if (!formData.title?.trim()) {
-      // 使用React Bootstrap的Toast
-      Toast.show('活动标题不能为空', { variant: 'danger' });
+      showToastMessage('活动标题不能为空', 'danger');
       return;
     }
     
@@ -54,11 +63,11 @@ const ActivityDetail = () => {
       
       const success = await updateActivity();
       if (success) {
-        Toast.show('保存成功', { variant: 'success' });
+        showToastMessage('保存成功', 'success');
       }
     } catch (error) {
       console.error('保存活动详情失败:', error);
-      Toast.show('保存失败', { variant: 'danger' });
+      showToastMessage('保存失败', 'danger');
     } finally {
       setSaveLoading(false);
     }
@@ -71,8 +80,8 @@ const ActivityDetail = () => {
     
     const success = await deleteActivity();
     if (success) {
-      Toast.show('删除成功', { variant: 'success' });
-      navigate('/activities');
+      showToastMessage('删除成功', 'success');
+      navigate(-1);
     }
   };
 
@@ -115,6 +124,24 @@ const ActivityDetail = () => {
 
   return (
     <Container fluid className="py-4 activity-detail-page px-4">
+      {/* Toast 消息 */}
+      <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1055 }}>
+        <Toast 
+          show={showToast} 
+          onClose={() => setShowToast(false)}
+          bg={toastVariant}
+          delay={3000}
+          autohide
+        >
+          <Toast.Header>
+            <strong className="me-auto">消息</strong>
+          </Toast.Header>
+          <Toast.Body className="text-white">
+            {toastMessage}
+          </Toast.Body>
+        </Toast>
+      </div>
+
       {/* 头部组件 */}
       <ActivityDetailHeader
         activity={activity}
